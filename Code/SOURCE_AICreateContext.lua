@@ -5,7 +5,9 @@ function AICreateContext(unit, context)
     local enemies = table.icopy(GetEnemies(unit))
 
     ---- 
-    if IsKindOf(weapon, "Firearm") and not unit:GetStatusEffect("shooting_stance") then
+    if IsKindOf(weapon, "Firearm") and not IsKindOf(weapon, "HeavyWeapon") and
+        not unit:HasStatusEffect("shooting_stance") then
+
         local attack_cost = default_attack:GetAPCost(unit)
         local stance_cost = GetWeapon_StanceAP(unit, default_attack:GetAttackWeapons(unit) or
                                                    unit:GetActiveWeapons()) + Get_AimCost(unit)
@@ -13,8 +15,8 @@ function AICreateContext(unit, context)
         local ap = unit.ActionPoints - free_move_ap
         local total_stance_cost = attack_cost + stance_cost
         local has_stance_ap = ap >= total_stance_cost
-        print("-- checking if has stance AP from AICreateContext:", has_stance_ap, GameTime())
-        print(default_attack.id, attack_cost, stance_cost)
+        -- print("-- checking if has stance AP from AICreateContext:", has_stance_ap, GameTime())
+        -- print(default_attack.id, attack_cost, stance_cost)
         if not has_stance_ap and table.find(weapon.AvailableAttacks, "SingleShot") then
             default_attack = CombatActions["SingleShot"]
         end
@@ -77,6 +79,9 @@ function AICreateContext(unit, context)
     context.max_attacks = unit.MaxAttacks
     context.dest_target = {} -- dest -> picked target (if any)
     context.dest_target_score = {} -- dest -> estimated damage
+    ------------------
+    context.dest_target_recoil_cth = {} -- dest -> recoil cth degradation
+    -----------------
     context.weapon = weapon
     context.default_attack = default_attack
     -- context.default_attack_cost = default_attack:GetAPCost(unit)

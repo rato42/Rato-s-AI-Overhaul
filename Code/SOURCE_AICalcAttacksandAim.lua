@@ -70,7 +70,7 @@ function AICalcAttacksAndAim(context, ap)
     end
     -------
 
-    local num_attacks = Min((ap - stance_cost) / cost, context.max_attacks)
+    local num_attacks = Min((ap - stance_cost - rotation_cost) / cost, context.max_attacks)
 
     if context.force_max_aim and has_stance_ap then --- Only Aim if can enter stance
         num_attacks = ------ stance_cost added

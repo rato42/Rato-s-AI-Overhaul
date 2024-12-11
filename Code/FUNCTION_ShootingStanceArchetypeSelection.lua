@@ -72,21 +72,9 @@ function getAIShootingStanceArchetypeSelectionScore(unit, proto_context)
                         -- print("self cover", use, enemy.session_id, value, ratio, add)
                     end
                 end
-
-                --[[local cover, any, coverage = unit:GetCoverPercentage(pos,
-                                                                     unit.return_pos_reserved or
-                                                                         att_pos)
-
-                local add = MulDivRound(weight_no_cover, (100 - (coverage or 0)), 100)
-
-                
-                print("self cover", enemy.session_id, cover, any, coverage, add)
-                score = score + add]]
-
             end
 
             local effective_range = context.EffectiveRange * const.SlabSizeX * effective_range_mul
-
             if dist <= effective_range then
                 local angle_ap = unit:GetShootingStanceAP(enemy, weapon, 1, false, "rotate")
                 if angle_ap <= angle_ap_threshold * const.Scale.AP then
@@ -99,16 +87,8 @@ function getAIShootingStanceArchetypeSelectionScore(unit, proto_context)
                         local ratio = 100 - Clamp(MulDivRound(value, 100, cover_max_malus), 0, 100)
                         local add = MulDivRound(weight_enemy_in_cone, ratio, 100)
                         score = score + add
-
                         -- print("enemy cover", use, enemy.session_id, value, ratio, add)
                     end
-
-                    -- local cover, any, coverage = enemy:GetCoverPercentage(att_pos, pos)
-
-                    -- local add = MulDivRound(weight_enemy_in_cone, (100 - coverage), 100)
-                    -- score = score + add
-                    -- print("enemy cover", enemy.session_id, cover, any, coverage, add)
-
                     no_enemy_in_range = false
                 end
             end
@@ -119,72 +99,3 @@ function getAIShootingStanceArchetypeSelectionScore(unit, proto_context)
     -- print(score)
     return score
 end
-
---[[function AIShootingStanceArchetypeSelection(unit, proto_context)
-    last_proto = proto_context
-    ------------------Further logic: default archetype (ie skirmshers or others that have mobile attacks)
-    local context = AICreateContext(unit, proto_context)
-    local weapon = context.weapon or unit:GetActiveWeapons()
-    last_context = context
-
-    ---- Parameters
-    local angle_ap_threshold = 2 -- AP
-    local closeness_threshold = 4 -- slab
-    local distance_to_check_lack_of_cover = 20 -- slab
-    local effective_range_mul = 1.2
-
-    local remove_stance_archetype
-    local enemy_in_cone = false
-
-    if unit:IsUnderTimedTrap() or unit:IsUnderBombard() then ---Unit:IsThreatened(enemies, mode)
-        remove_stance_archetype = true
-    else
-        for enemy, pos in pairs(context.enemy_pos) do
-            local att_pos = unit:GetPos()
-            --- Can use enemy_visible_by_team as well
-            if context.enemy_visible[enemy] and IsValidPos(pos) and IsValidPos(att_pos) then
-                local pos = IsValidZ(pos) and pos or pos:SetTerrainZ()
-                att_pos = IsValidZ(att_pos) and att_pos or att_pos:SetTerrainZ()
-                local dist = att_pos:Dist(pos)
-                -- print(enemy.session_id, "dist", dist / const.SlabSizeX)
-
-                if dist <= closeness_threshold * const.SlabSizeX then
-                    remove_stance_archetype = true
-                    -- print("close")
-                    break
-                end
-
-                local cover, any, coverage
-                if dist <= distance_to_check_lack_of_cover * const.SlabSizeX then
-                    cover, any, coverage = unit:GetCoverPercentage(pos, unit.return_pos_reserved or
-                                                                       unit.return_pos or att_pos,
-                                                                   enemy.stance)
-                    -- print(enemy.session_id, cover, any, coverage)
-                    if not cover then
-                        remove_stance_archetype = true
-                        break
-                    end
-                end
-
-                -- DbgAddText(context.enemy_dir[enemy], pos)
-                -- print(enemy.session_id, "dir", context.enemy_dir[enemy])
-
-                local effective_range = context.EffectiveRange * const.SlabSizeX *
-                                            effective_range_mul
-                if dist <= effective_range then
-                    local angle_ap = unit:GetShootingStanceAP(enemy, weapon, 1, false, "rotate")
-                    if angle_ap <= angle_ap_threshold * const.Scale.AP then
-                        enemy_in_cone = true
-                    end
-                    -- print(enemy.session_id, "angle", angle)
-                end
-                -- print(enemy.session_id, "in_cone", enemy_in_cone)
-                -- end
-            end
-
-            remove_stance_archetype = remove_stance_archetype or not enemy_in_cone
-        end
-    end
-
-    return not remove_stance_archetype and 'ShootingStance_Archetype' or false
-end]]

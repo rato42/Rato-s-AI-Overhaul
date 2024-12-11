@@ -429,6 +429,10 @@ return {
 		'CodeFileName', "Code/FUNCTION_ChangeAIKeyWords.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "FUNCTION_AIGetCustomBiasWeight",
+		'CodeFileName', "Code/FUNCTION_AIGetCustomBiasWeight.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AIPrecalcDamageScore",
 		'CodeFileName', "Code/SOURCE_AIPrecalcDamageScore.lua",
 	}),
@@ -448,6 +452,14 @@ return {
 	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AIGetAttackArgs",
 		'CodeFileName', "Code/SOURCE_AIGetAttackArgs.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "SOURCE_AIGetBias",
+		'CodeFileName', "Code/SOURCE_AIGetBias.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "SOURCE_AISelectAction",
+		'CodeFileName', "Code/SOURCE_AISelectAction.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "vanilla_archetype_functions_forconsult",
@@ -924,10 +936,11 @@ return {
 				'BiasId', "Standard",
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyTakeCover', {
-						'Weight', 50,
 						'visibility_mode', "team",
 					}),
-					PlaceObj('AIPolicyDealDamage', nil),
+					PlaceObj('AIPolicyDealDamage', {
+						'Weight', 150,
+					}),
 				},
 				'TakeCoverChance', 50,
 			}),
@@ -943,9 +956,7 @@ return {
 		Comment = "Keywords: Soldier, Sniper, Control, Ordnance, Smoke, Explosives",
 		MoveStance = "Crouch",
 		OptLocPolicies = {
-			PlaceObj('AIPolicyTakeCover', {
-				'Weight', 50,
-			}),
+			PlaceObj('AIPolicyTakeCover', nil),
 			PlaceObj('AIPolicyHighGround', {
 				'RequiredKeywords', {
 					"Sniper",
@@ -956,7 +967,7 @@ return {
 				'Weight', 300,
 			}),
 			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 50,
+				'Weight', 60,
 				'RangeMin', 10,
 				'RangeMax', 25,
 			}),
@@ -965,7 +976,7 @@ return {
 				'RangeMax', 49,
 			}),
 			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 150,
+				'Weight', 80,
 				'RangeMin', 50,
 				'RangeMax', 100,
 			}),
@@ -975,13 +986,6 @@ return {
 		SignatureActions = {
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "Autofire",
-				'Weight', 150,
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "Autofire",
-						'Effect', "disable",
-					}),
-				},
 				'NotificationText', "",
 				'RequiredKeywords', {
 					"Soldier",
@@ -1004,6 +1008,15 @@ return {
 				'RequiredKeywords', {
 					"Sniper",
 				},
+			}),
+			PlaceObj('AIActionMobileShot', {
+				'BiasId', "RunAndGun",
+				'NotificationText', "",
+				'action_id', "RunAndGun",
+			}),
+			PlaceObj('AIActionMobileShot', {
+				'BiasId', "MobileShot",
+				'NotificationText', "",
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
@@ -1248,6 +1261,7 @@ return {
 		PrefStance = "Crouch",
 		SignatureActions = {
 			PlaceObj('AIActionMobileShot', {
+				'BiasId', "RunAndGun",
 				'Priority', true,
 				'NotificationText', "",
 				'RequiredKeywords', {
@@ -1256,6 +1270,7 @@ return {
 				'action_id', "RunAndGun",
 			}),
 			PlaceObj('AIActionMobileShot', {
+				'BiasId', "MobileShot",
 				'Priority', true,
 				'NotificationText', "",
 				'RequiredKeywords', {
@@ -1390,6 +1405,7 @@ return {
 		OptLocSearchRadius = 80,
 		SignatureActions = {
 			PlaceObj('AIActionMobileShot', {
+				'BiasId', "RunAndGun",
 				'Priority', true,
 				'NotificationText', "",
 				'RequiredKeywords', {
@@ -1398,6 +1414,7 @@ return {
 				'action_id', "RunAndGun",
 			}),
 			PlaceObj('AIActionMobileShot', {
+				'BiasId', "MobileShot",
 				'Priority', true,
 				'NotificationText', "",
 				'RequiredKeywords', {

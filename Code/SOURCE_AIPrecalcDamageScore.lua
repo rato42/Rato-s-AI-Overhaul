@@ -2,9 +2,9 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 
     ic("precalc", GameTime())
 
-    if context.override_attack_id or context.override_attack_cost then
-        ic(context.override_attack_id, context.override_attack_cost, GameTime())
-    end
+    -- if context.override_attack_id or context.override_attack_cost then
+    --     ic(context.override_attack_id, context.override_attack_cost, GameTime())
+    -- end
 
     local unit = context.unit
     local weapon = context.weapon
@@ -73,6 +73,9 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
     local dest_target_score = context.dest_target_score
     local dest_ap = context.dest_ap
     local aim_mod = Presets.ChanceToHitModifier.Default.Aim
+    ---
+    local pb_cth_mod = Presets.ChanceToHitModifier.Default.PointBlank
+    ---
     local dest_cth = {}
     context.dest_cth = dest_cth
     local lof_params
@@ -141,8 +144,12 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
         local best_score = 0
         local potential_targets, target_score, target_cth = {}, {}, {}
 
+        ------------------ Recoil storage
+        local recoil_score = {}
         ------------------
-        local old_scores_dbg, old_cth_debug, recoil_score_dbg = {}, {}, {}
+
+        ------------------ Debug
+        local old_scores_dbg, old_cth_debug = {}, {}
         ------------------
 
         if weapon and ap >= cost_ap then
@@ -177,6 +184,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                     recoil_cth = get_recoil(unit, target, target:GetPos(), context.default_attack,
                                             weapon)
                 end
+                recoil_score[target] = recoil_cth
                 -------
 
                 if dist <= (max_check_range or dist) and
@@ -191,13 +199,12 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         hit_mod = hit_mod + (unit:GetLastAttack() == target and modSameTarget or 0)
                     end
 
-                    ---------------------- Cover penalty score reworked
-
                     --[[local target_cover = GetCoverFrom(tpos, upos)
                     if target_cover == const.CoverLow or target_cover == const.CoverHigh then
                         hit_mod = hit_mod + modCover
                     end]]
 
+                    ---------------------- Cover penalty score reworked
                     local use_cover, cover_value =
                         hit_modifiers.RangeAttackTargetStanceCover:CalcValue(unit, target, nil,
                                                                              action, weapon, nil,
@@ -215,7 +222,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                     local mod = hit_mod - penalty -- dist_penalty
                     -- environmental modifiers when applicable
 
-                    local apply, value, target_spot_group, action, weapon1, weapon2, lof, aim,
+                    local apply, value, target_spot_group, weapon1, weapon2, lof, aim,
                           opportunity_attack
                     apply, value = hit_modifiers.Darkness:CalcValue(unit, target, target_spot_group,
                                                                     action, weapon1, weapon2, lof,
@@ -225,12 +232,22 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         mod = mod + value
                     end
 
-                    if not is_heavy and unit:IsPointBlankRange(target) then
+                    -- TODO: PointBlank changes
 
-                        -- TODO: PointBlank changes
-
+                    --[[if not is_heavy and unit:IsPointBlankRange(target) then
                         mod = MulDivRound(mod, 100 + const.AIPointBlankTargetMod, 100)
+                    end]]
+
+                    --------------------- Point blank rework
+                    if not is_heavy then
+                        local pb_apply, pb_value =
+                            pb_cth_mod:CalcValue(unit, target, target_spot_group, action, weapon,
+                                                 nil, nil, nil, false, attacker_pos)
+                        if pb_apply then
+                            mod = mod + pb_value
+                        end
                     end
+                    --------------------
 
                     mod = Max(0, mod)
                     if mod > const.AIShootAboveCTH then
@@ -289,7 +306,10 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         ----------TODO: WEIGTH HERE!
                         ------------------- Recoil addition
                         -- base_mod = base_mod + recoil_cth
-                        mod = mod + recoil_cth
+                        if context.default_attack == "BurstFire" or context.default_attack ==
+                            "MGBurstFire" then
+                            mod = mod + recoil_cth
+                        end
                         -------------------
 
                         -- modify score by archetype-specific weight and (optional) targeting policies
@@ -354,7 +374,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         ----------------- DEBUG
                         old_scores_dbg[target] = old_mod
                         old_cth_debug[target] = old_base_mod
-                        recoil_score_dbg[target] = recoil_cth
+
                         ------------
 
                         best_score = Max(best_score, mod)
@@ -426,9 +446,23 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 
         -- logdata.chosen_target = best_target and (IsKindOf(best_target, "Unit") and _InternalTranslate(best_target.Name or "") or best_target.class) or tostring(best_target)
 
+        ------------------------------
+        context.dest_target_recoil_cth[upos] = recoil_score[best_target]
+        ------------------------------
+
         dest_target_score[upos] = best_score ------ This defines DealDamage policy score
         dest_target[upos] = best_target
         dest_cth[upos] = best_cth
+
+        ----Debug vectors
+        -- local dux, duy, duz, dustance_idx = stance_pos_unpack(upos)
+        -- local debug_score_pos = point(dux, duy, duz)
+
+        -- if best_cth and best_cth > 0 and best_target then
+        --     DbgAddText(best_cth, debug_score_pos)
+        --     DbgAddVector(debug_score_pos, best_target:GetPos() - debug_score_pos)
+        -- end
+        -----
     end
 
     ---- End looping destinations
