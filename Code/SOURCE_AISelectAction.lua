@@ -25,7 +25,10 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
                     return action
                 end
                 available[#available + 1] = action
-                available[available] = action_weight
+                ---
+                -- available[available] = action_weight
+                available[action] = action_weight
+                ---
                 weight = weight + action_weight
             elseif dbg_available_actions then
                 table.insert(dbg_available_actions, {action = action, weight = false})
@@ -35,12 +38,16 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
 
     if weight > 0 then
         local roll = InteractionRand(weight, "AISignatureAction", context.unit)
+        ic(roll)
         for _, action in ipairs(available) do
             local w = available[action]
-            if roll <= weight then
+            -- if roll <= weight then
+            ic(action)
+            if roll <= w then
                 return action
             end
-            roll = roll - weight
+            -- roll = roll - weight
+            roll = roll - w
         end
     end
 

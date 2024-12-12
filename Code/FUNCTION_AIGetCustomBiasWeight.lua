@@ -1,4 +1,9 @@
 last_bias_context = {}
+
+--- Pq eles usam a ação mesmo q o peso esteja mto baixo? 
+-- so nao usam se eu desabilitar. 
+-- O ataque normal n é considerado no "roll"? Se tive ruma ação disponivel, será usada?
+
 function AIGetCustomBiasWeight(id, unit, context, ai_action)
 
     local weight_mod, disable, priority = 100, false, false
@@ -69,11 +74,11 @@ function AIGetCustomBiasWeight(id, unit, context, ai_action)
             score_mod = 100 - (ratio)
             weight_mod = weight_mod - score_mod
         end
-
+        ic(action_id, priority, ratio, dest_cth, dest_recoil, score_mod, weight_mod)
         -- disable = true
     end
 
-    ic(action_id, priority, ratio, dest_cth, dest_recoil, score_mod, weight_mod)
+    -- ic(action_id, priority, ratio, dest_cth, dest_recoil, score_mod, weight_mod)
 
     return weight_mod, disable, priority
 end
