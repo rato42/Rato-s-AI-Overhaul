@@ -23,9 +23,15 @@ function StandardAI:Think(unit, debug_data)
     AIPrecalcDamageScore(context)
     context.override_attack_id = nil
     context.override_attack_cost = nil
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    -------------- LOOK HERE!
+
     unit.ai_context.ai_destination = AIScoreReachableVoxels(context, self.EndTurnPolicies,
                                                             self.OptLocWeight, debug_data and
                                                                 debug_data.reachable_scores)
+    --------- Also look at AIPlayAttacks and AIChooseSignatureAction
+    ----------------------------------------------------------------------
+
     self:EndStep("end of turn location", debug_data)
 
     self:BeginStep("movement action", debug_data)

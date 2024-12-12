@@ -16,16 +16,17 @@ function AIGetCustomBiasWeight(id, unit, context, ai_action)
     local dist, target, dest_cth, dest_recoil, attacker_pos
     local action_id = action and action.id or ''
     local upos = context.ai_destination
+    ----------------- HoldPosition behavior wont have ai_destination for some reason
 
     if upos then
         dest_cth = context.dest_cth and context.dest_cth[upos]
         dest_recoil = context.dest_target_recoil_cth and context.dest_target_recoil_cth[upos]
         local ux, uy, uz, ustance_idx = stance_pos_unpack(upos)
         attacker_pos = point(ux, uy, uz)
-        ic(attacker_pos)
+        -- ic(attacker_pos)
         target = context.dest_target[upos]
         local target_id = target and target.session_id or ''
-        ic(target_id)
+        -- ic(target_id)
         DbgAddCircle(attacker_pos)
         if target then
             dist = (attacker_pos:Dist(target:GetPos()) or 0)
@@ -52,7 +53,7 @@ function AIGetCustomBiasWeight(id, unit, context, ai_action)
             local mul = GetHipfirePenal(unit:GetActiveWeapons(), unit, action, false, 1)
             local snap_penal = MulDivRound(dist, const.Combat.SnapshotMaxPenalty, const.Combat
                                                .Snapshot_MaxDistforPenalty * const.SlabSizeX)
-            ic(snap_penal, mul)
+            -- ic(snap_penal, mul)
             ratio = MulDivRound(dest_cth + const.Combat.Snapshot_BasePenalty + snap_penal * mul *
                                     1.5, 100, dest_cth)
             score_mod = 100 - (ratio)
@@ -63,10 +64,13 @@ function AIGetCustomBiasWeight(id, unit, context, ai_action)
             priority = true
         elseif dest_cth and dest_recoil then
             ---- revisar esses calculos, feito durante privacao de sono kkkkk
+
             ratio = MulDivRound(dest_cth + dest_recoil, 100, dest_cth) -- dest_cth / (dest_cth + dest_recoil)
             score_mod = 100 - (ratio)
             weight_mod = weight_mod - score_mod
         end
+
+        -- disable = true
     end
 
     ic(action_id, priority, ratio, dest_cth, dest_recoil, score_mod, weight_mod)

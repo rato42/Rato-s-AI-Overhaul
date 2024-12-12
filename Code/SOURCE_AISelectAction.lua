@@ -1,6 +1,9 @@
 function AISelectAction(context, actions, base_weight, dbg_available_actions)
     local available = {}
     local weight = base_weight or 0
+    --------- base_weight is from the default attack
+    ---- Stored here
+    ---context.choose_actions = {{action = false, weight = weight, priority = false}}
 
     context.action_states = context.action_states or {}
 

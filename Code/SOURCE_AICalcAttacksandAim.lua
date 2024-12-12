@@ -2,6 +2,8 @@ local debug = false
 last_aim_calc_context = {}
 
 ---TODO: Consider leaving this function as "pre-planning" and moving the more complex logic to when the positions are defined?
+
+---TODO: #1 If we enter here after using a signature action that puts you in shooting stance, the min_aim level wont be properly increased
 function AICalcAttacksAndAim(context, ap)
     last_aim_calc_context = context
 
