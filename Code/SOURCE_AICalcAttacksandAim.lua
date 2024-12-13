@@ -3,11 +3,10 @@ last_aim_calc_context = {}
 
 ---TODO: Consider leaving this function as "pre-planning" and moving the more complex logic to when the positions are defined?
 
----TODO: #1 If we enter here after using a signature action that puts you in shooting stance, the min_aim level wont be properly increased
-
 function AICalcAttacksAndAim(context, ap)
     last_aim_calc_context = context
 
+    context.max_attacks = 20
     ------- Fix for min aim
     ---TODO: check if mobile attacks are having aim for AI
     local unit = context.unit
@@ -33,7 +32,9 @@ function AICalcAttacksAndAim(context, ap)
             unit_pos = IsValidZ(unit_pos) and unit_pos or unit_pos:SetTerrainZ()
 
             not_moved = attack_pos == unit_pos
-            has_stance = not_moved and context.unit:GetStatusEffect("shooting_stance")
+
+            has_stance = not_moved and context.unit:HasStatusEffect("shooting_stance")
+            -- ic(attack_pos, unit_pos, not_moved, has_stance)
         end
 
         -------- Persistant recoil aim cost increase
@@ -57,6 +58,10 @@ function AICalcAttacksAndAim(context, ap)
     end
     ------
 
+    ----
+    print("after sig", context.ap_after_signature, "has stance",
+          unit:HasStatusEffect("shooting_stance"))
+
     local aim_cost = Get_AimCost(unit)
 
     local cost = context.default_attack_cost
@@ -64,6 +69,18 @@ function AICalcAttacksAndAim(context, ap)
     ------- Verify if has AP to enter Stance
     local ap = ap - free_move_ap --- Fixes considering free move ap as AP
     local total_stance_cost = cost + stance_cost + aim_cost -- + recoil_aim_cost
+
+    ---- support for reverting to basic attacks from AIPlayAttacks (always on the same position as the signature)
+    total_stance_cost = (context.ap_after_signature and unit:HasStatusEffect("shooting_stance")) and
+                            0 or total_stance_cost
+    stance_cost = (context.ap_after_signature and unit:HasStatusEffect("shooting_stance")) and 0 or
+                      stance_cost
+    ----
+
+    if context.ap_after_signature then
+        -- bp()
+    end
+
     local has_stance_ap = ap >= total_stance_cost
 
     if not has_stance_ap then

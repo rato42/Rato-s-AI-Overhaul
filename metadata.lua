@@ -1,6 +1,6 @@
 return PlaceObj('ModDef', {
 	'title', "Rato's AI Overhaul",
-	'description', "TODO:\n\n--------MatchUnit to prevent/enable \n\nFix MGs attacking outside cone. Maybe using signature ?\nUnderstand Positioning AI\nInvestigate Seek Cover policy - improve it\n\n\n\n\n\n\n\n\n\n\nOBS: some logic will check if unit has ap after movement to attack\n\n----- Targeting\nAdd policys for grouped targets when using burst/autofire\n\n----- Movement\ngive score to voxels where they would have enough stance ap\n\n------- Actions\nAI shooting from too afar when using burst/autofire\nConsider increasing aim levels in burst fire?? maybe\nBurstFire should not be aimed at limbs\n\nHeadshots\nIncrease usage of Mobile attacks and grenades\n\nVisibility",
+	'description', "TODO:\n\n--------MatchUnit to prevent/enable \n\nFix MGs attacking outside cone. Maybe using signature ?\nUnderstand Positioning AI\nInvestigate Seek Cover policy - improve it\n\n\nEnemies are finishing turn with AP remaining\n\n\n\n\n\n\n\nOBS: some logic will check if unit has ap after movement to attack\n\n----- Targeting\nAdd policys for grouped targets when using burst/autofire\n\n----- Movement\ngive score to voxels where they would have enough stance ap\n\n------- Actions\nAI shooting from too afar when using burst/autofire\nConsider increasing aim levels in burst fire?? maybe\nBurstFire should not be aimed at limbs\n\nHeadshots\nIncrease usage of Mobile attacks and grenades\n\nVisibility",
 	'dependencies', {
 		PlaceObj('ModDependency', {
 			'id', "cfahRED",
@@ -11,7 +11,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "rEYcAD4",
 	'author', "rato",
-	'version', 742,
+	'version', 779,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -43,8 +43,8 @@ return PlaceObj('ModDef', {
 	},
 	'default_options', {},
 	'has_data', true,
-	'saved', 1734101257,
-	'code_hash', 8999601402698105884,
+	'saved', 1734120283,
+	'code_hash', -7627100634198662771,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
@@ -94,6 +94,11 @@ return PlaceObj('ModDef', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
 			'Id', "Soldier",
+			'ClassDisplayName', "AI Archetype",
+		}),
+		PlaceObj('ModResourcePreset', {
+			'Class', "AIArchetype",
+			'Id', "RPG",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {

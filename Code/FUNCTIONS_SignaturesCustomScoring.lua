@@ -29,7 +29,7 @@ function AutoFire_CustomScoring(self, context)
     end
 
     -- ic(priority, ratio, dest_cth, dest_recoil, score_mod)
-    return weight, weight < 0 and false or disable, priority
+    return Max(0, weight), weight < 0 and false or disable, priority
 end
 
 function MobileAttack_CustomScoring(self, context)
@@ -47,7 +47,9 @@ function MobileAttack_CustomScoring(self, context)
         dest_recoil = context.dest_target_recoil_cth and context.dest_target_recoil_cth[upos]
         local ux, uy, uz, ustance_idx = stance_pos_unpack(upos)
         attacker_pos = point(ux, uy, uz)
-        DbgAddCircle(attacker_pos, const.SlabSizeX / 2, const.clrRed)
+        -- ic(attacker_pos, unit:GetPos())
+        -- ic(attacker_pos == unit:GetPos())
+        -- DbgAddCircle(attacker_pos, const.SlabSizeX / 2, const.clrRed)
         target = context.dest_target[upos]
         if target then
             dist = attacker_pos:Dist(target:GetPos())
@@ -67,11 +69,11 @@ function MobileAttack_CustomScoring(self, context)
         local snap_penal = MulDivRound(dist, const.Combat.SnapshotMaxPenalty,
                                        const.Combat.Snapshot_MaxDistforPenalty * const.SlabSizeX)
         -- ic(snap_penal, mul)
-        ratio = MulDivRound(dest_cth + const.Combat.Snapshot_BasePenalty + snap_penal * mul * 1.5,
-                            100, dest_cth)
+        ratio = MulDivRound(dest_cth + const.Combat.Snapshot_BasePenalty + snap_penal * mul, 100,
+                            dest_cth)
         score_mod = 100 - (100 - ratio)
         weight = MulDivRound(weight, score_mod, 100)
     end
     -- ic(weight, priority, ratio, dest_cth, dest_recoil, score_mod)
-    return weight, weight < 0 and false or disable, priority
+    return Max(0, weight), weight < 0 and false or disable, priority
 end

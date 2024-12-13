@@ -22,7 +22,7 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
             -- if action and action.action_id == "RunAndGun" then
             --     bp()
             -- end
-            action:PrecalcAction(context, context.action_states[action]) ---TODO: #4 Check: Run And Gun is not able to do a combat path? or is it just an exeception?
+            action:PrecalcAction(context, context.action_states[action])
             if action:IsAvailable(context, context.action_states[action]) then
 
                 --------------------------------------------
@@ -56,7 +56,7 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
 
         for _, action in ipairs(available) do
             local w = available[action]
-
+            -- ic(action.action_id, w)
             -- if roll <= weight then
             if roll <= w then
 
