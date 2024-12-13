@@ -232,8 +232,6 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         mod = mod + value
                     end
 
-                    -- TODO: PointBlank changes
-
                     --[[if not is_heavy and unit:IsPointBlankRange(target) then
                         mod = MulDivRound(mod, 100 + const.AIPointBlankTargetMod, 100)
                     end]]
@@ -303,12 +301,12 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         local old_mod, old_base_mod = mod, base_mod
                         ------------
 
-                        ----------TODO: WEIGTH HERE!
                         ------------------- Recoil addition
                         -- base_mod = base_mod + recoil_cth
                         if context.default_attack == "BurstFire" or context.default_attack ==
                             "MGBurstFire" then
-                            mod = mod + recoil_cth
+                            mod = mod + recoil_cth ----------TODO: #3 Weight HERE!
+                            ic(recoil_cth)
                         end
                         -------------------
 

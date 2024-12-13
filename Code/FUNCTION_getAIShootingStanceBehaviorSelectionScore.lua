@@ -1,7 +1,7 @@
 last_proto = {}
 last_context = {}
 
-function getAIShootingStanceArchetypeSelectionScore(unit, proto_context)
+function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
     last_proto = proto_context
 
     if unit:HasStatusEffect("ManningEmplacement") or unit:HasStatusEffect("StationedMachineGun") then

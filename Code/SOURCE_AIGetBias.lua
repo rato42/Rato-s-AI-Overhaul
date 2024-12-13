@@ -1,6 +1,6 @@
 function AIGetBias(id, unit, context, ai_action)
     ---
-    local weight_mod, disable, priority = AIGetCustomBiasWeight(id, unit, context, ai_action)
+    local weight_mod, disable, priority = 100, false, false -- AIGetCustomBiasWeight(id, unit, context, ai_action)
     ---
     if id and id ~= "" then
         local mods = g_AIBiases[id] or empty_table
@@ -20,3 +20,4 @@ function AIGetBias(id, unit, context, ai_action)
 
     return weight_mod, disable, priority
 end
+

@@ -12,13 +12,15 @@ return PlaceObj('ModDef', {
 	},
 	'id', "rEYcAD4",
 	'author', "rato",
-	'version', 665,
+	'version', 721,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
-		"Code/FUNCTION_ShootingStanceArchetypeSelection.lua",
+		"Code/CLASS_append_AISignatureAction.lua",
+		"Code/FUNCTION_getAIShootingStanceBehaviorSelectionScore.lua",
 		"Code/FUNCTION_ChangeAIKeyWords.lua",
 		"Code/FUNCTION_AIGetCustomBiasWeight.lua",
+		"Code/FUNCTIONS_SignaturesCustomScoring.lua",
 		"Code/SOURCE_AIPrecalcDamageScore.lua",
 		"Code/SOURCE_AICalcAttacksandAim.lua",
 		"Code/SOURCE_SelectArchetype.lua",
@@ -41,8 +43,8 @@ return PlaceObj('ModDef', {
 	},
 	'default_options', {},
 	'has_data', true,
-	'saved', 1734008417,
-	'code_hash', -6585623406722397081,
+	'saved', 1734064092,
+	'code_hash', -8633755444173365787,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",

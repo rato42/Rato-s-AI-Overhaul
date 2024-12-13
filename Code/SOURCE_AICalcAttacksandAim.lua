@@ -4,6 +4,7 @@ last_aim_calc_context = {}
 ---TODO: Consider leaving this function as "pre-planning" and moving the more complex logic to when the positions are defined?
 
 ---TODO: #1 If we enter here after using a signature action that puts you in shooting stance, the min_aim level wont be properly increased
+
 function AICalcAttacksAndAim(context, ap)
     last_aim_calc_context = context
 
@@ -72,7 +73,7 @@ function AICalcAttacksAndAim(context, ap)
     end
     -------
 
-    local num_attacks = Min((ap - stance_cost - rotation_cost) / cost, context.max_attacks)
+    local num_attacks = Min((ap - stance_cost - rotation_cost) / cost, context.max_attacks) -- TODO: #2 Implement Bolt Action costs when appropriated
 
     if context.force_max_aim and has_stance_ap then --- Only Aim if can enter stance
         num_attacks = ------ stance_cost added

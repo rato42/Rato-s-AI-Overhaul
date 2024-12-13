@@ -421,8 +421,12 @@ return {
 		id = "ShootingStance_Archetype_copy",
 	}),
 	PlaceObj('ModItemCode', {
-		'name', "FUNCTION_ShootingStanceArchetypeSelection",
-		'CodeFileName', "Code/FUNCTION_ShootingStanceArchetypeSelection.lua",
+		'name', "CLASS_append_AISignatureAction",
+		'CodeFileName', "Code/CLASS_append_AISignatureAction.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "FUNCTION_getAIShootingStanceBehaviorSelectionScore",
+		'CodeFileName', "Code/FUNCTION_getAIShootingStanceBehaviorSelectionScore.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "FUNCTION_ChangeAIKeyWords",
@@ -431,6 +435,10 @@ return {
 	PlaceObj('ModItemCode', {
 		'name', "FUNCTION_AIGetCustomBiasWeight",
 		'CodeFileName', "Code/FUNCTION_AIGetCustomBiasWeight.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "FUNCTIONS_SignaturesCustomScoring",
+		'CodeFileName', "Code/FUNCTIONS_SignaturesCustomScoring.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AIPrecalcDamageScore",
@@ -947,7 +955,7 @@ return {
 			PlaceObj('HoldPositionAI', {
 				'Fallback', false,
 				'Score', function (self, unit, proto_context, debug_data)
-					local score = getAIShootingStanceArchetypeSelectionScore(unit, proto_context)
+					local score = getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
 					return MulDivRound(score, self.Weight, 100)
 				end,
 				'TakeCoverChance', 0,
@@ -990,9 +998,62 @@ return {
 				'RequiredKeywords', {
 					"Soldier",
 				},
+				'CustomScoring', function (self, context)
+					local weight, disable, priority = self.Weight, self.Priority, false
+					
+					    local action = CombatActions[self.action_id]
+					    local unit = context.unit
+					    local dist, target, dest_cth, dest_recoil, attacker_pos, ratio, score_mod
+					    local upos = context.ai_destination
+					    ----------------- HoldPosition behavior wont have ai_destination for some reason
+					
+					    if upos then
+					        dest_cth = context.dest_cth and context.dest_cth[upos]
+					        dest_recoil = context.dest_target_recoil_cth and context.dest_target_recoil_cth[upos]
+					        local ux, uy, uz, ustance_idx = stance_pos_unpack(upos)
+					        attacker_pos = point(ux, uy, uz)
+					        target = context.dest_target[upos]
+					        local target_id = target and target.session_id or ''
+					        DbgAddCircle(attacker_pos)
+					        if target then
+					            dist = attacker_pos:Dist(target:GetPos())
+					        end
+					    end
+					
+					    if target and unit:IsPointBlankRange(target) then
+					        priority = true
+					    elseif dest_cth and dest_recoil then
+					        ---- revisar esses calculos, feito durante privacao de sono kkkkk
+					        ratio = MulDivRound(dest_cth + dest_recoil, 100, dest_cth) -- dest_cth / (dest_cth + dest_recoil)
+					        score_mod = 100 - (100 - ratio)
+					    end
+					
+					    weight = MulDivRound(weight, score_mod, 100)
+					
+					    return weight, weight < 0 and false or disable, priority
+				end,
 				'action_id', "AutoFire",
 				'Aiming', "Maximum",
 				'AttackTargeting', set( "Torso" ),
+			}),
+			PlaceObj('AIAttackSingleTarget', {
+				'BiasId', "GroinShot",
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "GroinShot",
+						'Effect', "disable",
+					}),
+				},
+				'Aiming', "Remaining AP",
+				'AttackTargeting', set( "Groin" ),
+			}),
+			PlaceObj('AIActionMobileShot', {
+				'BiasId', "RunAndGun",
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
+				'action_id', "RunAndGun",
 			}),
 			PlaceObj('AIActionPinDown', {
 				'BiasId', "PinDownAttack",
@@ -1008,15 +1069,6 @@ return {
 				'RequiredKeywords', {
 					"Sniper",
 				},
-			}),
-			PlaceObj('AIActionMobileShot', {
-				'BiasId', "RunAndGun",
-				'NotificationText', "",
-				'action_id', "RunAndGun",
-			}),
-			PlaceObj('AIActionMobileShot', {
-				'BiasId', "MobileShot",
-				'NotificationText', "",
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
@@ -1090,20 +1142,6 @@ return {
 				'action_id', "RocketLauncherFire",
 				'LimitRange', true,
 				'MaxTargetRange', 30,
-			}),
-			PlaceObj('AIAttackSingleTarget', {
-				'BiasId', "GroinShot",
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "GroinShot",
-						'Effect', "disable",
-					}),
-				},
-				'RequiredKeywords', {
-					"Sniper",
-				},
-				'Aiming', "Remaining AP",
-				'AttackTargeting', set( "Groin" ),
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "Headshot",
@@ -1233,7 +1271,7 @@ return {
 				'Weight', 10,
 				'Fallback', false,
 				'Score', function (self, unit, proto_context, debug_data)
-					local score = getAIShootingStanceArchetypeSelectionScore(unit, proto_context)
+					local score = getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
 					return MulDivRound(score, self.Weight, 100)
 				end,
 				'TakeCoverChance', 0,
@@ -1262,11 +1300,11 @@ return {
 		SignatureActions = {
 			PlaceObj('AIActionMobileShot', {
 				'BiasId', "RunAndGun",
-				'Priority', true,
+				'Weight', 10,
 				'NotificationText', "",
-				'RequiredKeywords', {
-					"RunAndGun",
-				},
+				'CustomScoring', function (self, context)
+					MobileAttack_CustomScoring(self, context)
+				end,
 				'action_id', "RunAndGun",
 			}),
 			PlaceObj('AIActionMobileShot', {
@@ -1384,7 +1422,7 @@ return {
 			PlaceObj('HoldPositionAI', {
 				'Fallback', false,
 				'Score', function (self, unit, proto_context, debug_data)
-					local score = getAIShootingStanceArchetypeSelectionScore(unit, proto_context)
+					local score = getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
 					return MulDivRound(score, self.Weight, 100)
 				end,
 				'TakeCoverChance', 0,

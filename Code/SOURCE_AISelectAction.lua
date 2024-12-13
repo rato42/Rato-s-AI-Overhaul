@@ -9,14 +9,30 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
 
     for _, action in ipairs(actions) do
         context.action_states[action] = {}
-        local weight_mod, disable, priority =
-            AIGetBias(action.BiasId, context.unit, context, action)
-        disable = disable or context.disable_actions[action.BiasId or false]
+        local weight_mod, disable, priority = AIGetBias(action.BiasId, context.unit)
+
+        --------------------------------------------
+        local weight, custom_disable, action_priority = action:CustomScoring(context)
+
+        -- disable = disable or context.disable_actions[action.BiasId or false] 
+        disable = disable or context.disable_actions[action.BiasId or false] or custom_disable
+        --------------------------------------------
+
         if not disable then
-            action:PrecalcAction(context, context.action_states[action])
+            -- if action and action.action_id == "RunAndGun" then
+            --     bp()
+            -- end
+            action:PrecalcAction(context, context.action_states[action]) ---TODO: #4 Check: Run And Gun is not able to do a combat path? or is it just an exeception?
             if action:IsAvailable(context, context.action_states[action]) then
-                local action_weight = MulDivRound(action.Weight, weight_mod, 100)
-                priority = priority or action.Priority
+
+                --------------------------------------------
+                -- local action_weight = MulDivRound(action.Weight, weight_mod, 100)
+                local action_weight = MulDivRound(weight, weight_mod, 100)
+
+                -- priority = priority or action.Priority
+                priority = priority or action_priority
+                --------------------------------------------
+
                 if dbg_available_actions then
                     table.insert(dbg_available_actions,
                                  {action = action, weight = action_weight, priority = priority})
@@ -25,8 +41,7 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
                     return action
                 end
                 available[#available + 1] = action
-                ---
-                -- available[available] = action_weight
+                ----
                 available[action] = action_weight
                 ---
                 weight = weight + action_weight
@@ -38,12 +53,13 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
 
     if weight > 0 then
         local roll = InteractionRand(weight, "AISignatureAction", context.unit)
-        ic(roll)
+
         for _, action in ipairs(available) do
             local w = available[action]
+
             -- if roll <= weight then
-            ic(action)
             if roll <= w then
+
                 return action
             end
             -- roll = roll - weight
@@ -51,5 +67,5 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
         end
     end
 
-    return available[#available]
+    return -- available[#available]
 end
