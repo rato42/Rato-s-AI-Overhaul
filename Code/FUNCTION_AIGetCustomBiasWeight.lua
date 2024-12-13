@@ -1,4 +1,4 @@
-last_bias_context = {}
+--[[last_bias_context = {}
 
 -- O ataque normal n é considerado no "roll"? Se tive ruma ação disponivel, será usada?
 
@@ -80,3 +80,4 @@ function AIGetCustomBiasWeight(id, unit, context, ai_action)
 
     return weight_mod, disable, priority
 end
+]] 

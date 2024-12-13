@@ -1,4 +1,4 @@
-function AIGetBias(id, unit, context, ai_action)
+--[[function AIGetBias(id, unit, context, ai_action)
     ---
     local weight_mod, disable, priority = 100, false, false -- AIGetCustomBiasWeight(id, unit, context, ai_action)
     ---
@@ -19,5 +19,4 @@ function AIGetBias(id, unit, context, ai_action)
     disable = disable or (weight_mod <= 0)
 
     return weight_mod, disable, priority
-end
-
+end]] 

@@ -12,7 +12,7 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
         local weight_mod, disable, priority = AIGetBias(action.BiasId, context.unit)
 
         --------------------------------------------
-        local weight, custom_disable, action_priority = action:CustomScoring(context)
+        local c_action_weight, custom_disable, action_priority = action:CustomScoring(context)
 
         -- disable = disable or context.disable_actions[action.BiasId or false] 
         disable = disable or context.disable_actions[action.BiasId or false] or custom_disable
@@ -27,7 +27,7 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
 
                 --------------------------------------------
                 -- local action_weight = MulDivRound(action.Weight, weight_mod, 100)
-                local action_weight = MulDivRound(weight, weight_mod, 100)
+                local action_weight = MulDivRound(c_action_weight, weight_mod, 100)
 
                 -- priority = priority or action.Priority
                 priority = priority or action_priority

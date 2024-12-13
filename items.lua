@@ -200,7 +200,7 @@ return {
 				'action_id', "Overwatch",
 			}),
 		},
-		comment = "-- recheck keywords",
+		comment = "---- Not used",
 		group = "System",
 		id = "ShootingStance_Archetype",
 	}),
@@ -416,9 +416,13 @@ return {
 				'AttackTargeting', set( "Head" ),
 			}),
 		},
-		comment = "-- recheck keywords",
+		comment = "---- Not used",
 		group = "System",
 		id = "ShootingStance_Archetype_copy",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "Const_APstance",
+		'CodeFileName', "Code/Const_APstance.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "CLASS_append_AISignatureAction",
@@ -463,6 +467,7 @@ return {
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AIGetBias",
+		'comment', "---- Not used",
 		'CodeFileName', "Code/SOURCE_AIGetBias.lua",
 	}),
 	PlaceObj('ModItemCode', {
@@ -999,38 +1004,7 @@ return {
 					"Soldier",
 				},
 				'CustomScoring', function (self, context)
-					local weight, disable, priority = self.Weight, self.Priority, false
-					
-					    local action = CombatActions[self.action_id]
-					    local unit = context.unit
-					    local dist, target, dest_cth, dest_recoil, attacker_pos, ratio, score_mod
-					    local upos = context.ai_destination
-					    ----------------- HoldPosition behavior wont have ai_destination for some reason
-					
-					    if upos then
-					        dest_cth = context.dest_cth and context.dest_cth[upos]
-					        dest_recoil = context.dest_target_recoil_cth and context.dest_target_recoil_cth[upos]
-					        local ux, uy, uz, ustance_idx = stance_pos_unpack(upos)
-					        attacker_pos = point(ux, uy, uz)
-					        target = context.dest_target[upos]
-					        local target_id = target and target.session_id or ''
-					        DbgAddCircle(attacker_pos)
-					        if target then
-					            dist = attacker_pos:Dist(target:GetPos())
-					        end
-					    end
-					
-					    if target and unit:IsPointBlankRange(target) then
-					        priority = true
-					    elseif dest_cth and dest_recoil then
-					        ---- revisar esses calculos, feito durante privacao de sono kkkkk
-					        ratio = MulDivRound(dest_cth + dest_recoil, 100, dest_cth) -- dest_cth / (dest_cth + dest_recoil)
-					        score_mod = 100 - (100 - ratio)
-					    end
-					
-					    weight = MulDivRound(weight, score_mod, 100)
-					
-					    return weight, weight < 0 and false or disable, priority
+					return AutoFire_CustomScoring(self, context)
 				end,
 				'action_id', "AutoFire",
 				'Aiming', "Maximum",
@@ -1054,6 +1028,29 @@ return {
 					return MobileAttack_CustomScoring(self, context)
 				end,
 				'action_id', "RunAndGun",
+			}),
+			PlaceObj('AIActionMobileShot', {
+				'BiasId', "MobileShot",
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
+			}),
+			PlaceObj('AIAttackSingleTarget', {
+				'BiasId', "Headshot",
+				'Weight', 150,
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "Headshot",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+				},
+				'RequiredKeywords', {
+					"Sniper",
+				},
+				'Aiming', "Remaining AP",
+				'AttackTargeting', set( "Head" ),
 			}),
 			PlaceObj('AIActionPinDown', {
 				'BiasId', "PinDownAttack",
@@ -1143,22 +1140,6 @@ return {
 				'LimitRange', true,
 				'MaxTargetRange', 30,
 			}),
-			PlaceObj('AIAttackSingleTarget', {
-				'BiasId', "Headshot",
-				'Weight', 150,
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "Headshot",
-						'Effect', "disable",
-						'Period', 0,
-					}),
-				},
-				'RequiredKeywords', {
-					"Sniper",
-				},
-				'Aiming', "Remaining AP",
-				'AttackTargeting', set( "Head" ),
-			}),
 			PlaceObj('AIConeAttack', {
 				'BiasId', "Overwatch",
 				'OnActivationBiases', {
@@ -1235,11 +1216,8 @@ return {
 	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
-		BaseAttackWeight = 10,
-		BaseMovementWeight = 10,
 		Behaviors = {
 			PlaceObj('StandardAI', {
-				'Weight', 10,
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyDealDamage', nil),
 					PlaceObj('AIPolicyTakeCover', {
@@ -1268,7 +1246,7 @@ return {
 				'VoiceResponse', "AIFlanking",
 			}),
 			PlaceObj('HoldPositionAI', {
-				'Weight', 10,
+				'Weight', 50,
 				'Fallback', false,
 				'Score', function (self, unit, proto_context, debug_data)
 					local score = getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
@@ -1300,10 +1278,9 @@ return {
 		SignatureActions = {
 			PlaceObj('AIActionMobileShot', {
 				'BiasId', "RunAndGun",
-				'Weight', 10,
 				'NotificationText', "",
 				'CustomScoring', function (self, context)
-					MobileAttack_CustomScoring(self, context)
+					return MobileAttack_CustomScoring(self, context)
 				end,
 				'action_id', "RunAndGun",
 			}),
@@ -1311,9 +1288,9 @@ return {
 				'BiasId', "MobileShot",
 				'Priority', true,
 				'NotificationText', "",
-				'RequiredKeywords', {
-					"MobileShot",
-				},
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
@@ -1420,6 +1397,7 @@ return {
 				'TakeCoverChance', 0,
 			}),
 			PlaceObj('HoldPositionAI', {
+				'Weight', 50,
 				'Fallback', false,
 				'Score', function (self, unit, proto_context, debug_data)
 					local score = getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
@@ -1446,18 +1424,18 @@ return {
 				'BiasId', "RunAndGun",
 				'Priority', true,
 				'NotificationText', "",
-				'RequiredKeywords', {
-					"RunAndGun",
-				},
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
 				'action_id', "RunAndGun",
 			}),
 			PlaceObj('AIActionMobileShot', {
 				'BiasId', "MobileShot",
 				'Priority', true,
 				'NotificationText', "",
-				'RequiredKeywords', {
-					"MobileShot",
-				},
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "StunGrenade",
