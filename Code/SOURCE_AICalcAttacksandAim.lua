@@ -58,13 +58,24 @@ function AICalcAttacksAndAim(context, ap)
     end
     ------
 
-    ----
-    print("after sig", context.ap_after_signature, "has stance",
-          unit:HasStatusEffect("shooting_stance"))
-
     local aim_cost = Get_AimCost(unit)
-
     local cost = context.default_attack_cost
+
+    ---- Manual Cycling
+    local bolting_cost = 0
+    local is_unbolted, can_bolt
+    if context.weapon and rat_canBolt(context.weapon) then
+        can_bolt = true
+        bolting_cost = rat_get_manual_cyclingAP(unit, context.weapon, true) * const.Scale.AP
+        is_unbolted = context.weapon.unbolted
+    end
+    -- bp()
+    if can_bolt and not is_unbolted then ---- if is_unbolted the atk_cost will already have bolting cost
+        ap = ap + bolting_cost ----- otherwise, discount the first shot cost
+        cost = cost + bolting_cost ---- and increase the atk cost
+    end
+    ic(ap)
+    ----
 
     ------- Verify if has AP to enter Stance
     local ap = ap - free_move_ap --- Fixes considering free move ap as AP
@@ -78,7 +89,7 @@ function AICalcAttacksAndAim(context, ap)
     ----
 
     if context.ap_after_signature then
-        -- bp()
+        ic(context.ap_after_signature)
     end
 
     local has_stance_ap = ap >= total_stance_cost
@@ -94,11 +105,10 @@ function AICalcAttacksAndAim(context, ap)
 
     if context.force_max_aim and has_stance_ap then --- Only Aim if can enter stance
         num_attacks = ------ stance_cost added
-        Max(1, ---- At least one attack if the max aim level goes beyond what the unit can do
         Min((ap - stance_cost - rotation_cost) /
                 (cost + aim_cost * (max_aim - min_aim) + recoil_aim_cost * --- Persistant recoil aim cost increase
                     Min(3, (max_aim - min_aim))), -- context.weapon.MaxAimActions),
-        context.max_attacks))
+        context.max_attacks)
         ------
         --[[elseif force_enter_stance then
         num_attacks = Min(
@@ -168,6 +178,7 @@ function AICalcAttacksAndAim(context, ap)
     end
     ------
 
+    ic(is_unbolted, bolting_cost, cost, num_attacks, aims)
     return num_attacks, aims
 end
 

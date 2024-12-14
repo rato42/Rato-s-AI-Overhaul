@@ -27,6 +27,7 @@ function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
     local weight_no_cover = -20
     local weight_enemy_in_cone = 35
     local weight_per_AP_stance = 10
+    local weight_unbolted = 30
 
     ----- Initialization
     local context = AICreateContext(unit, proto_context)
@@ -43,6 +44,10 @@ function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
     local wep_stance_ap = GetWeapon_StanceAP(unit, weapon) or 1000
     score = score + MulDivRound(wep_stance_ap, weight_per_AP_stance, const.Scale.AP)
     -----
+    if weapon and rat_canBolt(weapon) then
+        score = score + weight_unbolted
+    end
+    ----
 
     for enemy, pos in pairs(context.enemy_pos) do
 
