@@ -1,5 +1,13 @@
+table_score_cover = {}
+
 function AIPolicyTakeCover:EvalDest(context, dest, grid_voxel)
     local score = 0
+    -- local test_score = 0
+
+    -- local context_cover = context.dest_target_cover_score[dest]
+
+    local ux, uy, uz, ustance_idx = stance_pos_unpack(dest)
+    -- DbgAddCircle(point(ux, uy, uz))
     local tbl = context.enemies or empty_table
     for _, enemy in ipairs(tbl) do
         local visible = true
@@ -10,10 +18,38 @@ function AIPolicyTakeCover:EvalDest(context, dest, grid_voxel)
         end
         if visible then
             local cover = GetCoverFrom(dest, context.enemy_pack_pos_stance[enemy])
+
+            -- local context_cver_score = context_cover[enemy] or 0
+            -- test_score = test_score + context_cver_score
+
+            --[[if self.CoverScores[cover] and self.CoverScores[cover] > 0 then
+                local prone_cover_CTH = Presets.ChanceToHitModifier.Default
+                                            .RangeAttackTargetStanceCover
+                local unit = context.unit
+                local weapon = context.weapon
+                local use, value = prone_cover_CTH:CalcValue(unit, enemy, false,
+                                                             enemy:GetDefaultAttackAction(nil,
+                                                                                          "ungrouped",
+                                                                                          nil,
+                                                                                          "sync"),
+                                                             enemy:GetActiveWeapons(), nil, nil, 0,
+                                                             false, enemy:GetPos(), unit:GetPos())
+
+                -- ic(use, value, self.CoverScores[cover])
+                value = use and value * -1
+                score = score + value
+            end]]
+
+            -- ic(self.CoverScores[cover])
             score = score + self.CoverScores[cover]
         end
     end
 
+    -- DbgAddText(score / Max(1, #tbl), point(ux, uy, uz))
+    -- local end_score = MulDivRound(score, Max(1, #tbl), 1)
+    -- table.insert(table_score_cover, end_score)
+
+    -- ic(score / Max(1, #tbl), test_score / Max(1, #tbl))
     return score / Max(1, #tbl)
 end
 

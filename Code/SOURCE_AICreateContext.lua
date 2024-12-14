@@ -81,6 +81,7 @@ function AICreateContext(unit, context)
     context.dest_target_score = {} -- dest -> estimated damage
     ------------------
     context.dest_target_recoil_cth = {} -- dest -> recoil cth degradation
+    context.dest_target_cover_score = {} -- dest -> cover
     -----------------
     context.weapon = weapon
     context.default_attack = default_attack

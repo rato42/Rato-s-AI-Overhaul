@@ -6,7 +6,6 @@ last_aim_calc_context = {}
 function AICalcAttacksAndAim(context, ap)
     last_aim_calc_context = context
 
-    context.max_attacks = 20
     ------- Fix for min aim
     ---TODO: check if mobile attacks are having aim for AI
     local unit = context.unit
@@ -74,7 +73,7 @@ function AICalcAttacksAndAim(context, ap)
         ap = ap + bolting_cost ----- otherwise, discount the first shot cost
         cost = cost + bolting_cost ---- and increase the atk cost
     end
-    ic(ap)
+
     ----
 
     ------- Verify if has AP to enter Stance
@@ -178,7 +177,7 @@ function AICalcAttacksAndAim(context, ap)
     end
     ------
 
-    ic(is_unbolted, bolting_cost, cost, num_attacks, aims)
+    -- ic(is_unbolted, bolting_cost, cost, num_attacks, aims)
     return num_attacks, aims
 end
 

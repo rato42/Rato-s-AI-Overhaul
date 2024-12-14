@@ -1,12 +1,11 @@
-function AutoFire_CustomScoring(self, context)
+local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
 
-    local weight, disable, priority = self.Weight, self.Priority, false
+local function GetDestArgs(self, context)
 
-    local action = CombatActions[self.action_id]
     local unit = context.unit
-    local dist, target, dest_cth, dest_recoil, attacker_pos, ratio, score_mod
+    local action = CombatActions[self.action_id]
+    local dist, target, dest_cth, dest_recoil, attacker_pos
     local upos = context.ai_destination
-    ----------------- HoldPosition behavior wont have ai_destination for some reason
 
     if upos then
         dest_cth = context.dest_cth and context.dest_cth[upos]
@@ -17,8 +16,17 @@ function AutoFire_CustomScoring(self, context)
         if target then
             dist = attacker_pos:Dist(target:GetPos())
         end
+        return upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos
     end
+end
 
+function AutoFire_CustomScoring(self, context)
+
+    local weight, disable, priority = self.Weight, false, self.Priority
+
+    local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
+                                                                                              context)
+    local ratio, score_mod
     if target and unit:IsPointBlankRange(target) then
         priority = true
     elseif dest_cth and dest_recoil then
@@ -29,33 +37,17 @@ function AutoFire_CustomScoring(self, context)
     end
 
     -- ic(priority, ratio, dest_cth, dest_recoil, score_mod)
-    return Max(0, weight), weight < 0 and false or disable, priority
+    return Max(0, weight), weight < 0 and true or disable, priority
 end
 
 function MobileAttack_CustomScoring(self, context)
 
-    local weight, disable, priority = self.Weight, self.Priority, false
+    local weight, disable, priority = self.Weight, false, self.Priority
 
-    local action = CombatActions[self.action_id]
-    local unit = context.unit
-    local dist, target, dest_cth, dest_recoil, attacker_pos, ratio, score_mod
-    local upos = context.ai_destination
-    ----------------- HoldPosition behavior wont have ai_destination for some reason
+    local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
+                                                                                              context)
 
-    if upos then
-        dest_cth = context.dest_cth and context.dest_cth[upos]
-        dest_recoil = context.dest_target_recoil_cth and context.dest_target_recoil_cth[upos]
-        local ux, uy, uz, ustance_idx = stance_pos_unpack(upos)
-        attacker_pos = point(ux, uy, uz)
-        -- ic(attacker_pos, unit:GetPos())
-        -- ic(attacker_pos == unit:GetPos())
-        -- DbgAddCircle(attacker_pos, const.SlabSizeX / 2, const.clrRed)
-        target = context.dest_target[upos]
-        if target then
-            dist = attacker_pos:Dist(target:GetPos())
-        end
-    end
-
+    local ratio, score_mod, use, snap_penal
     if target and unit:IsPointBlankRange(target) then
         priority = true
     elseif dist and target and attacker_pos then
@@ -65,15 +57,108 @@ function MobileAttack_CustomScoring(self, context)
         --                                                     1, false, attacker_pos,
         --                                                     target:GetPos())
 
-        local mul = GetHipfirePenal(unit:GetActiveWeapons(), unit, action, false, 1)
+        --[[local mul = GetWeaponHipfireOrSnapshotMul(unit:GetActiveWeapons(), unit, action, false, 1)
         local snap_penal = MulDivRound(dist, const.Combat.SnapshotMaxPenalty,
                                        const.Combat.Snapshot_MaxDistforPenalty * const.SlabSizeX)
         -- ic(snap_penal, mul)
         ratio = MulDivRound(dest_cth + const.Combat.Snapshot_BasePenalty + snap_penal * mul, 100,
-                            dest_cth)
+                            dest_cth)]]
+        use, snap_penal = hit_modifiers.HipshotPenalty:CalcValue(unit, target, nil, action,
+                                                                 unit:GetActiveWeapons(), nil, nil,
+                                                                 1, false, attacker_pos,
+                                                                 target:GetPos())
+        ratio = MulDivRound(dest_cth + snap_penal, 100, dest_cth)
         score_mod = 100 - (100 - ratio)
         weight = MulDivRound(weight, score_mod, 100)
     end
-    -- ic(weight, priority, ratio, dest_cth, dest_recoil, score_mod)
-    return Max(0, weight), weight < 0 and false or disable, priority
+    -- ic(weight, snap_penal, ratio, dest_cth, dest_recoil, score_mod)
+    return Max(0, weight), weight < 0 and true or disable, priority
+end
+
+function SingleShotTargeted_CustomScoring(self, context)
+
+    local weight, disable, priority = self.Weight, false, self.Priority
+
+    local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
+                                                                                              context)
+
+    local body_part = "Head"
+    for part, boleano in pairs(self.AttackTargeting) do
+        if boleano then
+            body_part = part
+            break
+        end
+    end
+
+    local ratio, score_mod
+    if upos and target then
+        local use, targeted_penal = hit_modifiers.TargetedShot:CalcValue(unit, target,
+                                                                         Presets.TargetBodyPart
+                                                                             .Default[body_part],
+                                                                         action,
+                                                                         unit:GetActiveWeapons(),
+                                                                         nil, nil, 3, false,
+                                                                         attacker_pos,
+                                                                         target:GetPos())
+        ratio = MulDivRound(dest_cth + targeted_penal, 100, dest_cth)
+        score_mod = 100 - (100 - ratio)
+        weight = MulDivRound(weight, score_mod, 100)
+        -- ic(targeted_penal, dest_cth, score_mod)
+    end
+
+    return Max(0, weight), weight < 0 and true or disable, priority
+end
+
+function Overwatch_CustomScoring(self, context)
+    local weight, disable, priority = self.Weight, false, self.Priority
+
+    local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
+                                                                                              context)
+
+    if not upos then
+        return weight, disable, priority
+    end
+
+    local interrupt_cth_mod = 0
+    local ow_cth = 0
+    local use
+    if target and attacker_pos then
+        use, ow_cth = hit_modifiers["OpportunityAttack"]:CalcValue(unit, target, false, action,
+                                                                   context.weapon, nil, nil, 1,
+                                                                   true, attacker_pos,
+                                                                   target:GetPos())
+    end
+
+    interrupt_cth_mod = interrupt_cth_mod + ow_cth
+
+    local snap_penal = 0
+    if unit and target then
+        --[[local mul = GetWeaponHipfireOrSnapshotMul(unit:GetActiveWeapons(), unit, action, false, 1)
+
+        --- Idea 1: calc a arbitrary snap penal using local effective_range = context.EffectiveRange * const.SlabSizeX
+        --- Idea 2: calc snap penal getting the closer visible target.
+
+        local effective_range = context.EffectiveRange * const.SlabSizeX
+        local snap_penal = MulDivRound(effective_range, const.Combat.SnapshotMaxPenalty,
+                                       const.Combat.Snapshot_MaxDistforPenalty * const.SlabSizeX) *
+                               mul
+
+        snap_penal = use and snap_penal + ow_cth]]
+        use, snap_penal = hit_modifiers.HipshotPenalty:CalcValue(unit, target, nil, action,
+                                                                 unit:GetActiveWeapons(), nil, nil,
+                                                                 1, false, attacker_pos,
+                                                                 target:GetPos())
+    end
+
+    interrupt_cth_mod = interrupt_cth_mod + snap_penal
+
+    local ratio, score_mod
+    if dest_cth then
+        ratio = MulDivRound(dest_cth + interrupt_cth_mod, 100, dest_cth)
+        score_mod = 100 - (100 - ratio)
+        weight = MulDivRound(weight, score_mod, 100)
+    end
+
+    -- ic(snap_penal, ow_cth, interrupt_cth_mod, weight)
+    return Max(0, weight), weight < 0 and true or disable, priority
 end

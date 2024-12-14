@@ -1,6 +1,6 @@
 function AIPrecalcDamageScore(context, destinations, preferred_target, debug_data)
 
-    ic("precalc", GameTime())
+    -- ic("precalc", GameTime())
 
     -- if context.override_attack_id or context.override_attack_cost then
     --     ic(context.override_attack_id, context.override_attack_cost, GameTime())
@@ -152,6 +152,10 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
         local old_scores_dbg, old_cth_debug = {}, {}
         ------------------
 
+        ----						
+        local target_covers = {}
+        ----
+
         if weapon and ap >= cost_ap then
             local pos_mod = base_mod
             pos_mod = pos_mod +
@@ -170,6 +174,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                 ----
 
             end
+
             for k, target in ipairs(targets) do
                 local tpos = GetPackedPosAndStance(target)
                 local dist = stance_pos_dist(upos, tpos)
@@ -211,6 +216,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                                                                              nil, nil, nil,
                                                                              attacker_pos)
                     if use_cover then
+                        table.insert(target_covers, {[target] = cover_value})
                         hit_mod = hit_mod + cover_value
                     end
                     -- ic(target.session_id)
@@ -396,6 +402,10 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                 end
             end
         end
+
+        ------- looped all targets in this pos, store in the context
+        context.dest_target_cover_score[upos] = target_covers
+        -------
 
         if #potential_targets > 0 then
             local total = 0

@@ -11,7 +11,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "rEYcAD4",
 	'author', "rato",
-	'version', 790,
+	'version', 852,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -43,8 +43,8 @@ return PlaceObj('ModDef', {
 	},
 	'default_options', {},
 	'has_data', true,
-	'saved', 1734129791,
-	'code_hash', -3828573720703793339,
+	'saved', 1734195402,
+	'code_hash', 1614165477992635118,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
@@ -103,7 +103,7 @@ return PlaceObj('ModDef', {
 		}),
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
-			'Id', "cover",
+			'Id', "ow",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {
@@ -232,4 +232,5 @@ return PlaceObj('ModDef', {
 			'ClassDisplayName', "AI Archetype",
 		}),
 	},
+	'TagCombat&AI', true,
 })

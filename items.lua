@@ -699,7 +699,7 @@ return {
 			'AIKeywords', {
 				"Soldier",
 			},
-			'archetype', "Soldier_nobias_test",
+			'archetype', "ow",
 			'role', "Soldier",
 			'MaxAttacks', 2,
 			'PickCustomArchetype', function (self, proto_context)  end,
@@ -974,7 +974,7 @@ return {
 				'RequiredKeywords', {
 					"Sniper",
 				},
-				'Weight', 200,
+				'Weight', 170,
 			}),
 			PlaceObj('AIPolicyLosToEnemy', {
 				'Weight', 300,
@@ -1012,12 +1012,9 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "GroinShot",
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "GroinShot",
-						'Effect', "disable",
-					}),
-				},
+				'CustomScoring', function (self, context)
+					return SingleShotTargeted_CustomScoring(self, context)
+				end,
 				'Aiming', "Remaining AP",
 				'AttackTargeting', set( "Groin" ),
 			}),
@@ -1156,6 +1153,9 @@ return {
 				'RequiredKeywords', {
 					"Soldier",
 				},
+				'CustomScoring', function (self, context)
+					return Overwatch_CustomScoring(self, context)
+				end,
 				'team_score', 0,
 				'min_score', 300,
 				'action_id', "Overwatch",
@@ -1209,219 +1209,7 @@ return {
 			}),
 		},
 		Comment = "Keywords: Soldier, Sniper, Control, Ordnance, Smoke, Explosives",
-		MoveStance = "Crouch",
-		OptLocPolicies = {
-			PlaceObj('AIPolicyTakeCover', nil),
-			PlaceObj('AIPolicyHighGround', {
-				'RequiredKeywords', {
-					"Sniper",
-				},
-				'Weight', 200,
-			}),
-			PlaceObj('AIPolicyLosToEnemy', {
-				'Weight', 300,
-			}),
-			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 60,
-				'RangeMin', 10,
-				'RangeMax', 25,
-			}),
-			PlaceObj('AIPolicyWeaponRange', {
-				'RangeMin', 26,
-				'RangeMax', 49,
-			}),
-			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 80,
-				'RangeMin', 50,
-				'RangeMax', 100,
-			}),
-		},
 		OptLocSearchRadius = 80,
-		SignatureActions = {
-			PlaceObj('AIAttackSingleTarget', {
-				'BiasId', "Autofire",
-				'NotificationText', "",
-				'RequiredKeywords', {
-					"Soldier",
-				},
-				'CustomScoring', function (self, context)
-					return AutoFire_CustomScoring(self, context)
-				end,
-				'action_id', "AutoFire",
-				'Aiming', "Maximum",
-				'AttackTargeting', set( "Torso" ),
-			}),
-			PlaceObj('AIAttackSingleTarget', {
-				'BiasId', "GroinShot",
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "GroinShot",
-						'Effect', "disable",
-					}),
-				},
-				'Aiming', "Remaining AP",
-				'AttackTargeting', set( "Groin" ),
-			}),
-			PlaceObj('AIActionMobileShot', {
-				'BiasId', "RunAndGun",
-				'NotificationText', "",
-				'CustomScoring', function (self, context)
-					return MobileAttack_CustomScoring(self, context)
-				end,
-				'action_id', "RunAndGun",
-			}),
-			PlaceObj('AIActionMobileShot', {
-				'BiasId', "MobileShot",
-				'NotificationText', "",
-				'CustomScoring', function (self, context)
-					return MobileAttack_CustomScoring(self, context)
-				end,
-			}),
-			PlaceObj('AIAttackSingleTarget', {
-				'BiasId', "Headshot",
-				'Weight', 150,
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "Headshot",
-						'Effect', "disable",
-						'Period', 0,
-					}),
-				},
-				'RequiredKeywords', {
-					"Sniper",
-				},
-				'Aiming', "Remaining AP",
-				'AttackTargeting', set( "Head" ),
-			}),
-			PlaceObj('AIActionPinDown', {
-				'BiasId', "PinDownAttack",
-				'Weight', 20,
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "PinDownAttack",
-						'Effect', "disable",
-						'Value', -50,
-						'ApplyTo', "Team",
-					}),
-				},
-				'RequiredKeywords', {
-					"Sniper",
-				},
-			}),
-			PlaceObj('AIActionThrowGrenade', {
-				'BiasId', "AssaultGrenadeThrow",
-				'Weight', 200,
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "AssaultGrenadeThrow",
-						'Effect', "disable",
-					}),
-				},
-				'RequiredKeywords', {
-					"Explosives",
-				},
-				'self_score_mod', -1000,
-				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
-			}),
-			PlaceObj('AIActionThrowGrenade', {
-				'BiasId', "SmokeGrenade",
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "SmokeGrenade",
-						'Effect', "disable",
-					}),
-				},
-				'RequiredKeywords', {
-					"Smoke",
-				},
-				'enemy_score', 0,
-				'team_score', 100,
-				'self_score_mod', 100,
-				'MinDist', 0,
-				'AllowedAoeTypes', set( "smoke" ),
-			}),
-			PlaceObj('AIActionHeavyWeaponAttack', {
-				'BiasId', "LauncherFire",
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "LauncherFire",
-						'Effect', "disable",
-						'Period', 0,
-					}),
-					PlaceObj('AIBiasModification', {
-						'BiasId', "LauncherFire",
-						'Value', -20,
-						'Period', 0,
-						'ApplyTo', "Team",
-					}),
-				},
-				'RequiredKeywords', {
-					"Ordnance",
-				},
-				'self_score_mod', -1000,
-				'MinDist', 5000,
-				'LimitRange', true,
-				'MaxTargetRange', 30,
-			}),
-			PlaceObj('AIActionHeavyWeaponAttack', {
-				'BiasId', "RocketFire",
-				'Weight', 200,
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "RocketFire",
-						'Effect', "disable",
-					}),
-				},
-				'RequiredKeywords', {
-					"Ordnance",
-				},
-				'self_score_mod', -1000,
-				'MinDist', 5000,
-				'action_id', "RocketLauncherFire",
-				'LimitRange', true,
-				'MaxTargetRange', 30,
-			}),
-			PlaceObj('AIConeAttack', {
-				'BiasId', "Overwatch",
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "Overwatch",
-						'Value', -50,
-						'ApplyTo', "Team",
-					}),
-					PlaceObj('AIBiasModification', {
-						'BiasId', "Overwatch",
-						'Effect', "disable",
-						'Value', -50,
-						'Period', 2,
-					}),
-				},
-				'RequiredKeywords', {
-					"Soldier",
-				},
-				'team_score', 0,
-				'min_score', 300,
-				'action_id', "Overwatch",
-			}),
-			PlaceObj('AIConeAttack', {
-				'BiasId', "SpamOverwatch",
-				'Weight', 200,
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "SpamOverwatch",
-						'Effect', "disable",
-						'Value', -50,
-						'ApplyTo', "Team",
-					}),
-				},
-				'RequiredKeywords', {
-					"Control",
-				},
-				'team_score', 0,
-				'min_score', 100,
-				'action_id', "Overwatch",
-			}),
-		},
 		TargetScoreRandomization = 10,
 		group = "Default",
 		id = "RPG",
@@ -1451,9 +1239,20 @@ return {
 		},
 		OptLocSearchRadius = 80,
 		PrefStance = "Crouch",
+		SignatureActions = {
+			PlaceObj('AIConeAttack', {
+				'BiasId', "Overwatch",
+				'CustomScoring', function (self, context)
+					return Overwatch_CustomScoring(self, context)
+				end,
+				'team_score', 0,
+				'min_score', 0,
+				'action_id', "Overwatch",
+			}),
+		},
 		TargetScoreRandomization = 10,
 		group = "Default",
-		id = "cover",
+		id = "ow",
 	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),

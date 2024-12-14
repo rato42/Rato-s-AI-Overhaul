@@ -53,7 +53,7 @@ function AIGetCustomBiasWeight(id, unit, context, ai_action)
             --                                                     1, false, attacker_pos,
             --                                                     target:GetPos())
 
-            local mul = GetHipfirePenal(unit:GetActiveWeapons(), unit, action, false, 1)
+            local mul = GetWeaponHipfireOrSnapshotMul(unit:GetActiveWeapons(), unit, action, false, 1)
             local snap_penal = MulDivRound(dist, const.Combat.SnapshotMaxPenalty, const.Combat
                                                .Snapshot_MaxDistforPenalty * const.SlabSizeX)
             -- ic(snap_penal, mul)
