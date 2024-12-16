@@ -441,6 +441,10 @@ return {
 		'CodeFileName', "Code/FUNCTION_AIGetCustomBiasWeight.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "AIACTION_ThrowFlare",
+		'CodeFileName', "Code/AIACTION_ThrowFlare.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "FUNCTIONS_SignaturesCustomScoring",
 		'CodeFileName', "Code/FUNCTIONS_SignaturesCustomScoring.lua",
 	}),
@@ -493,6 +497,16 @@ return {
 	PlaceObj('ModItemCode', {
 		'name', "get_accuracy",
 		'CodeFileName', "Code/get_accuracy.lua",
+	}),
+	PlaceObj('ModItemLootDef', {
+		group = "Default",
+		id = "FLARES",
+		loot = "all",
+		PlaceObj('LootEntryInventoryItem', {
+			item = "FlareStick",
+			stack_max = 10,
+			stack_min = 10,
+		}),
 	}),
 	PlaceObj('ModItemFolder', {
 		'name', "Tests",
@@ -604,6 +618,7 @@ return {
 			},
 			'Equipment', {
 				"LegionGrenadier",
+				"ArmysExplosives",
 			},
 			'AdditionalGroups', {
 				PlaceObj('AdditionalGroup', {
@@ -699,7 +714,6 @@ return {
 			'AIKeywords', {
 				"Soldier",
 			},
-			'archetype', "ow",
 			'role', "Soldier",
 			'MaxAttacks', 2,
 			'PickCustomArchetype', function (self, proto_context)  end,
@@ -799,6 +813,7 @@ return {
 			},
 			'Equipment', {
 				"LegionRaiders",
+				"FLARES",
 			},
 			'AdditionalGroups', {
 				PlaceObj('AdditionalGroup', {
@@ -1018,6 +1033,31 @@ return {
 				'Aiming', "Remaining AP",
 				'AttackTargeting', set( "Groin" ),
 			}),
+			PlaceObj('AIConeAttack', {
+				'BiasId', "Overwatch",
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "Overwatch",
+						'Value', -50,
+						'ApplyTo', "Team",
+					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "Overwatch",
+						'Effect', "disable",
+						'Value', -50,
+						'Period', 2,
+					}),
+				},
+				'RequiredKeywords', {
+					"Soldier",
+				},
+				'CustomScoring', function (self, context)
+					return Overwatch_CustomScoring(self, context)
+				end,
+				'team_score', 0,
+				'min_score', 300,
+				'action_id', "Overwatch",
+			}),
 			PlaceObj('AIActionMobileShot', {
 				'NotificationText', "",
 				'CustomScoring', function (self, context)
@@ -1077,6 +1117,12 @@ return {
 				'self_score_mod', -1000,
 				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 			}),
+			PlaceObj('AIActionThrowFlare', {
+				'team_score', 0,
+				'self_score_mod', 0,
+				'min_score', 100,
+				'TargetLastAttackPos', true,
+			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "SmokeGrenade",
 				'OnActivationBiases', {
@@ -1134,31 +1180,6 @@ return {
 				'action_id', "RocketLauncherFire",
 				'LimitRange', true,
 				'MaxTargetRange', 30,
-			}),
-			PlaceObj('AIConeAttack', {
-				'BiasId', "Overwatch",
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "Overwatch",
-						'Value', -50,
-						'ApplyTo', "Team",
-					}),
-					PlaceObj('AIBiasModification', {
-						'BiasId', "Overwatch",
-						'Effect', "disable",
-						'Value', -50,
-						'Period', 2,
-					}),
-				},
-				'RequiredKeywords', {
-					"Soldier",
-				},
-				'CustomScoring', function (self, context)
-					return Overwatch_CustomScoring(self, context)
-				end,
-				'team_score', 0,
-				'min_score', 300,
-				'action_id', "Overwatch",
 			}),
 			PlaceObj('AIConeAttack', {
 				'BiasId', "SpamOverwatch",
@@ -1332,21 +1353,11 @@ return {
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
 				'Weight', 200,
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "AssaultGrenadeThrow",
-						'Effect', "disable",
-					}),
-					PlaceObj('AIBiasModification', {
-						'BiasId', "AssaultGrenadeThrow",
-						'Value', -50,
-						'Period', 0,
-						'ApplyTo', "Team",
-					}),
-				},
+				'Priority', true,
 				'RequiredKeywords', {
 					"Explosives",
 				},
+				'min_score', 0,
 				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 			}),
 		},
@@ -1361,6 +1372,103 @@ return {
 		},
 		group = "Simplified",
 		id = "Skirmisher",
+	}),
+	PlaceObj('ModItemAIArchetype', {
+		BaseAttackTargeting = set( "Torso" ),
+		Behaviors = {
+			PlaceObj('StandardAI', {
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyDealDamage', nil),
+					PlaceObj('AIPolicyTakeCover', {
+						'visibility_mode', "team",
+					}),
+				},
+				'TakeCoverChance', 50,
+			}),
+			PlaceObj('PositioningAI', {
+				'BiasId', "Flanking",
+				'Weight', 500,
+				'Fallback', false,
+				'RequiredKeywords', {
+					"Flank",
+				},
+				'OptLocWeight', 20,
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyFlanking', {
+						'Weight', 1000,
+						'Required', true,
+						'ReserveAttackAP', true,
+					}),
+					PlaceObj('AIPolicyDealDamage', nil),
+				},
+				'TakeCoverChance', 0,
+				'VoiceResponse', "AIFlanking",
+			}),
+			PlaceObj('HoldPositionAI', {
+				'Weight', 50,
+				'Fallback', false,
+				'Score', function (self, unit, proto_context, debug_data)
+					local score = getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
+					return MulDivRound(score, self.Weight, 100)
+				end,
+				'TakeCoverChance', 0,
+			}),
+		},
+		Comment = "Keywords: Flank, Explosives",
+		OptLocPolicies = {
+			PlaceObj('AIPolicyWeaponRange', {
+				'RangeBase', "Absolute",
+				'RangeMin', 2,
+				'RangeMax', 8,
+			}),
+			PlaceObj('AIPolicyWeaponRange', {
+				'Weight', 200,
+				'RangeBase', "Absolute",
+				'RangeMin', 5,
+				'RangeMax', 15,
+			}),
+			PlaceObj('AIPolicyLosToEnemy', nil),
+		},
+		OptLocSearchRadius = 80,
+		SignatureActions = {
+			PlaceObj('AIActionMobileShot', {
+				'BiasId', "RunAndGun",
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
+				'action_id', "RunAndGun",
+			}),
+			PlaceObj('AIActionMobileShot', {
+				'BiasId', "MobileShot",
+				'Priority', true,
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
+			}),
+			PlaceObj('AIActionThrowGrenade', {
+				'BiasId', "AssaultGrenadeThrow",
+				'Weight', 200,
+				'Priority', true,
+				'RequiredKeywords', {
+					"Explosives",
+				},
+				'min_score', 0,
+				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
+			}),
+		},
+		TargetScoreRandomization = 10,
+		TargetingPolicies = {
+			PlaceObj('AITargetingEnemyHealth', {
+				'Health', 50,
+			}),
+			PlaceObj('AITargetingEnemyWeapon', {
+				'EnemyWeapon', "Sniper",
+			}),
+		},
+		group = "Simplified",
+		id = "_Demolition",
 	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),

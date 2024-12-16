@@ -49,6 +49,7 @@ DefineClass.LegionGrenadier_copy = {
 	},
 	Equipment = {
 		"LegionGrenadier",
+		"ArmysExplosives",
 	},
 	AdditionalGroups = {
 		PlaceObj('AdditionalGroup', {

@@ -8,23 +8,30 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
     context.action_states = context.action_states or {}
 
     for _, action in ipairs(actions) do
+
         context.action_states[action] = {}
         local weight_mod, disable, priority = AIGetBias(action.BiasId, context.unit)
 
         --------------------------------------------
+
         local c_action_weight, custom_disable, action_priority = action:CustomScoring(context)
 
         -- disable = disable or context.disable_actions[action.BiasId or false] 
         disable = disable or context.disable_actions[action.BiasId or false] or custom_disable
         --------------------------------------------
-
+        ic(action.BiasId, disable)
         if not disable then
+
             -- if action and action.action_id == "RunAndGun" then
             --     bp()
             -- end
+            if action and action.BiasId == "AssaultGrenadeThrow" then
+                -- bp()
+            end
             action:PrecalcAction(context, context.action_states[action])
-            if action:IsAvailable(context, context.action_states[action]) then
 
+            if action:IsAvailable(context, context.action_states[action]) then
+                ic(action.action_id)
                 --------------------------------------------
                 -- local action_weight = MulDivRound(action.Weight, weight_mod, 100)
                 local action_weight = MulDivRound(c_action_weight, weight_mod, 100)
