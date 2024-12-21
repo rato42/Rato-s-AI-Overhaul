@@ -11,7 +11,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "rEYcAD4",
 	'author', "rato",
-	'version', 894,
+	'version', 926,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -29,11 +29,13 @@ return PlaceObj('ModDef', {
 		"Code/SOURCE_AIGetAttackArgs.lua",
 		"Code/SOURCE_AIGetBias.lua",
 		"Code/SOURCE_AISelectAction.lua",
+		"Code/PROPERTIES_Unit.lua",
 		"Code/vanilla_archetype_functions_forconsult.lua",
 		"Code/vanilla_action_functions_forconsult1.lua",
 		"Code/eval_dest.lua",
 		"Code/Test.lua",
 		"Code/get_accuracy.lua",
+		"Code/AddItem.lua",
 		"UnitData/AdonisSniper_Elite_copy.lua",
 		"UnitData/LegionGrenadier_copy.lua",
 		"UnitData/LegionGunner_copy.lua",
@@ -44,8 +46,8 @@ return PlaceObj('ModDef', {
 	},
 	'default_options', {},
 	'has_data', true,
-	'saved', 1734359008,
-	'code_hash', 2342545502310134727,
+	'saved', 1734800570,
+	'code_hash', 9206632148599068966,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",

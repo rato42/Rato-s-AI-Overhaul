@@ -38,6 +38,11 @@ function AIActionThrowFlare:PrecalcAction(context, action_state)
         end
     end
 
+    if not grenade then
+        action_id = 'ThrowGrenadeA'
+        grenade = context.unit:GetItemInSlot("Inventory", "FlareStick")
+    end
+
     if not action_id or not grenade then
         return
     end
@@ -73,42 +78,6 @@ end
 function AIActionThrowFlare:Execute(context, action_state)
     assert(action_state.action_id and action_state.target_pos)
     AIPlayCombatAction(action_state.action_id, context.unit, nil, {target = action_state.target_pos})
-end
-
-function AIEvalZones(context, zones, min_score, enemy_score, team_score, self_score_mod)
-    local best_target, best_score = nil, (min_score or 0) - 1
-
-    for _, zone in ipairs(zones) do
-        local score
-        local selfmod = 0
-        for _, unit in ipairs(zone.units) do
-            local uscore = 0
-            if not unit:IsDead() and not unit:IsDowned() then
-                if unit:IsOnEnemySide(context.unit) then
-                    uscore = enemy_score or 0
-                elseif unit.team == context.unit.team then
-                    uscore = team_score or 0
-                    if unit == context.unit then
-                        selfmod = self_score_mod or 0
-                    end
-                end
-            end
-            score = (score or 0) + uscore
-        end
-        score = score and MulDivRound(score, zone.score_mod or 100, 100)
-        score = score and MulDivRound(score, 100 + selfmod, 100)
-        if score and score > best_score then
-            best_target, best_score = zone, score
-        end
-        zone.score = score
-    end
-
-    return best_target, best_score
-end
-
-function AIActionBaseZoneAttack:EvalZones(context, zones)
-    return AIEvalZones(context, zones, self.min_score, self.enemy_score, self.team_score,
-                       self.self_score_mod)
 end
 
 local function IsUnitInTheDark(hit)

@@ -19,17 +19,9 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
         -- disable = disable or context.disable_actions[action.BiasId or false] 
         disable = disable or context.disable_actions[action.BiasId or false] or custom_disable
         --------------------------------------------
-        ic(action.BiasId, disable)
+
         if not disable then
-
-            -- if action and action.action_id == "RunAndGun" then
-            --     bp()
-            -- end
-            if action and action.BiasId == "AssaultGrenadeThrow" then
-                -- bp()
-            end
             action:PrecalcAction(context, context.action_states[action])
-
             if action:IsAvailable(context, context.action_states[action]) then
                 ic(action.action_id)
                 --------------------------------------------
@@ -60,6 +52,14 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
 
     if weight > 0 then
         local roll = InteractionRand(weight, "AISignatureAction", context.unit)
+
+        ----
+        ic(roll)
+        for _, action in ipairs(available) do
+            local weig = available[action]
+            ic(action.action_id, weig)
+        end
+        -----
 
         for _, action in ipairs(available) do
             local w = available[action]

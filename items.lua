@@ -479,6 +479,10 @@ return {
 		'CodeFileName', "Code/SOURCE_AISelectAction.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "PROPERTIES_Unit",
+		'CodeFileName', "Code/PROPERTIES_Unit.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "vanilla_archetype_functions_forconsult",
 		'CodeFileName', "Code/vanilla_archetype_functions_forconsult.lua",
 	}),
@@ -497,6 +501,10 @@ return {
 	PlaceObj('ModItemCode', {
 		'name', "get_accuracy",
 		'CodeFileName', "Code/get_accuracy.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "AddItem",
+		'CodeFileName', "Code/AddItem.lua",
 	}),
 	PlaceObj('ModItemLootDef', {
 		group = "Default",
@@ -1055,7 +1063,7 @@ return {
 					return Overwatch_CustomScoring(self, context)
 				end,
 				'team_score', 0,
-				'min_score', 300,
+				'enemy_cover_mod', 200,
 				'action_id', "Overwatch",
 			}),
 			PlaceObj('AIActionMobileShot', {
@@ -1070,6 +1078,32 @@ return {
 				'CustomScoring', function (self, context)
 					return MobileAttack_CustomScoring(self, context)
 				end,
+			}),
+			PlaceObj('AIActionThrowFlare', {
+				'BiasId', "FlareThrow",
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "FlareThrow",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "FlareThrow",
+						'Value', -30,
+						'Period', 0,
+						'ApplyTo', "Team",
+					}),
+				},
+				'CustomScoring', function (self, context)
+					           if GameState.Night or GameState.Underground then    
+									 return self.Weight, false, self.Priority
+								end
+								return 0, true, false
+				end,
+				'team_score', 0,
+				'self_score_mod', 0,
+				'min_score', 100,
+				'TargetLastAttackPos', true,
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "Headshot",
@@ -1116,12 +1150,6 @@ return {
 				},
 				'self_score_mod', -1000,
 				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
-			}),
-			PlaceObj('AIActionThrowFlare', {
-				'team_score', 0,
-				'self_score_mod', 0,
-				'min_score', 100,
-				'TargetLastAttackPos', true,
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "SmokeGrenade",
@@ -1359,6 +1387,12 @@ return {
 				},
 				'min_score', 0,
 				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
+			}),
+			PlaceObj('AIActionThrowFlare', {
+				'team_score', 0,
+				'self_score_mod', 0,
+				'min_score', 100,
+				'TargetLastAttackPos', true,
 			}),
 		},
 		TargetScoreRandomization = 10,

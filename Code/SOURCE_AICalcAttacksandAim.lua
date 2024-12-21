@@ -87,10 +87,6 @@ function AICalcAttacksAndAim(context, ap)
                       stance_cost
     ----
 
-    if context.ap_after_signature then
-        ic(context.ap_after_signature)
-    end
-
     local has_stance_ap = ap >= total_stance_cost
 
     if not has_stance_ap then
@@ -100,7 +96,7 @@ function AICalcAttacksAndAim(context, ap)
     end
     -------
 
-    local num_attacks = Min((ap - stance_cost - rotation_cost) / cost, context.max_attacks) -- TODO: #2 Implement Bolt Action costs when appropriated
+    local num_attacks = Min((ap - stance_cost - rotation_cost) / cost, context.max_attacks)
 
     if context.force_max_aim and has_stance_ap then --- Only Aim if can enter stance
         num_attacks = ------ stance_cost added
