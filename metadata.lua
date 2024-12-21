@@ -11,7 +11,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "rEYcAD4",
 	'author', "rato",
-	'version', 926,
+	'version', 1002,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -29,6 +29,7 @@ return PlaceObj('ModDef', {
 		"Code/SOURCE_AIGetAttackArgs.lua",
 		"Code/SOURCE_AIGetBias.lua",
 		"Code/SOURCE_AISelectAction.lua",
+		"Code/SOURCE_AIEvalZones.lua",
 		"Code/PROPERTIES_Unit.lua",
 		"Code/vanilla_archetype_functions_forconsult.lua",
 		"Code/vanilla_action_functions_forconsult1.lua",
@@ -46,8 +47,8 @@ return PlaceObj('ModDef', {
 	},
 	'default_options', {},
 	'has_data', true,
-	'saved', 1734800570,
-	'code_hash', 9206632148599068966,
+	'saved', 1734814484,
+	'code_hash', 6032539839963588580,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
@@ -62,6 +63,11 @@ return PlaceObj('ModDef', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "LootDef",
 			'Id', "FLARES",
+			'ClassDisplayName', "Loot definition",
+		}),
+		PlaceObj('ModResourcePreset', {
+			'Class', "LootDef",
+			'Id', "he",
 			'ClassDisplayName', "Loot definition",
 		}),
 		PlaceObj('ModResourcePreset', {
@@ -121,7 +127,7 @@ return PlaceObj('ModDef', {
 		}),
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
-			'Id', "_Demolition",
+			'Id', "RATOAI_Demolition",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {

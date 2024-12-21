@@ -479,6 +479,10 @@ return {
 		'CodeFileName', "Code/SOURCE_AISelectAction.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "SOURCE_AIEvalZones",
+		'CodeFileName', "Code/SOURCE_AIEvalZones.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "PROPERTIES_Unit",
 		'CodeFileName', "Code/PROPERTIES_Unit.lua",
 	}),
@@ -512,6 +516,16 @@ return {
 		loot = "all",
 		PlaceObj('LootEntryInventoryItem', {
 			item = "FlareStick",
+			stack_max = 10,
+			stack_min = 10,
+		}),
+	}),
+	PlaceObj('ModItemLootDef', {
+		group = "Default",
+		id = "he",
+		loot = "all",
+		PlaceObj('LootEntryInventoryItem', {
+			item = "HE_Grenade",
 			stack_max = 10,
 			stack_min = 10,
 		}),
@@ -603,7 +617,7 @@ return {
 				"Explosives",
 				"MobileShot",
 			},
-			'archetype', "Skirmisher",
+			'archetype', "RATOAI_Demolition",
 			'role', "Demolitions",
 			'CanManEmplacements', false,
 			'MaxAttacks', 1,
@@ -625,8 +639,8 @@ return {
 				}),
 			},
 			'Equipment', {
-				"LegionGrenadier",
-				"ArmysExplosives",
+				"he",
+				"Grunty",
 			},
 			'AdditionalGroups', {
 				PlaceObj('AdditionalGroup', {
@@ -1043,27 +1057,12 @@ return {
 			}),
 			PlaceObj('AIConeAttack', {
 				'BiasId', "Overwatch",
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "Overwatch",
-						'Value', -50,
-						'ApplyTo', "Team",
-					}),
-					PlaceObj('AIBiasModification', {
-						'BiasId', "Overwatch",
-						'Effect', "disable",
-						'Value', -50,
-						'Period', 2,
-					}),
-				},
-				'RequiredKeywords', {
-					"Soldier",
-				},
 				'CustomScoring', function (self, context)
 					return Overwatch_CustomScoring(self, context)
 				end,
 				'team_score', 0,
-				'enemy_cover_mod', 200,
+				'min_score', 130,
+				'enemy_cover_mod', 150,
 				'action_id', "Overwatch",
 			}),
 			PlaceObj('AIActionMobileShot', {
@@ -1095,15 +1094,11 @@ return {
 					}),
 				},
 				'CustomScoring', function (self, context)
-					           if GameState.Night or GameState.Underground then    
 									 return self.Weight, false, self.Priority
-								end
-								return 0, true, false
 				end,
 				'team_score', 0,
 				'self_score_mod', 0,
 				'min_score', 100,
-				'TargetLastAttackPos', true,
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "Headshot",
@@ -1372,7 +1367,6 @@ return {
 			}),
 			PlaceObj('AIActionMobileShot', {
 				'BiasId', "MobileShot",
-				'Priority', true,
 				'NotificationText', "",
 				'CustomScoring', function (self, context)
 					return MobileAttack_CustomScoring(self, context)
@@ -1381,11 +1375,11 @@ return {
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
 				'Weight', 200,
-				'Priority', true,
 				'RequiredKeywords', {
 					"Explosives",
 				},
-				'min_score', 0,
+				'min_score', 130,
+				'enemy_cover_mod', 50,
 				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 			}),
 			PlaceObj('AIActionThrowFlare', {
@@ -1452,44 +1446,35 @@ return {
 		OptLocPolicies = {
 			PlaceObj('AIPolicyWeaponRange', {
 				'RangeBase', "Absolute",
-				'RangeMin', 2,
-				'RangeMax', 8,
+				'RangeMin', 8,
+				'RangeMax', 10,
 			}),
 			PlaceObj('AIPolicyWeaponRange', {
 				'Weight', 200,
 				'RangeBase', "Absolute",
-				'RangeMin', 5,
+				'RangeMin', 11,
 				'RangeMax', 15,
 			}),
 			PlaceObj('AIPolicyLosToEnemy', nil),
 		},
 		OptLocSearchRadius = 80,
 		SignatureActions = {
-			PlaceObj('AIActionMobileShot', {
-				'BiasId', "RunAndGun",
-				'NotificationText', "",
-				'CustomScoring', function (self, context)
-					return MobileAttack_CustomScoring(self, context)
-				end,
-				'action_id', "RunAndGun",
-			}),
-			PlaceObj('AIActionMobileShot', {
-				'BiasId', "MobileShot",
-				'Priority', true,
-				'NotificationText', "",
-				'CustomScoring', function (self, context)
-					return MobileAttack_CustomScoring(self, context)
-				end,
+			PlaceObj('AIActionThrowGrenade', {
+				'BiasId', "ExplosiveGrenade",
+				'Weight', 200,
+				'min_score', 0,
+				'enemy_cover_mod', 50,
 			}),
 			PlaceObj('AIActionThrowGrenade', {
-				'BiasId', "AssaultGrenadeThrow",
+				'BiasId', "UtilityGrenade",
 				'Weight', 200,
-				'Priority', true,
-				'RequiredKeywords', {
-					"Explosives",
-				},
-				'min_score', 0,
-				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
+				'AllowedAoeTypes', set( "fire", "teargas", "toxicgas" ),
+				'TargetLastAttackPos', true,
+			}),
+			PlaceObj('AIActionThrowFlare', {
+				'team_score', 0,
+				'self_score_mod', 0,
+				'min_score', 100,
 			}),
 		},
 		TargetScoreRandomization = 10,
@@ -1502,7 +1487,7 @@ return {
 			}),
 		},
 		group = "Simplified",
-		id = "_Demolition",
+		id = "RATOAI_Demolition",
 	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
@@ -1553,13 +1538,7 @@ return {
 				'Health', 50,
 				'AboveHealth', true,
 			}),
-			PlaceObj('AITargetingEnemyWeapon', nil),
-			PlaceObj('AITargetingEnemyWeapon', {
-				'EnemyWeapon', "SMG",
-			}),
-			PlaceObj('AITargetingEnemyWeapon', {
-				'EnemyWeapon', "Shotgun",
-			}),
+			PlaceObj('AITargetingEnemyInCover', nil),
 		},
 		comment = "Pq as signatures estao no Comportamento e não no Arquetipo???",
 		group = "Simplified",

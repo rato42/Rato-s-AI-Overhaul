@@ -1,7 +1,8 @@
 function OnMsg.UnitEnterCombat(unit)
     if GameState.Night or GameState.Underground then
         if R_IsAI(unit) and not unit.RATOAI_flare_added then
-            local amount = InteractionRandRange(-1, 5)
+            local amount = InteractionRandRange(1, 7)
+            amount = amount - 2
             if amount > 0 then
                 local flare = PlaceInventoryItem("FlareStick")
                 flare.Amount = amount

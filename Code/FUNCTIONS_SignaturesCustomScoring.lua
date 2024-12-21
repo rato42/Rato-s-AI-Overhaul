@@ -16,8 +16,9 @@ local function GetDestArgs(self, context)
         if target then
             dist = attacker_pos:Dist(target:GetPos())
         end
-        return upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos
     end
+
+    return upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos
 end
 
 function AutoFire_CustomScoring(self, context)
@@ -152,6 +153,18 @@ function Overwatch_CustomScoring(self, context)
 
     interrupt_cth_mod = interrupt_cth_mod + snap_penal
 
+    local cover_penal = 0
+    if unit and target then
+        use, cover_penal = hit_modifiers.RangeAttackTargetStanceCover:CalcValue(unit, target, nil,
+                                                                                action,
+                                                                                unit:GetActiveWeapons(),
+                                                                                nil, nil, 1, false,
+                                                                                attacker_pos,
+                                                                                target:GetPos())
+    end
+
+    interrupt_cth_mod = interrupt_cth_mod + (cover_penal * -1)
+
     local ratio, score_mod
     if dest_cth then
         ratio = MulDivRound(dest_cth + interrupt_cth_mod, 100, dest_cth)
@@ -159,6 +172,6 @@ function Overwatch_CustomScoring(self, context)
         weight = MulDivRound(weight, score_mod, 100)
     end
 
-    -- ic(snap_penal, ow_cth, interrupt_cth_mod, weight)
+    -- ic(snap_penal, ow_cth, interrupt_cth_mod, weight, cover_penal)
     return Max(0, weight), weight < 0 and true or disable, priority
 end

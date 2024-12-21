@@ -309,10 +309,9 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 
                         ------------------- Recoil addition
                         -- base_mod = base_mod + recoil_cth
-                        if context.default_attack == "BurstFire" or context.default_attack ==
-                            "MGBurstFire" then
+                        if action.id == "BurstFire" or action.id == "MGBurstFire" then
                             mod = mod + recoil_cth ----------TODO: #3 Weight HERE!
-                            ic(recoil_cth)
+                            -- ic(recoil_cth)
                         end
                         -------------------
 

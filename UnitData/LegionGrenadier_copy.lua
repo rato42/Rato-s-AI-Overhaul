@@ -26,7 +26,7 @@ DefineClass.LegionGrenadier_copy = {
 		"Explosives",
 		"MobileShot",
 	},
-	archetype = "Skirmisher",
+	archetype = "RATOAI_Demolition",
 	role = "Demolitions",
 	CanManEmplacements = false,
 	MaxAttacks = 1,
@@ -48,8 +48,8 @@ DefineClass.LegionGrenadier_copy = {
 		}),
 	},
 	Equipment = {
-		"LegionGrenadier",
-		"ArmysExplosives",
+		"he",
+		"Grunty",
 	},
 	AdditionalGroups = {
 		PlaceObj('AdditionalGroup', {

@@ -21,9 +21,12 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
         --------------------------------------------
 
         if not disable then
+            -- if action.BiasId == "ExplosiveGrenade" then
+            --     bp()
+            -- end
             action:PrecalcAction(context, context.action_states[action])
             if action:IsAvailable(context, context.action_states[action]) then
-                ic(action.action_id)
+
                 --------------------------------------------
                 -- local action_weight = MulDivRound(action.Weight, weight_mod, 100)
                 local action_weight = MulDivRound(c_action_weight, weight_mod, 100)
@@ -50,11 +53,17 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
         end
     end
 
+    if not available then
+        return
+    end
+
     if weight > 0 then
         local roll = InteractionRand(weight, "AISignatureAction", context.unit)
 
         ----
-        ic(roll)
+        if #available > 0 then
+            ic(roll)
+        end
         for _, action in ipairs(available) do
             local weig = available[action]
             ic(action.action_id, weig)
