@@ -15,9 +15,9 @@ function AIEvalZones(context, zones, min_score, enemy_score, team_score, self_sc
             local uscore = 0
             if not unit:IsDead() and not unit:IsDowned() then
                 if unit:IsOnEnemySide(context.unit) then
-                    -----------------------------------
-                    uscore = enemy_score or 0
 
+                    uscore = enemy_score or 0
+                    -----------------------------------
                     if enemy_cover_score and enemy_cover_score ~= 0 then
                         local attacker = context.unit
                         local cover, any, coverage =
@@ -25,14 +25,15 @@ function AIEvalZones(context, zones, min_score, enemy_score, team_score, self_sc
 
                         local cover_effect = InterpolateCoverEffect(coverage, 100, 0)
                         -- coverage = coverage >= 80 and 100 or coverage < 40 and 0 or coverage --- values from InterpolateCoverEffect
-                        local to_add
+                        local to_add = 0
                         if cover_effect > 0 then
                             to_add = MulDivRound(enemy_cover_score, cover_effect, 100)
-                            uscore = uscore + to_add
-                        end
-                        ic(unit.session_id, cover, any, coverage, uscore, cover_effect, to_add)
 
+                        end
+                        uscore = uscore + to_add
+                        -- ic(unit.session_id, cover, any, coverage, uscore, cover_effect, to_add)
                     end
+                    -----------------------------------
 
                 elseif unit.team == context.unit.team then
                     uscore = team_score or 0

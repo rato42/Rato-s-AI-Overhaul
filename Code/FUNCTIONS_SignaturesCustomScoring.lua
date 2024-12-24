@@ -154,7 +154,7 @@ function Overwatch_CustomScoring(self, context)
     interrupt_cth_mod = interrupt_cth_mod + snap_penal
 
     local cover_penal = 0
-    if unit and target then
+    if unit and target then -- TODO: Make a special ratio for the cover. The more cover/cth ratio, the more chances to use overwatch
         use, cover_penal = hit_modifiers.RangeAttackTargetStanceCover:CalcValue(unit, target, nil,
                                                                                 action,
                                                                                 unit:GetActiveWeapons(),

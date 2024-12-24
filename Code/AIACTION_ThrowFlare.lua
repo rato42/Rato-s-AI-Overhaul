@@ -31,10 +31,6 @@ function AIActionThrowFlare:PrecalcAction(context, action_state)
                 break
             end
             ---
-            -- if IsKindOf(weapon, "Grenade") and self.AllowedAoeTypes[aoetype] then
-            --     grenade = weapon
-            --     break
-            -- end
         end
     end
 
@@ -46,8 +42,6 @@ function AIActionThrowFlare:PrecalcAction(context, action_state)
     if not action_id or not grenade then
         return
     end
-
-    -- bp()
 
     local max_range = Min(self.MaxDist, grenade:GetMaxAimRange(context.unit) * const.SlabSizeX)
     local blast_radius = grenade.AreaOfEffect * const.SlabSizeX
@@ -90,15 +84,6 @@ local function IsUnitInTheDark(hit)
     end
 
     return false
-    --[[
-    if hit.damage > 0 then
-        return true
-    end
-    for _, effect in ipairs(hit.effects) do
-        if effect and effect ~= "" then
-            return true
-        end
-    end]]
 end
 
 function AIPrecalcFlareZones(context, action_id, min_range, max_range, blast_radius, aoeType,

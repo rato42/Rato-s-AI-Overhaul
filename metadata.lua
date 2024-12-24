@@ -11,7 +11,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "rEYcAD4",
 	'author', "rato",
-	'version', 1002,
+	'version', 1153,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -20,6 +20,7 @@ return PlaceObj('ModDef', {
 		"Code/FUNCTION_getAIShootingStanceBehaviorSelectionScore.lua",
 		"Code/FUNCTION_ChangeAIKeyWords.lua",
 		"Code/FUNCTION_AIGetCustomBiasWeight.lua",
+		"Code/FUNCTION_MGSetup.lua",
 		"Code/AIACTION_ThrowFlare.lua",
 		"Code/FUNCTIONS_SignaturesCustomScoring.lua",
 		"Code/SOURCE_AIPrecalcDamageScore.lua",
@@ -33,6 +34,8 @@ return PlaceObj('ModDef', {
 		"Code/PROPERTIES_Unit.lua",
 		"Code/vanilla_archetype_functions_forconsult.lua",
 		"Code/vanilla_action_functions_forconsult1.lua",
+		"Code/AIPrecalcConeTargetZones.lua",
+		"Code/AIScoreReachableVoxels.lua",
 		"Code/eval_dest.lua",
 		"Code/Test.lua",
 		"Code/get_accuracy.lua",
@@ -47,8 +50,8 @@ return PlaceObj('ModDef', {
 	},
 	'default_options', {},
 	'has_data', true,
-	'saved', 1734814484,
-	'code_hash', 6032539839963588580,
+	'saved', 1735063641,
+	'code_hash', -5560315609394796333,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
@@ -113,11 +116,6 @@ return PlaceObj('ModDef', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
 			'Id', "RPG",
-			'ClassDisplayName', "AI Archetype",
-		}),
-		PlaceObj('ModResourcePreset', {
-			'Class', "AIArchetype",
-			'Id', "ow",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {
@@ -238,16 +236,6 @@ return PlaceObj('ModDef', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
 			'Id', "PinnedDown_copy",
-			'ClassDisplayName', "AI Archetype",
-		}),
-		PlaceObj('ModResourcePreset', {
-			'Class', "AIArchetype",
-			'Id', "Soldier_copy_copy",
-			'ClassDisplayName', "AI Archetype",
-		}),
-		PlaceObj('ModResourcePreset', {
-			'Class', "AIArchetype",
-			'Id', "Sniper_test",
 			'ClassDisplayName', "AI Archetype",
 		}),
 	},

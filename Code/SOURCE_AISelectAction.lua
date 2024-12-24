@@ -21,12 +21,9 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
         --------------------------------------------
 
         if not disable then
-            -- if action.BiasId == "ExplosiveGrenade" then
-            --     bp()
-            -- end
+
             action:PrecalcAction(context, context.action_states[action])
             if action:IsAvailable(context, context.action_states[action]) then
-
                 --------------------------------------------
                 -- local action_weight = MulDivRound(action.Weight, weight_mod, 100)
                 local action_weight = MulDivRound(c_action_weight, weight_mod, 100)

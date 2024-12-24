@@ -27,6 +27,9 @@ DefineClass.LegionGunner_copy = {
 	MaxAttacks = 2,
 	PickCustomArchetype = function (self, proto_context)  end,
 	MaxHitPoints = 85,
+	StartingPerks = {
+		"HeavyWeaponsTraining",
+	},
 	AppearancesList = {
 		PlaceObj('AppearanceWeight', {
 			'Preset', "Legion_Heavy",

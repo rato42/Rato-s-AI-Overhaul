@@ -1,6 +1,6 @@
-function OnMsg.UnitEnterCombat(unit)
+function RATOAI_AddFlare(unit, check)
     if GameState.Night or GameState.Underground then
-        if R_IsAI(unit) and not unit.RATOAI_flare_added then
+        if R_IsAI(unit) and (not check or not unit.RATOAI_flare_added) then
             local amount = InteractionRandRange(1, 7)
             amount = amount - 2
             if amount > 0 then
@@ -17,3 +17,6 @@ function OnMsg.UnitEnterCombat(unit)
     end
 end
 
+function OnMsg.UnitEnterCombat(unit)
+    RATOAI_AddFlare(unit, true)
+end
