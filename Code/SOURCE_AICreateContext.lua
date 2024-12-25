@@ -82,6 +82,7 @@ function AICreateContext(unit, context)
     ------------------
     context.dest_target_recoil_cth = {} -- dest -> recoil cth degradation
     context.dest_target_cover_score = {} -- dest -> cover
+    context.dest_flanking_pol_debug = {} ------------- DEBUGGER
     -----------------
     context.weapon = weapon
     context.default_attack = default_attack

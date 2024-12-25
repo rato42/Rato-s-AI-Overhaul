@@ -216,7 +216,8 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                                                                              nil, nil, nil,
                                                                              attacker_pos)
                     if use_cover then
-                        table.insert(target_covers, {[target] = cover_value})
+                        -- table.insert(target_covers, {[target] = cover_value})
+                        target_covers[target] = cover_value
                         hit_mod = hit_mod + cover_value
                     end
                     -- ic(target.session_id)

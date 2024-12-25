@@ -19,28 +19,6 @@ function AIPolicyTakeCover:EvalDest(context, dest, grid_voxel)
         if visible then
             local cover = GetCoverFrom(dest, context.enemy_pack_pos_stance[enemy])
 
-            -- local context_cver_score = context_cover[enemy] or 0
-            -- test_score = test_score + context_cver_score
-
-            --[[if self.CoverScores[cover] and self.CoverScores[cover] > 0 then
-                local prone_cover_CTH = Presets.ChanceToHitModifier.Default
-                                            .RangeAttackTargetStanceCover
-                local unit = context.unit
-                local weapon = context.weapon
-                local use, value = prone_cover_CTH:CalcValue(unit, enemy, false,
-                                                             enemy:GetDefaultAttackAction(nil,
-                                                                                          "ungrouped",
-                                                                                          nil,
-                                                                                          "sync"),
-                                                             enemy:GetActiveWeapons(), nil, nil, 0,
-                                                             false, enemy:GetPos(), unit:GetPos())
-
-                -- ic(use, value, self.CoverScores[cover])
-                value = use and value * -1
-                score = score + value
-            end]]
-
-            -- ic(self.CoverScores[cover])
             score = score + self.CoverScores[cover]
         end
     end

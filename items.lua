@@ -429,6 +429,18 @@ return {
 		'CodeFileName', "Code/CLASS_append_AISignatureAction.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "DEBUG",
+		'CodeFileName', "Code/DEBUG.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "AIPOLICY_CustomFlanking",
+		'CodeFileName', "Code/AIPOLICY_CustomFlanking.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "AIACTION_ThrowFlare",
+		'CodeFileName', "Code/AIACTION_ThrowFlare.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "FUNCTION_getAIShootingStanceBehaviorSelectionScore",
 		'CodeFileName', "Code/FUNCTION_getAIShootingStanceBehaviorSelectionScore.lua",
 	}),
@@ -443,10 +455,6 @@ return {
 	PlaceObj('ModItemCode', {
 		'name', "FUNCTION_MGSetup",
 		'CodeFileName', "Code/FUNCTION_MGSetup.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "AIACTION_ThrowFlare",
-		'CodeFileName', "Code/AIACTION_ThrowFlare.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "FUNCTIONS_SignaturesCustomScoring",
@@ -1003,6 +1011,9 @@ return {
 						'Weight', 200,
 						'visibility_mode', "team",
 					}),
+					PlaceObj('AIPolicyCustomFlanking', {
+						'ReserveAttackAP', true,
+					}),
 					PlaceObj('AIPolicyDealDamage', {
 						'Weight', 150,
 					}),
@@ -1023,7 +1034,13 @@ return {
 						'Required', true,
 						'ReserveAttackAP', true,
 					}),
+					PlaceObj('AIPolicyDealDamage', nil),
+					PlaceObj('AIPolicyTakeCover', {
+						'Weight', 200,
+						'visibility_mode', "team",
+					}),
 				},
+				'VoiceResponse', "AIFlanking",
 			}),
 		},
 		Comment = "Keywords: Soldier, Sniper, Control, Ordnance, Smoke, Explosives",
@@ -1054,9 +1071,6 @@ return {
 				'Weight', 80,
 				'RangeMin', 50,
 				'RangeMax', 100,
-			}),
-			PlaceObj('AIPolicyCustomFlanking', {
-				'ReserveAttackAP', true,
 			}),
 		},
 		OptLocSearchRadius = 80,
@@ -1292,6 +1306,10 @@ return {
 			PlaceObj('StandardAI', {
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyDealDamage', nil),
+					PlaceObj('AIPolicyCustomFlanking', {
+						'Weight', 50,
+						'ReserveAttackAP', true,
+					}),
 					PlaceObj('AIPolicyTakeCover', {
 						'visibility_mode', "team",
 					}),
@@ -1300,7 +1318,7 @@ return {
 			}),
 			PlaceObj('PositioningAI', {
 				'BiasId', "Flanking",
-				'Weight', 500,
+				'Weight', 30,
 				'Fallback', false,
 				'RequiredKeywords', {
 					"Flank",
@@ -1308,11 +1326,15 @@ return {
 				'OptLocWeight', 20,
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyFlanking', {
-						'Weight', 1000,
-						'Required', true,
 						'ReserveAttackAP', true,
 					}),
 					PlaceObj('AIPolicyDealDamage', nil),
+					PlaceObj('AIPolicyCustomFlanking', {
+						'Weight', 50,
+						'Required', true,
+						'ReserveAttackAP', true,
+					}),
+					PlaceObj('AIPolicyTakeCover', nil),
 				},
 				'TakeCoverChance', 0,
 				'VoiceResponse', "AIFlanking",
@@ -1330,6 +1352,7 @@ return {
 		Comment = "Keywords: Flank, Explosives",
 		OptLocPolicies = {
 			PlaceObj('AIPolicyWeaponRange', {
+				'Weight', 150,
 				'RangeBase', "Absolute",
 				'RangeMin', 6,
 				'RangeMax', 8,
@@ -1340,12 +1363,17 @@ return {
 				'RangeMax', 18,
 			}),
 			PlaceObj('AIPolicyLosToEnemy', nil),
+			PlaceObj('AIPolicyCustomFlanking', {
+				'ReserveAttackAP', true,
+			}),
+			PlaceObj('AIPolicyTakeCover', nil),
 		},
 		OptLocSearchRadius = 80,
 		PrefStance = "Crouch",
 		SignatureActions = {
 			PlaceObj('AIActionMobileShot', {
 				'BiasId', "RunAndGun",
+				'Weight', 500,
 				'NotificationText', "",
 				'CustomScoring', function (self, context)
 					return MobileAttack_CustomScoring(self, context)
@@ -1354,6 +1382,7 @@ return {
 			}),
 			PlaceObj('AIActionMobileShot', {
 				'BiasId', "MobileShot",
+				'Weight', 500,
 				'NotificationText', "",
 				'CustomScoring', function (self, context)
 					return MobileAttack_CustomScoring(self, context)
@@ -1373,9 +1402,18 @@ return {
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
 				'Weight', 200,
+				'RequiredKeywords', {
+					"Explosives",
+				},
 				'min_score', 130,
 				'enemy_cover_mod', 50,
-				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
+			}),
+			PlaceObj('AIActionThrowGrenade', {
+				'Weight', 200,
+				'RequiredKeywords', {
+					"Explosives",
+				},
+				'AllowedAoeTypes', set( "fire", "teargas", "toxicgas" ),
 			}),
 			PlaceObj('AIActionThrowFlare', {
 				'BiasId', "FlareThrow",
