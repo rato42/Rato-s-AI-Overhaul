@@ -1,17 +1,7 @@
 function AIPrecalcDamageScore(context, destinations, preferred_target, debug_data)
-
-    -- ic("precalc", GameTime())
-
-    -- if context.override_attack_id or context.override_attack_cost then
-    --     ic(context.override_attack_id, context.override_attack_cost, GameTime())
-    -- end
-
     local unit = context.unit
     local weapon = context.weapon
     local action = CombatActions[context.override_attack_id or false] or context.default_attack
-    -----
-    -- context.current_action = action
-    -----
     local archetype = context.archetype
     local behavior = context.behavior
 
@@ -154,6 +144,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 
         ----						
         local target_covers = {}
+        local target_los = {}
         ----
 
         if weapon and ap >= cost_ap then
@@ -210,16 +201,20 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                     end]]
 
                     ---------------------- Cover penalty score reworked
-                    local use_cover, cover_value =
+                    local use_cover, cover_value, _, _, type_cover =
                         hit_modifiers.RangeAttackTargetStanceCover:CalcValue(unit, target, nil,
                                                                              action, weapon, nil,
                                                                              nil, nil, nil,
                                                                              attacker_pos)
                     if use_cover then
-                        -- table.insert(target_covers, {[target] = cover_value})
-                        target_covers[target] = cover_value
+                        if type_cover == "Cover" then
+                            target_covers[target] = cover_value
+                        end
                         hit_mod = hit_mod + cover_value
                     end
+
+                    target_los[target] = targets_attack_data[k] and targets_attack_data[k].los
+
                     -- ic(target.session_id)
                     -- ic(cover_value)
                     ---------------------
@@ -244,6 +239,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                     end]]
 
                     --------------------- Point blank rework
+                    --- TODO: #19 add scope penalty
                     if not is_heavy then
                         local pb_apply, pb_value =
                             pb_cth_mod:CalcValue(unit, target, target_spot_group, action, weapon,
@@ -405,6 +401,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 
         ------- looped all targets in this pos, store in the context
         context.dest_target_cover_score[upos] = target_covers
+        context.dest_target_los[upos] = target_los
         -------
 
         if #potential_targets > 0 then

@@ -7,7 +7,6 @@ function AICalcAttacksAndAim(context, ap)
     last_aim_calc_context = context
 
     ------- Fix for min aim
-    ---TODO: check if mobile attacks are having aim for AI
     local unit = context.unit
     unit.AI_dont_return_Stance_min_aim_level = true --- avoiding duplicates. GetBaseAimLevelRange check considers unit position, not future positions like the current function calculates
     local min_aim, max_aim = unit:GetBaseAimLevelRange(context.default_attack, false)
@@ -68,7 +67,7 @@ function AICalcAttacksAndAim(context, ap)
         bolting_cost = rat_get_manual_cyclingAP(unit, context.weapon, true) * const.Scale.AP
         is_unbolted = context.weapon.unbolted
     end
-    -- bp()
+
     if can_bolt and not is_unbolted then ---- if is_unbolted the atk_cost will already have bolting cost
         ap = ap + bolting_cost ----- otherwise, discount the first shot cost
         cost = cost + bolting_cost ---- and increase the atk cost

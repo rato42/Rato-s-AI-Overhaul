@@ -3,6 +3,8 @@ local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
 local function GetDestArgs(self, context)
 
     local unit = context.unit
+    -- context = Update_AIPrecalcDamageScore(unit) or context
+
     local action = CombatActions[self.action_id]
     local dist, target, dest_cth, dest_recoil, attacker_pos
     local upos = context.ai_destination

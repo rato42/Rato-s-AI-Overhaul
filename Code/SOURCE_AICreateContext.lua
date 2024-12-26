@@ -80,8 +80,10 @@ function AICreateContext(unit, context)
     context.dest_target = {} -- dest -> picked target (if any)
     context.dest_target_score = {} -- dest -> estimated damage
     ------------------
+    context.currentpos_target_cover_score = {}
     context.dest_target_recoil_cth = {} -- dest -> recoil cth degradation
     context.dest_target_cover_score = {} -- dest -> cover
+    context.dest_target_los = {}
     context.dest_flanking_pol_debug = {} ------------- DEBUGGER
     -----------------
     context.weapon = weapon
@@ -142,6 +144,21 @@ function AICreateContext(unit, context)
         end
         context.enemy_visible[enemy] = HasVisibilityTo(unit, enemy)
         context.enemy_visible_by_team[enemy] = HasVisibilityTo(unit.team, enemy)
+
+        -----
+        if context.enemy_visible[enemy] then
+            local use_cover, cover_value, _, _, type_cover =
+                Presets["ChanceToHitModifier"]["Default"].RangeAttackTargetStanceCover:CalcValue(
+                    unit, enemy, nil, default_attack, weapon, nil, nil, nil, nil, unit:GetPos())
+
+            if use_cover and type_cover == "Cover" then
+                context.currentpos_target_cover_score[enemy] = cover_value
+            else
+                context.currentpos_target_cover_score[enemy] = 0
+            end
+        end
+        ---------------------
+
     end
     if context.behavior then
         context.behavior:EnumDestinations(unit, context)
@@ -160,3 +177,4 @@ function AICreateContext(unit, context)
     unit.ai_context = context
     return context
 end
+

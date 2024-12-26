@@ -22,6 +22,7 @@ function AIGetAttackArgs(context, action, target_spot_group, aim_type, override_
     elseif aim_type ~= "None" then
         -- args.aim = context.weapon.MaxAimActions
         ---------
+        --------TODO: Check if Shooting Stance is correctly being considered
         local min_aim, max_aim = context.unit:GetBaseAimLevelRange(action, false)
         args.aim = max_aim
         --------
