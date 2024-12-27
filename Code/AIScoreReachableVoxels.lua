@@ -87,11 +87,7 @@ function AIScoreReachableVoxels(context, policies, opt_loc_weight, dest_score_de
 
     local curr_dest = context.voxel_to_dest[context.unit_world_voxel] or
                           context.voxel_to_dest[context.closest_free_pos] or context.unit_stance_pos
-    ---
-    local x, y, z = stance_pos_unpack(curr_dest)
-    local new_pos = point(x, y, z)
-    DbgAddCircle(new_pos)
-    ---				  
+
     local dist = dest_dist[curr_dest] or total_dist
     local score = -opt_loc_weight
 

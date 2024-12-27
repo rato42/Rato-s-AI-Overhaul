@@ -86,15 +86,3 @@ local function CompareCovers(enemy, current_pos_cover_data, new_pos_cover_data)
     return cover_difference
 end
 
-function Update_AIPrecalcDamageScore(unit)
-    local context = unit.ai_context or {}
-    if not context.damage_score_precalced then
-        print("-- not precalced", GameTime())
-        AIPrecalcDamageScore(context)
-        -- unit.ai_context = context
-        return context
-    end
-    return nil
-    -- print("Already precalced", GameTime())
-end
-
