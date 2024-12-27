@@ -23,6 +23,8 @@ DefineClass.AIPolicyCustomFlanking = {
     }
 }
 
+local draw_debug = true
+
 local function IsInCover(unit, enemy, cover_data, los_data)
 
     local cover_penalty =
@@ -94,7 +96,8 @@ function AIPolicyCustomFlanking:EvalDest(context, dest, grid_voxel)
     ---- Args
     local effective_range_mul = 1.0
     local distance_impact = 0.5
-    local extra_target_weight = 50
+    local extra_target_weight = 100
+    local unit_weight = 100
     ----
 
     local unit = context.unit
@@ -103,10 +106,7 @@ function AIPolicyCustomFlanking:EvalDest(context, dest, grid_voxel)
     -- context = Update_AICoverLOS_currentpos(unit, current_pos) or context
     -- current_pos = context.unit_stance_pos
 
-    local target = context.dest_target[dest] -- or {session_id = false}
-    if target then
-        -- print("target", target.session_id)
-    end
+    local target = context.dest_target[dest]
 
     local ap = context.dest_ap[dest] or 0
     if self.ReserveAttackAP and ap < context.default_attack_cost then
@@ -149,10 +149,12 @@ function AIPolicyCustomFlanking:EvalDest(context, dest, grid_voxel)
                 end
 
                 if visible then
-                    local weight = Max(0, 100 - (dist / effective_range) * (100 * distance_impact))
+                    local weight = unit_weight
                     if target and enemy == target then
                         weight = weight + extra_target_weight
                     end
+                    --  weight = Max(0, 100 - (dist / effective_range) * (100 * distance_impact))
+
                     enemies_weight[enemy] = weight
                     enemies[#enemies + 1] = enemy
                 end
@@ -190,14 +192,14 @@ function AIPolicyCustomFlanking:EvalDest(context, dest, grid_voxel)
 
     local debug_data = {}
     for _, enemy in ipairs(enemies) do
-        local delta_weight = enemies_weight[enemy] or 0
+        local delta_weight = enemies_weight[enemy] or 100
 
         debug_data[enemy] = {
             new_in_cover = new_pos_cover_data[enemy].in_cover,
             old_in_cover = current_pos_cover_data[enemy].cover_cth,
             delta = 0,
             cover = context_cover_data and context_cover_data[enemy] or 0,
-            los = context_los_data and context_los_data[enemy] or "No context los data"
+            los = context_los_data and context_los_data[enemy] or "NoLosData"
         }
 
         --------- New
@@ -206,8 +208,8 @@ function AIPolicyCustomFlanking:EvalDest(context, dest, grid_voxel)
         -- ic(delta_weight)
 
         -- total_weight = total_weight + abs(delta_weight)
-        debug_data[enemy].delta = delta_weight
 
+        -- debug_data[enemy].delta = delta_weight
         -- delta = delta + delta_weight
 
         if new_pos_cover_data[enemy].in_cover and not current_pos_cover_data[enemy].in_cover then
@@ -230,28 +232,25 @@ function AIPolicyCustomFlanking:EvalDest(context, dest, grid_voxel)
 
     end
 
-    -- local final_delta = total_weight > 0 and (delta / total_weight) or 0
     local denominador = (Max(1, #enemies)) * 100
-    local final_delta = delta / denominador
-
+    local score = delta -- (delta / (Max(1, denominador))) * 100
     ------------ FIX THIS
 
-    -- final_delta = delta / Max(1, #enemies)
-
-    local score = final_delta * self.Weight
     -- ic(delta, final_delta, #enemies, denominador, total_weight, score)
 
     ----------------------- Debug
-    -- DbgAddCircle(new_pos)
+
+    if draw_debug then
+        DbgAddCircle(new_pos)
+    end
     local all_enemy_debug_info = "\n"
+
     for enemy, data in pairs(debug_data) do
         local delta = data.delta
 
-        local dbg_text = string.format(
-                             "%s, New in Cover: %s, Old in Cover: %s, Delta: %d, Cover: %s LOS: %s",
-                             tostring(enemy.session_id), tostring(data.new_in_cover),
-                             tostring(data.old_in_cover), delta, tostring(data.cover),
-                             tostring(data.los))
+        local dbg_text = string.format("  %s, 1stCover: %s, 2ndCover: %s Delta: %d, LOS: %s",
+                                       tostring(enemy.session_id), tostring(data.old_in_cover),
+                                       tostring(data.cover), delta, tostring(data.los))
 
         all_enemy_debug_info = all_enemy_debug_info .. dbg_text .. "\n"
 
@@ -261,9 +260,15 @@ function AIPolicyCustomFlanking:EvalDest(context, dest, grid_voxel)
             if not data.los or data.los == 0 then
                 color = const.clrBlue
             end
-            DbgAddVector(new_pos, enemy:GetPos() - new_pos, color)
+            if draw_debug then
+                DbgAddVector(new_pos, enemy:GetPos() - new_pos, color)
+            end
         end
     end
+
+    local total_dbg_text = string.format("Score: %s", tostring(score))
+    all_enemy_debug_info = total_dbg_text .. all_enemy_debug_info
+
     context.dest_flanking_pol_debug[dest] = all_enemy_debug_info
     ----------------------- 
 

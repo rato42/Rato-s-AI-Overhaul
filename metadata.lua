@@ -11,7 +11,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "rEYcAD4",
 	'author', "rato",
-	'version', 1452,
+	'version', 1495,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -19,6 +19,7 @@ return PlaceObj('ModDef', {
 		"Code/CLASS_append_AISignatureAction.lua",
 		"Code/DEBUG.lua",
 		"Code/AIPOLICY_CustomFlanking.lua",
+		"Code/AIPOLICY_CustomSeekCover.lua",
 		"Code/AIACTION_ThrowFlare.lua",
 		"Code/FUNCTION_getAIShootingStanceBehaviorSelectionScore.lua",
 		"Code/FUNCTION_ChangeAIKeyWords.lua",
@@ -52,8 +53,8 @@ return PlaceObj('ModDef', {
 	},
 	'default_options', {},
 	'has_data', true,
-	'saved', 1735248303,
-	'code_hash', 1256354094953665191,
+	'saved', 1735260780,
+	'code_hash', -721258200079016095,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",

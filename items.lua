@@ -437,6 +437,10 @@ return {
 		'CodeFileName', "Code/AIPOLICY_CustomFlanking.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "AIPOLICY_CustomSeekCover",
+		'CodeFileName', "Code/AIPOLICY_CustomSeekCover.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "AIACTION_ThrowFlare",
 		'CodeFileName', "Code/AIACTION_ThrowFlare.lua",
 	}),
@@ -1014,12 +1018,6 @@ return {
 					PlaceObj('AIPolicyDealDamage', {
 						'Weight', 150,
 					}),
-					PlaceObj('AIPolicyCustomFlanking', {
-						'Weight', 200,
-						'ReserveAttackAP', true,
-						'visibility_mode', "team",
-						'OnlyTarget', true,
-					}),
 				},
 				'TakeCoverChance', 50,
 			}),
@@ -1030,6 +1028,28 @@ return {
 					return MulDivRound(score, self.Weight, 100)
 				end,
 				'TakeCoverChance', 0,
+			}),
+			PlaceObj('PositioningAI', {
+				'BiasId', "Flanking",
+				'Fallback', false,
+				'OptLocWeight', 20,
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyFlanking', {
+						'ReserveAttackAP', true,
+					}),
+					PlaceObj('AIPolicyDealDamage', nil),
+					PlaceObj('AIPolicyCustomFlanking', {
+						'Required', true,
+						'ReserveAttackAP', true,
+						'visibility_mode', "team",
+					}),
+					PlaceObj('AIPolicyCustomSeekCover', {
+						'Required', true,
+						'visibility_mode', "team",
+					}),
+				},
+				'TakeCoverChance', 100,
+				'VoiceResponse', "AIFlanking",
 			}),
 		},
 		Comment = "Keywords: Soldier, Sniper, Control, Ordnance, Smoke, Explosives",
@@ -1570,9 +1590,6 @@ return {
 			PlaceObj('PositioningAI', {
 				'BiasId', "Flanking",
 				'Fallback', false,
-				'RequiredKeywords', {
-					"Flank",
-				},
 				'OptLocWeight', 20,
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyFlanking', {
@@ -1580,15 +1597,16 @@ return {
 					}),
 					PlaceObj('AIPolicyDealDamage', nil),
 					PlaceObj('AIPolicyCustomFlanking', {
-						'Weight', 200,
 						'Required', true,
 						'ReserveAttackAP', true,
 						'visibility_mode', "team",
-						'OnlyTarget', true,
 					}),
-					PlaceObj('AIPolicyTakeCover', nil),
+					PlaceObj('AIPolicyTakeCover', {
+						'Required', true,
+						'visibility_mode', "team",
+					}),
 				},
-				'TakeCoverChance', 0,
+				'TakeCoverChance', 100,
 				'VoiceResponse', "AIFlanking",
 			}),
 			PlaceObj('HoldPositionAI', {

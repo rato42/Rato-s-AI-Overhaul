@@ -46,12 +46,6 @@ function IModeAIDebug:GetVoxelRolloverText()
                                  StancesList[ds])
         text = text .. string.format("\n  Pathfind dist: %s", self.ai_context.dest_dist and
                                          tostring(self.ai_context.dest_dist[dest]) or "N/A")
-        -----------------------------------------
-        if self.ai_context.dest_flanking_pol_debug[dest] then
-            text = text .. "\n\nFlanking Policy Debug:\n"
-            text = text .. "  " .. self.ai_context.dest_flanking_pol_debug[dest] .. "\n"
-        end
-        ---------------------------------------
     end
 
     local move_stance_idx = StancesList[arch.MoveStance]
@@ -64,6 +58,14 @@ function IModeAIDebug:GetVoxelRolloverText()
                                  arch.PrefStance, format_ap(
                                      self.ai_context.dest_ap[stance_pos_pack(x, y, z,
                                                                              pref_stance_idx)]))
+    -----------------------------------------
+    if dest and self.ai_context.dest_flanking_pol_debug[dest] then
+
+        text = text .. "\n\nFlanking Policy Debug:\n"
+        text = text .. "  " .. self.ai_context.dest_flanking_pol_debug[dest] .. "\n"
+
+    end
+    -----------------------------------------
 
     text = text .. "\nVoxel score: " .. (opt_scores.final_score or "N/A")
     for i = 1, #opt_scores, 2 do
