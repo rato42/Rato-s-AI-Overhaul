@@ -22,6 +22,13 @@ function OnMsg.ClassesGenerate(classdefs)
             editor = "number",
             default = 0
         }
+        --[[props[#props + 1] = {
+            id = "enemy_height_mod",
+            name = "Enemy Height Score",
+            help = "UNFINISHED",
+            editor = "number",
+            default = 0
+        }]]
     end
 end
 

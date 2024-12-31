@@ -26,7 +26,7 @@ function AIActionThrowFlare:PrecalcAction(context, action_state)
             local weapon = caction:GetAttackWeapons(context.unit)
             local aoetype = weapon.aoeType or "none"
             ---
-            if IsKindOf(weapon, "FlareStick") then
+            if IsKindOf(weapon, "FlareStick") or IsKindOf(weapon, "GlowStick") then
                 grenade = weapon
                 break
             end
@@ -34,10 +34,10 @@ function AIActionThrowFlare:PrecalcAction(context, action_state)
         end
     end
 
-    if not grenade then
-        action_id = 'ThrowGrenadeA'
-        grenade = context.unit:GetItemInSlot("Inventory", "FlareStick")
-    end
+    -- if not grenade then
+    --     action_id = 'ThrowGrenadeA'
+    --     grenade = context.unit:GetItemInSlot("Inventory", "FlareStick")
+    -- end
 
     if not action_id or not grenade then
         return

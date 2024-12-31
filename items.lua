@@ -429,6 +429,14 @@ return {
 		'CodeFileName', "Code/CLASS_append_AISignatureAction.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "PATCH_UnitData",
+		'CodeFileName', "Code/PATCH_UnitData.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "PATCH_call",
+		'CodeFileName', "Code/PATCH_call.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "DEBUG",
 		'CodeFileName', "Code/DEBUG.lua",
 	}),
@@ -438,6 +446,7 @@ return {
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "AIPOLICY_CustomSeekCover",
+		'comment', "--- unfinished",
 		'CodeFileName', "Code/AIPOLICY_CustomSeekCover.lua",
 	}),
 	PlaceObj('ModItemCode', {
@@ -445,24 +454,37 @@ return {
 		'CodeFileName', "Code/AIACTION_ThrowFlare.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "UTIL",
+		'CodeFileName', "Code/UTIL.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "FUNCTION_AddFlares",
+		'CodeFileName', "Code/FUNCTION_AddFlares.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "FUNCTION_getAIShootingStanceBehaviorSelectionScore",
 		'CodeFileName', "Code/FUNCTION_getAIShootingStanceBehaviorSelectionScore.lua",
 	}),
 	PlaceObj('ModItemCode', {
-		'name', "FUNCTION_ChangeAIKeyWords",
-		'CodeFileName', "Code/FUNCTION_ChangeAIKeyWords.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "FUNCTION_AIGetCustomBiasWeight",
-		'CodeFileName', "Code/FUNCTION_AIGetCustomBiasWeight.lua",
+		'name', "FUNCTION_ChangeUnitDataDef",
+		'CodeFileName', "Code/FUNCTION_ChangeUnitDataDef.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "FUNCTION_MGSetup",
+		'comment', "---- unfinished",
 		'CodeFileName', "Code/FUNCTION_MGSetup.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "FUNCTIONS_SignaturesCustomScoring",
 		'CodeFileName', "Code/FUNCTIONS_SignaturesCustomScoring.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "FUNCTION_CustomArchetypeFunc",
+		'CodeFileName', "Code/FUNCTION_CustomArchetypeFunc.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "PROPERTIES_Unit",
+		'CodeFileName', "Code/PROPERTIES_Unit.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AIPrecalcDamageScore",
@@ -499,10 +521,6 @@ return {
 		'CodeFileName', "Code/SOURCE_AIEvalZones.lua",
 	}),
 	PlaceObj('ModItemCode', {
-		'name', "PROPERTIES_Unit",
-		'CodeFileName', "Code/PROPERTIES_Unit.lua",
-	}),
-	PlaceObj('ModItemCode', {
 		'name', "vanilla_archetype_functions_forconsult",
 		'CodeFileName', "Code/vanilla_archetype_functions_forconsult.lua",
 	}),
@@ -526,13 +544,23 @@ return {
 		'name', "Test",
 		'CodeFileName', "Code/Test.lua",
 	}),
-	PlaceObj('ModItemCode', {
-		'name', "get_accuracy",
-		'CodeFileName', "Code/get_accuracy.lua",
+	PlaceObj('ModItemOptionToggle', {
+		'name', "ImproveExplosiveStat",
+		'DisplayName', "Improve Explosive Stat",
+		'Help', "This option will moderately improve the enemies Explosive stat. Specialists (like Grenadier) will have a bigger boost. Highly recommended if using Rato's Explosive Overhaul 2. Restart after applying.",
+		'DefaultValue', true,
 	}),
-	PlaceObj('ModItemCode', {
-		'name', "AddItem",
-		'CodeFileName', "Code/AddItem.lua",
+	PlaceObj('ModItemOptionToggle', {
+		'name', "AddHWStoGunners",
+		'DisplayName', "Add HWS to Gunners",
+		'Help', "Add Heavy Weapons Specialist perk to enemy Machine Gunners",
+		'DefaultValue', true,
+	}),
+	PlaceObj('ModItemOptionToggle', {
+		'name', "AddFlares",
+		'DisplayName', "Add Flares",
+		'Help', "Add Flares to enemies at night",
+		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemLootDef', {
 		group = "Default",
@@ -1165,6 +1193,9 @@ return {
 				'RequiredKeywords', {
 					"Sniper",
 				},
+				'CustomScoring', function (self, context)
+					return SingleShotTargeted_CustomScoring(self, context)
+				end,
 				'Aiming', "Remaining AP",
 				'AttackTargeting', set( "Head" ),
 			}),
@@ -1204,6 +1235,12 @@ return {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SmokeGrenade",
 						'Effect', "disable",
+					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "SmokeGrenade",
+						'Value', -50,
+						'Period', 0,
+						'ApplyTo', "Team",
 					}),
 				},
 				'RequiredKeywords', {
@@ -1412,7 +1449,7 @@ return {
 				'AttackTargeting', set( "Torso" ),
 			}),
 			PlaceObj('AIActionThrowGrenade', {
-				'BiasId', "AssaultGrenadeThrow",
+				'BiasId', "ExplosiveGrenadeThrow",
 				'Weight', 200,
 				'RequiredKeywords', {
 					"Explosives",
@@ -1421,6 +1458,7 @@ return {
 				'enemy_cover_mod', 50,
 			}),
 			PlaceObj('AIActionThrowGrenade', {
+				'BiasId', "AOEGrenadeThrow",
 				'Weight', 200,
 				'RequiredKeywords', {
 					"Explosives",
@@ -1500,12 +1538,13 @@ return {
 		OptLocSearchRadius = 80,
 		SignatureActions = {
 			PlaceObj('AIActionThrowGrenade', {
+				'BiasId', "ExplosiveGrenadeThrow",
 				'Weight', 600,
 				'min_score', 140,
 				'enemy_cover_mod', 100,
 			}),
 			PlaceObj('AIActionThrowGrenade', {
-				'BiasId', "UtilityGrenade",
+				'BiasId', "AOEGrenadeThrow",
 				'Weight', 200,
 				'AllowedAoeTypes', set( "fire", "teargas", "toxicgas" ),
 				'TargetLastAttackPos', true,
@@ -1529,6 +1568,30 @@ return {
 				'team_score', 0,
 				'self_score_mod', 0,
 				'min_score', 100,
+			}),
+			PlaceObj('AIActionThrowGrenade', {
+				'BiasId', "SmokeGrenade",
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "SmokeGrenade",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "SmokeGrenade",
+						'Value', -50,
+						'Period', 0,
+						'ApplyTo', "Team",
+					}),
+				},
+				'RequiredKeywords', {
+					"Smoke",
+				},
+				'enemy_score', 0,
+				'team_score', 100,
+				'self_score_mod', 100,
+				'MinDist', 0,
+				'AllowedAoeTypes', set( "smoke" ),
 			}),
 		},
 		TargetScoreRandomization = 10,

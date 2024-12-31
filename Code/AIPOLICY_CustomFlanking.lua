@@ -134,8 +134,8 @@ function AIPolicyCustomFlanking:EvalDest(context, dest, grid_voxel)
     local check_ap = self.ReserveAttackAP == "AP" and context.default_attack_cost or
                          self.ReserveAttackAP == "Stance" and
                          (context.default_attack_cost +
-                             GetWeapon_StanceAP(unit, context.weapon or unit:GetActiveWeapons())) or
-                         0
+                             GetWeapon_StanceAP(unit, context.weapon or unit:GetActiveWeapons()) +
+                             Get_AimCost(unit)) or 0
 
     if ap < check_ap then
         return 0

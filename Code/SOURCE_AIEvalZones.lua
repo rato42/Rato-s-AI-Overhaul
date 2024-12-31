@@ -1,11 +1,11 @@
 function AIActionBaseZoneAttack:EvalZones(context, zones)
     return AIEvalZones(context, zones, self.min_score, self.enemy_score, self.team_score,
-                       self.self_score_mod, self.enemy_cover_mod)
-    --- addition of "self.enemy_cover_mod"
+                       self.self_score_mod, self.enemy_cover_mod) -- , self.enemy_height_mod)
+    --- addition of "self.enemy_cover_mod" and "enemy_height_mod"
 end
 
 function AIEvalZones(context, zones, min_score, enemy_score, team_score, self_score_mod,
-                     enemy_cover_score)
+                     enemy_cover_score) -- , heigth_score)
     local best_target, best_score = nil, (min_score or 0) - 1
 
     for _, zone in ipairs(zones) do
@@ -33,6 +33,9 @@ function AIEvalZones(context, zones, min_score, enemy_score, team_score, self_sc
                         uscore = uscore + to_add
                         -- ic(unit.session_id, cover, any, coverage, uscore, cover_effect, to_add)
                     end
+
+                    -- if heigth_score and heigth_score ~= 0 then
+
                     -----------------------------------
 
                 elseif unit.team == context.unit.team then

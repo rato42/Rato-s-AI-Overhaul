@@ -213,7 +213,8 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         hit_mod = hit_mod + cover_value
                     end
 
-                    target_los[target] = targets_attack_data[k] and targets_attack_data[k].los
+                    target_los[target] = targets_attack_data and targets_attack_data[k] and
+                                             targets_attack_data[k].los
 
                     -- ic(target.session_id)
                     -- ic(cover_value)

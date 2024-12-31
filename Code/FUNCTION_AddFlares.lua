@@ -1,4 +1,7 @@
 function RATOAI_AddFlare(unit, check)
+    if not CurrentModOptions.AddFlares then
+        return
+    end
     if GameState.Night or GameState.Underground then
         if R_IsAI(unit) and (not check or not unit.RATOAI_flare_added) then
             local amount = InteractionRandRange(1, 7)
@@ -34,6 +37,6 @@ function temporary_add_grenade(unit)
 end
 
 function OnMsg.UnitEnterCombat(unit)
-    temporary_add_grenade(unit)
+    -- temporary_add_grenade(unit)
     RATOAI_AddFlare(unit, true)
 end
