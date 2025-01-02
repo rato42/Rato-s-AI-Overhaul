@@ -23,8 +23,8 @@ function RATOAI_ChangeUnitDataDef(class, props)
             if CurrentModOptions.ImproveExplosiveStat then
                 class[k] = v
             end
-        elseif k == 'PickCustomArchetype' then
-            class[k] = Set_PickCustomArchetype(v)
+            -- elseif k == 'PickCustomArchetype' then
+            -- class[k] = v
         else
             class[k] = v
         end

@@ -11,7 +11,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "rEYcAD4",
 	'author', "rato",
-	'version', 1589,
+	'version', 1647,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -24,6 +24,7 @@ return PlaceObj('ModDef', {
 		"Code/AIPOLICY_CustomSeekCover.lua",
 		"Code/AIACTION_ThrowFlare.lua",
 		"Code/UTIL.lua",
+		"Code/CUAE_options.lua",
 		"Code/FUNCTION_AddFlares.lua",
 		"Code/FUNCTION_getAIShootingStanceBehaviorSelectionScore.lua",
 		"Code/FUNCTION_ChangeUnitDataDef.lua",
@@ -59,8 +60,8 @@ return PlaceObj('ModDef', {
 		ImproveExplosiveStat = true,
 	},
 	'has_data', true,
-	'saved', 1735617598,
-	'code_hash', 957955218010116469,
+	'saved', 1735700458,
+	'code_hash', 7590428358400812042,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
@@ -124,12 +125,12 @@ return PlaceObj('ModDef', {
 		}),
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
-			'Id', "RPG",
+			'Id', "Skirmisher",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
-			'Id', "Skirmisher",
+			'Id', "RATOAI_RetreatingMarksman",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {
@@ -145,11 +146,6 @@ return PlaceObj('ModDef', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
 			'Id', "Brute",
-			'ClassDisplayName', "AI Archetype",
-		}),
-		PlaceObj('ModResourcePreset', {
-			'Class', "AIArchetype",
-			'Id', "Soldier_nobias_test",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {
