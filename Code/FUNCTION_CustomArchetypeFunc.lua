@@ -15,15 +15,16 @@ function GetArgsForArchetypeAndWeaponSelection(unit)
         },
         Stormer = {
             main_w_classes = {"Firearm"},
-            close_w_classes = {"MeleeWeapon"},
+            close_w_classes = {"MeleeWeapon", "Shotgun"},
             close_archetype = "Brute",
             vr = "AIArchetypeAngry"
         },
         Artillery = {
-            main_w_classes = {"Artillery"},
+            main_w_classes = {"Artillery", "GrenadeLauncher"},
             close_w_classes = {"Firearm"},
             close_archetype = "RATOAI_RetreatingMarksman",
-            vr = "AIArchetypeScared"
+            vr = "AIArchetypeScared",
+            dist = 7
         }
 
     }
@@ -53,7 +54,9 @@ function CloseRangeArchetypeSelection(self, context)
     local enemy, dist = GetNearestEnemy(self)
     local weapon_classes = args.main_w_classes
 
-    if enemy and dist <= const.Weapons.PointBlankRange * const.SlabSizeX then
+    local check_dist = args.dist or const.Weapons.PointBlankRange
+
+    if enemy and dist <= check_dist * const.SlabSizeX then
         weapon_classes = args.close_w_classes
         archetype = args.close_archetype or archetype
         if args.vr then

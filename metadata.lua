@@ -1,6 +1,6 @@
 return PlaceObj('ModDef', {
 	'title', "Rato's AI Overhaul",
-	'description', "TODO:\n\n--------MatchUnit to prevent/enable \n\nFix MGs attacking outside cone. Maybe using signature ?\nUnderstand Positioning AI\nInvestigate Seek Cover policy - improve it\n\n\nEnemies are finishing turn with AP remaining\n\n\n\n\n\n\n\nOBS: some logic will check if unit has ap after movement to attack\n\n----- Targeting\nAdd policys for grouped targets when using burst/autofire\n\n----- Movement\ngive score to voxels where they would have enough stance ap\n\n------- Actions\nAI shooting from too afar when using burst/autofire\nConsider increasing aim levels in burst fire?? maybe\nBurstFire should not be aimed at limbs\n\nHeadshots\nIncrease usage of Mobile attacks and grenades\n\nVisibility",
+	'description', "Features\n\nLogic for keeping stance AP\n\nAI will be able to use single shot instead of burst shot if  otherwise it wouldnt have enough AP to enter shooting stance\n\nMore aiming, more shooting stance entering.\n\nCustom decision making when AI decides to use special attacks like mobile attack, overwatch, limb shots, etc. The logic is based on distance, weapons and components, and takes into effect the new mechanics from GBO.\n\nThe AI will be able to use most of the abilities of new weapons added by CUAE (example, a stockless rifle will use run and gun, SKS users will use their mobile attacks, they will be able to use grenades).\n\nCustom logic for Grenadiers and MGs to try to attack targets in cover and destroy the cover\n\nMore use of grenades.\n\nUnits will throw flares at the enemy at night.\n\nCreated a custom experimental logic for AI to flank more efficiently \n\nRevamped source functions that control the inner workings of the AI decision making. Added recoil calculation, point blank mechanics changes from GBO, cover, mechanics changes. The AI will take into account Bolt Action costs when making decisions.\n\nFixed some behaviors that made AI use FreeMove ap for aiming.\n\nAlso took away some limitations AI had to make it less punishing in the base game.\n\nIncreased AI use of cover. \nIncreased AI use of MGsetup.\n\nSnipers will swap to handguns and start retreating behaviors when you get too close to them.\n\nNew lore friendly weapon progression to be used with CUAE!\n\nThe philosophy here was to change mostly/only the behavior of the AI, with no cheating (I even fixed some cheating the AI did). \n\n\nThe only additions to units are increased explosive stats skill (if you use Rato's Explosive Overhaul, this is recommended) and the addition of Heavy Weapon's Specialist to machine gunners. Both can be disabled in the mod options\n\n\n\n\n\n\n\n----- Targeting\nAdd policys for grouped targets when using burst/autofire\n\n\nVisibility",
 	'dependencies', {
 		PlaceObj('ModDependency', {
 			'id', "cfahRED",
@@ -11,7 +11,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "rEYcAD4",
 	'author', "rato",
-	'version', 1647,
+	'version', 1676,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -57,11 +57,12 @@ return PlaceObj('ModDef', {
 	'default_options', {
 		AddFlares = true,
 		AddHWStoGunners = true,
+		CUAELoreProgression = true,
 		ImproveExplosiveStat = true,
 	},
 	'has_data', true,
-	'saved', 1735700458,
-	'code_hash', 7590428358400812042,
+	'saved', 1735880438,
+	'code_hash', -1442087879323949699,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
@@ -150,12 +151,12 @@ return PlaceObj('ModDef', {
 		}),
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
-			'Id', "Artillery_copy",
+			'Id', "Medic",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
-			'Id', "Medic_copy",
+			'Id', "Artillery_copy",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {

@@ -20,8 +20,36 @@ function RATOAI_AddFlare(unit, check)
     end
 end
 
+function build_explosive_grenade_table(unit)
+    local legion_thug = unit.Affiliation and
+                            (unit.Affiliation == "Legion" or unit.Affiliation == "Thug")
+
+    local EO_loaded = IsMod_loaded("RATONADE")
+
+    local explosive_IEDs = {'PipeBomb'}
+    local EO_IEDS = {"TNTBolt_IED", "NailBomb_IED"}
+
+    local explosive_nades = {'FragGrenade', 'HE_Grenade'}
+    local EO_explosives = {"HE_Grenade_1"}
+
+    if EO_loaded then
+        for _, v in ipairs(EO_IEDS) do
+            table.insert(explosive_IEDs, v)
+        end
+
+        for _, v in ipairs(EO_explosives) do
+            table.insert(explosive_nades, v)
+        end
+    end
+
+    --- 
+
+    return (legion_thug and EO_loaded) and explosive_IEDs or explosive_nades
+end
+
 function temporary_add_grenade(unit)
-    if R_IsAI(unit) then
+    local role = unit.role or ''
+    if R_IsAI(unit) and role == "Demolitions" then
         local amount = InteractionRandRange(1, 7)
         amount = amount - 2
         if amount > 0 then
