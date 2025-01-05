@@ -4,9 +4,9 @@ last_context = {}
 function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
     last_proto = proto_context
 
-    if unit:HasStatusEffect("ManningEmplacement") or unit:HasStatusEffect("StationedMachineGun") then
+    --[[if unit:HasStatusEffect("ManningEmplacement") or unit:HasStatusEffect("StationedMachineGun") then
         return 0
-    end
+    end]]
 
     if not unit:HasStatusEffect("shooting_stance") then
         return 0

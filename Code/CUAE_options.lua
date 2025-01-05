@@ -44,12 +44,10 @@ function RATOAI_AddExclusionCUAE()
 
     local western = {
         'FNMinimi', 'M14SAW_AUTO', 'M16A2', 'AUG', 'FAMAS', 'M4Commando', 'M24Sniper', 'M41Shotgun',
-        'MAC11_1'
+        'MAC11_1', 'M1911_1'
     }
 
-    local other = {
-        'ColtAnaconda', 'DesertEagle', 'Bereta92', 'Glock18', 'M1911_1', 'B93RR_1', 'Glock17_1'
-    }
+    local other = {'ColtAnaconda', 'DesertEagle', 'Bereta92', 'Glock18', 'B93RR_1', 'Glock17_1'}
 
     local israeli = {'MicroUZI_1', 'UZI', 'Galil'}
 
@@ -63,20 +61,21 @@ function RATOAI_AddExclusionCUAE()
 
     local end_game = {'BarretM82', 'AA12'}
 
+    --------- TODO: fix too much sks 
     local excl_table = {
         Army = {},
         Adonis = {},
-        Rebels = {},
-        Thugs = {"M14SAW_AUTO"},
-        Legion = {"M14SAW_AUTO"},
+        Rebels = {'Type56A_1', 'Type56C_1'},
+        Thugs = {"M14SAW_AUTO", 'Type56D_1', 'Type56B_1', 'PapovkaSKS_1', 'SKS_1'},
+        Legion = {"M14SAW_AUTO", 'Type56D_1', 'Type56C_1', 'Papovka2SKS_1'},
         SuperSoldiers = {},
-        Militia = {"M14SAW_AUTO"}
+        Militia = {"M14SAW_AUTO", 'Type56D_1', 'Type56D_1', 'Type56C_1', 'Papovka2SKS_1'}
     }
 
     local function add_items(destination, ...)
         for _, list in ipairs({...}) do
             for _, item in ipairs(list) do
-                table.insert(destination, item)
+                table.insert_unique(destination, item)
             end
         end
     end

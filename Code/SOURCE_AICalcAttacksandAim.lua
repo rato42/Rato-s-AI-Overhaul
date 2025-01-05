@@ -30,7 +30,6 @@ function AICalcAttacksAndAim(context, ap)
             unit_pos = IsValidZ(unit_pos) and unit_pos or unit_pos:SetTerrainZ()
 
             not_moved = attack_pos == unit_pos
-
             has_stance = not_moved and context.unit:HasStatusEffect("shooting_stance")
             -- ic(attack_pos, unit_pos, not_moved, has_stance)
         end
@@ -46,11 +45,8 @@ function AICalcAttacksAndAim(context, ap)
 
         if has_stance then
             rotation_cost = unit:GetShootingStanceAP(context.current_target, context.weapon, 1,
-                                                     context.default_attack,
-            -- context.current_action, -- which???
-                                                     "rotate")
+                                                     context.default_attack, "rotate")
         else
-            -- force_enter_stance = true
             stance_cost = GetWeapon_StanceAP(unit, context.weapon)
         end
     end
@@ -62,6 +58,7 @@ function AICalcAttacksAndAim(context, ap)
     ---- Manual Cycling
     local bolting_cost = 0
     local is_unbolted, can_bolt
+
     if context.weapon and rat_canBolt(context.weapon) then
         can_bolt = true
         bolting_cost = rat_get_manual_cyclingAP(unit, context.weapon, true) * const.Scale.AP
@@ -97,19 +94,12 @@ function AICalcAttacksAndAim(context, ap)
 
     local num_attacks = Min((ap - stance_cost - rotation_cost) / cost, context.max_attacks)
 
-    if context.force_max_aim and has_stance_ap then --- Only Aim if can enter stance
+    if (context.force_max_aim or ShouldMaxAim(context)) and has_stance_ap then --- Only Aim if can enter stance
         num_attacks = ------ stance_cost added
         Min((ap - stance_cost - rotation_cost) /
-                (cost + aim_cost * (max_aim - min_aim) + recoil_aim_cost * --- Persistant recoil aim cost increase
-                    Min(3, (max_aim - min_aim))), -- context.weapon.MaxAimActions),
-        context.max_attacks)
+                (cost + aim_cost * (max_aim - min_aim) +
+                    (recoil_aim_cost * Min(3, (max_aim - min_aim)))), context.max_attacks)
         ------
-        --[[elseif force_enter_stance then
-        num_attacks = Min(
-                          (ap - stance_cost - aim_cost * Max(0, (1 - min_aim))) /
-                              cost, -- Deduct the AP for the first aim level upfront
-                          context.max_attacks)
-        -----]]
     end
 
     ------ Stance Cost addition

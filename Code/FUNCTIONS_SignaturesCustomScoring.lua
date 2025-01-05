@@ -3,12 +3,13 @@ local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
 local function GetDestArgs(self, context)
 
     local unit = context.unit
-    -- context = Update_AIPrecalcDamageScore(unit) or context
+    context = Update_AIPrecalcDamageScore(unit) or context
 
     local action = CombatActions[self.action_id]
     local dist, target, dest_cth, dest_recoil, attacker_pos
     local upos = context.ai_destination
 
+    ---- TODO: #24 when holding position this is not working
     if upos then
         dest_cth = context.dest_cth and context.dest_cth[upos]
         dest_recoil = context.dest_target_recoil_cth and context.dest_target_recoil_cth[upos]
