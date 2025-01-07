@@ -13,38 +13,9 @@ function ShouldMaxAim(context) ----- used in AICalcAttacksAndAim
     local to_check_range = pb
 
     if dist and (dist > to_check_range * const.SlabSizeX) then
-        -- print("----------", context.unit.session_id, " should max aim bcause", target.session_id,
-        --      "is at ", dist / const.SlabSizeX)
-        return true
-    end
-    return false
-end
-
---[[function ShouldMaxAim(context) ----- used in AICalcAttacksAndAim
-    local function CustomGetNearestEnemy(unit, new_pos, ignore_awareness)
-        if not new_pos then
-            return
-        end
-
-        local enemies = ignore_awareness and GetAllEnemyUnits(unit) or GetEnemies(unit)
-        local nearest
-        for _, enemy in ipairs(enemies) do
-            if not nearest or IsCloser(new_pos, enemy, nearest) then
-                nearest = enemy
-            end
-        end
-        if nearest then
-            return nearest, new_pos:Dist(nearest:GetPos())
-        end
-    end
-
-    local closer, dist = CustomGetNearestEnemy(context.unit, context.attacker_pos, true)
-
-    ---context.EffectiveRange
-    if dist and (dist > const.Weapons.PointBlankRange * const.SlabSizeX) then
-        print("----------", context.unit.session_id, " should max aim bcause", closer.session_id,
+        print("----------", context.unit.session_id, " should max aim bcause", target.session_id,
               "is at ", dist / const.SlabSizeX)
         return true
     end
     return false
-end]]
+end

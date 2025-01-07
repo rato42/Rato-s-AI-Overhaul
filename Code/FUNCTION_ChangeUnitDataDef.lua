@@ -10,9 +10,6 @@ local function Set_PickCustomArchetype(func)
     end
 end
 
--- probably will need a different thing for the artillery
--- {CloseRangeArchetypeSelection, {"Artillery"}, {"Firearm"}}
-
 function RATOAI_ChangeUnitDataDef(class, props)
     for k, v in pairs(props) do
         if k == "add_HWS" then
@@ -28,19 +25,6 @@ function RATOAI_ChangeUnitDataDef(class, props)
         else
             class[k] = v
         end
-    end
-end
-
-function testopt()
-    Inspect(CurrentModOptions)
-    print(CurrentModOptions.AddHWStoGunners)
-    print(CurrentModOptions.ImproveExplosiveStat)
-end
-
-function print_unitdata()
-    -- local afs = {"Legion", "Thugs", "Adonis", "SuperSoldiers"}
-    for k, v in pairs(UnitDataDefs) do
-        print(k, v.Affiliation)
     end
 end
 

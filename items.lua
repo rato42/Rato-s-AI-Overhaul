@@ -1366,6 +1366,7 @@ return {
 				'OptLocWeight', 20,
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyFlanking', {
+						'Weight', 150,
 						'ReserveAttackAP', true,
 					}),
 					PlaceObj('AIPolicyDealDamage', nil),
@@ -1597,6 +1598,7 @@ return {
 		BaseAttackTargeting = set( "Torso" ),
 		Behaviors = {
 			PlaceObj('StandardAI', {
+				'OptLocWeight', 200,
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyDealDamage', nil),
 					PlaceObj('AIPolicyWeaponRange', {
@@ -1619,6 +1621,31 @@ return {
 				end,
 				'TakeCoverChance', 0,
 			}),
+			PlaceObj('PositioningAI', {
+				'BiasId', "Flanking",
+				'Weight', 50,
+				'Fallback', false,
+				'OptLocWeight', 20,
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyFlanking', {
+						'Weight', 50,
+						'ReserveAttackAP', true,
+					}),
+					PlaceObj('AIPolicyDealDamage', nil),
+					PlaceObj('AIPolicyCustomFlanking', {
+						'Required', true,
+						'ReserveAttackAP', "Stance",
+						'visibility_mode', "team",
+						'ScalePerDistance', true,
+					}),
+					PlaceObj('AIPolicyTakeCover', {
+						'Required', true,
+						'visibility_mode', "team",
+					}),
+				},
+				'TakeCoverChance', 100,
+				'VoiceResponse', "AIFlanking",
+			}),
 		},
 		Comment = "Keywords: Flank, Explosives",
 		OptLocPolicies = {
@@ -1629,14 +1656,14 @@ return {
 				'RangeMax', 10,
 			}),
 			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 50,
+				'Weight', 0,
 				'RangeBase', "Absolute",
 				'RangeMin', 11,
 				'RangeMax', 15,
 			}),
 			PlaceObj('AIPolicyLosToEnemy', nil),
 		},
-		OptLocSearchRadius = 80,
+		OptLocSearchRadius = 100,
 		SignatureActions = {
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "ExplosiveGrenadeThrow",
@@ -1678,6 +1705,7 @@ return {
 			}),
 			PlaceObj('AIActionThrowFlare', {
 				'BiasId', "FlareThrow",
+				'Weight', 80,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "FlareThrow",

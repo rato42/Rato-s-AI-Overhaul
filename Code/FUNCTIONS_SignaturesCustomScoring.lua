@@ -9,7 +9,13 @@ local function GetDestArgs(self, context)
     local dist, target, dest_cth, dest_recoil, attacker_pos
     local upos = context.ai_destination
 
-    ---- TODO: #24 when holding position this is not working
+    if not upos then ---- HoldPosition Behavior
+        local packed_pos = GetPackedPosAndStance(unit)
+        if packed_pos and context.dest_cth and context.dest_cth[packed_pos] then
+            upos = packed_pos
+        end
+    end
+
     if upos then
         dest_cth = context.dest_cth and context.dest_cth[upos]
         dest_recoil = context.dest_target_recoil_cth and context.dest_target_recoil_cth[upos]

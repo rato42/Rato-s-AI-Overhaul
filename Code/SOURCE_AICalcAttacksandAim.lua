@@ -73,6 +73,8 @@ function AICalcAttacksAndAim(context, ap)
     ----
 
     ------- Verify if has AP to enter Stance
+
+    ---TODO:Check if this deduction is correct
     local ap = ap - free_move_ap --- Fixes considering free move ap as AP
     local total_stance_cost = cost + stance_cost + aim_cost -- + recoil_aim_cost
 

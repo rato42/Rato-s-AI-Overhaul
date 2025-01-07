@@ -77,7 +77,8 @@ function AICreateContext(unit, context)
     context.unit_world_voxel = point_pack(pos)
     context.unit_stance_pos = stance_pos_pack(wx, wy, wz, StancesList[unit.stance])
     ----------------------------------------
-    context.max_attacks = (unit.MaxAttacks or 3) + 3
+    ---- TODO: change the value to a constant
+    context.max_attacks = unit.MaxAttacks + 3
     -----------------------------------------
     context.dest_target = {} -- dest -> picked target (if any)
     context.dest_target_score = {} -- dest -> estimated damage

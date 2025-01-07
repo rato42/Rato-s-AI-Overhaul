@@ -30,7 +30,7 @@ function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
     local weight_unbolted = 30
 
     ----- Initialization
-    local context = AICreateContext(unit, proto_context)
+    local context = unit.ai_context or AICreateContext(unit, proto_context)
     local weapon = context.weapon or unit:GetActiveWeapons()
     local score = 100
     local no_enemy_in_range = true
