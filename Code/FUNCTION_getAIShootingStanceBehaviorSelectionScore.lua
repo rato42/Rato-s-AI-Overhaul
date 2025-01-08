@@ -18,8 +18,8 @@ function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
 
     ---- Parameters
     local angle_ap_threshold = 2 -- AP
-    local closeness_threshold = 4 -- slab
-    local distance_to_check_lack_of_cover = 20 -- slab
+    local closeness_threshold = 6 -- slab
+    local distance_to_check_lack_of_cover = 30 -- slab
     local effective_range_mul = 1.5
 
     ----- Weights

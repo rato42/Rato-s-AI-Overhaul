@@ -1152,6 +1152,7 @@ return {
 		SignatureActions = {
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "Autofire",
+				'Weight', 150,
 				'NotificationText', "",
 				'CustomScoring', function (self, context)
 					return AutoFire_CustomScoring(self, context)
@@ -1162,6 +1163,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "GroinShot",
+				'Weight', 150,
 				'CustomScoring', function (self, context)
 					return SingleShotTargeted_CustomScoring(self, context)
 				end,
@@ -1170,6 +1172,7 @@ return {
 			}),
 			PlaceObj('AIConeAttack', {
 				'BiasId', "Overwatch",
+				'Weight', 150,
 				'CustomScoring', function (self, context)
 					return Overwatch_CustomScoring(self, context)
 				end,
@@ -1215,7 +1218,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "Headshot",
-				'Weight', 150,
+				'Weight', 200,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "Headshot",
@@ -1253,6 +1256,7 @@ return {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "AssaultGrenadeThrow",
 						'Effect', "disable",
+						'Period', 0,
 					}),
 				},
 				'self_score_mod', -1000,
@@ -1627,16 +1631,11 @@ return {
 				'Fallback', false,
 				'OptLocWeight', 20,
 				'EndTurnPolicies', {
-					PlaceObj('AIPolicyFlanking', {
-						'Weight', 50,
-						'ReserveAttackAP', true,
-					}),
 					PlaceObj('AIPolicyDealDamage', nil),
 					PlaceObj('AIPolicyCustomFlanking', {
 						'Required', true,
 						'ReserveAttackAP', "Stance",
 						'visibility_mode', "team",
-						'ScalePerDistance', true,
 					}),
 					PlaceObj('AIPolicyTakeCover', {
 						'Required', true,
@@ -1667,7 +1666,7 @@ return {
 		SignatureActions = {
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "ExplosiveGrenadeThrow",
-				'Priority', true,
+				'Weight', 300,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "ExplosiveGrenadeThrow",
@@ -1705,7 +1704,6 @@ return {
 			}),
 			PlaceObj('AIActionThrowFlare', {
 				'BiasId', "FlareThrow",
-				'Weight', 80,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "FlareThrow",
@@ -1725,9 +1723,6 @@ return {
 			}),
 		},
 		TargetScoreRandomization = 10,
-		TargetingPolicies = {
-			PlaceObj('AITargetingEnemyInCover', nil),
-		},
 		group = "RatoAI",
 		id = "RATOAI_Demolition",
 	}),
@@ -1748,7 +1743,7 @@ return {
 						'RangeMax', 60,
 					}),
 					PlaceObj('AIPolicyMGSetupAP', {
-						'Required', true,
+						'Weight', 150,
 					}),
 				},
 				'SignatureActions', {
@@ -1855,9 +1850,7 @@ return {
 				'Health', 50,
 				'AboveHealth', true,
 			}),
-			PlaceObj('AITargetingEnemyInCover', {
-				'Weight', 200,
-			}),
+			PlaceObj('AITargetingEnemyInCover', nil),
 		},
 		comment = "Pq as signatures estao no Comportamento e não no Arquetipo???",
 		group = "Simplified",

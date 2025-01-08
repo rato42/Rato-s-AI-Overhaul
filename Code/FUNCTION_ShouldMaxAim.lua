@@ -13,8 +13,8 @@ function ShouldMaxAim(context) ----- used in AICalcAttacksAndAim
     local to_check_range = pb
 
     if dist and (dist > to_check_range * const.SlabSizeX) then
-        print("----------", context.unit.session_id, " should max aim bcause", target.session_id,
-              "is at ", dist / const.SlabSizeX)
+        -- print("----------", context.unit.session_id, " should max aim bcause", target.session_id,
+        --      "is at ", dist / const.SlabSizeX)
         return true
     end
     return false
