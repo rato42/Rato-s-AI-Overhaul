@@ -1,6 +1,22 @@
 last_proto = {}
 last_context = {}
 
+---- Parameters
+local angle_ap_threshold = 2 -- AP
+local closeness_threshold = 6 -- slab
+local distance_to_check_lack_of_cover = 30 -- slab
+local effective_range_mul = 1.5
+
+----- Weights
+local weight_close_enemy = -50
+local weight_no_cover = -20
+local weight_enemy_in_cone = 35
+local weight_per_AP_stance = 10
+local weight_unbolted = 30
+
+local prone_cover_CTH = Presets.ChanceToHitModifier.Default.RangeAttackTargetStanceCover
+local cover_max_malus = prone_cover_CTH:ResolveValue("Cover")
+
 function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
     last_proto = proto_context
 
@@ -16,27 +32,12 @@ function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
         return 0
     end
 
-    ---- Parameters
-    local angle_ap_threshold = 2 -- AP
-    local closeness_threshold = 6 -- slab
-    local distance_to_check_lack_of_cover = 30 -- slab
-    local effective_range_mul = 1.5
-
-    ----- Weights
-    local weight_close_enemy = -50
-    local weight_no_cover = -20
-    local weight_enemy_in_cone = 35
-    local weight_per_AP_stance = 10
-    local weight_unbolted = 30
-
     ----- Initialization
     local context = unit.ai_context or AICreateContext(unit, proto_context)
     local weapon = context.weapon or unit:GetActiveWeapons()
     local score = 100
     local no_enemy_in_range = true
     local att_pos = context.unit_pos or unit:GetPos()
-    local prone_cover_CTH = Presets.ChanceToHitModifier.Default.RangeAttackTargetStanceCover
-    local cover_max_malus = prone_cover_CTH:ResolveValue("Cover")
 
     last_context = context
 
@@ -104,3 +105,57 @@ function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
     -- print(score)
     return score
 end
+
+function RATOAI_GetScoreCompareCoversAtPos(unit, enemy, context, score, att_pos, pos, dist,
+                                           angle_override)
+
+    local context = context or unit.ai_context
+    local weapon = context.weapon or unit:GetActiveWeapons()
+    local enemy_in_range = false
+
+    if not enemy:IsDowned() and context.enemy_visible[enemy] and IsValidPos(pos) and
+        IsValidPos(att_pos) then
+        local pos = IsValidZ(pos) and pos or pos:SetTerrainZ()
+        att_pos = IsValidZ(att_pos) and att_pos or att_pos:SetTerrainZ()
+        local dist = dist or att_pos:Dist(pos)
+
+        if dist <= distance_to_check_lack_of_cover * const.SlabSizeX then
+            local enemy_weapon = enemy:GetActiveWeapons()
+            if enemy_weapon and not enemy_weapon:IsKindOf("MeleeWeapon") then
+                local use, value = prone_cover_CTH:CalcValue(enemy, unit, false, nil, enemy_weapon,
+                                                             nil, nil, 0, false, pos, att_pos)
+                value = value or 0
+                if use then
+                    local ratio = 100 - Clamp(MulDivRound(value, 100, cover_max_malus), 0, 100)
+                    local add = MulDivRound(weight_no_cover, ratio, 100)
+                    score = score + add
+                    -- print("self cover", use, enemy.session_id, value, ratio, add)
+                end
+            end
+        end
+
+        local effective_range = context.EffectiveRange * const.SlabSizeX * effective_range_mul
+        if dist <= effective_range then
+
+            local angle_ap = angle_override or
+                                 unit:GetShootingStanceAP(enemy, weapon, 1, false, "rotate")
+
+            if angle_ap <= angle_ap_threshold * const.Scale.AP then
+                local use, value = prone_cover_CTH:CalcValue(unit, enemy, false,
+                                                             context.default_attack, weapon, nil,
+                                                             nil, 0, false, att_pos, pos)
+
+                value = value or 0
+                if use then
+                    local ratio = 100 - Clamp(MulDivRound(value, 100, cover_max_malus), 0, 100)
+                    local add = MulDivRound(weight_enemy_in_cone, ratio, 100)
+                    score = score + add
+                    -- print("enemy cover", use, enemy.session_id, value, ratio, add)
+                end
+                enemy_in_range = true
+            end
+        end
+    end
+    return score, enemy_in_range
+end
+

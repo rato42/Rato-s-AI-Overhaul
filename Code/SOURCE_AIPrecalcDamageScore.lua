@@ -159,26 +159,26 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                 lof_params.step_pos = point_pack(ux, uy, uz)
                 lof_params.stance = ustance
                 targets_attack_data = GetLoFData(unit, targets, lof_params)
-
                 ---
                 context.attacker_pos = attacker_pos
                 ----
-
             end
 
             for k, target in ipairs(targets) do
                 local tpos = GetPackedPosAndStance(target)
                 local dist = stance_pos_dist(upos, tpos)
-
                 ----
                 context.current_target = target
                 ----
 
                 ------ Recoil CTH Calculation 
                 local recoil_cth = 0
+
                 if IsKindOf(weapon, "Firearm") then
                     recoil_cth = get_recoil(unit, target, target:GetPos(), context.default_attack,
-                                            weapon)
+                                            weapon, nil,
+                                            weapon:GetAutofireShots(context.default_attack), nil,
+                                            nil, nil, nil, nil, attacker_pos)
                 end
                 recoil_score[target] = recoil_cth
                 -------
@@ -271,12 +271,6 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                                                                context.weapon, nil, nil, aims[i])
                             end
 
-                            -- print("-----------------------------------------------")
-                            -- print("current mod", base_mod)
-                            -- print("aim", aims[i])
-                            -- print("new bonus = ", bonus)
-                            -- print("old bonus = ", old_bonus)
-                            -- print("aim bonus", bonus)
                             mod = mod + base_mod + (use and bonus or 0)
                             ------
                             --[[local hip_mod = Presets.ChanceToHitModifier.Default.HipshotPenalty
@@ -290,10 +284,6 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                                 mod = mod + hip_bonus'
                             end
                             print("hip bonus", hip_bonus)]]
-                            -- print("-----------------------------------------------")
-
-                            ----
-
                         end
 
                         ----- Clear Context from my additions

@@ -466,6 +466,10 @@ return {
 		'CodeFileName', "Code/FUNCTION_AddFlares.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "FUNCTION_EndTurnAIAction",
+		'CodeFileName', "Code/FUNCTION_EndTurnAIAction.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "FUNCTION_ShouldMaxAim",
 		'CodeFileName', "Code/FUNCTION_ShouldMaxAim.lua",
 	}),
@@ -485,6 +489,10 @@ return {
 	PlaceObj('ModItemCode', {
 		'name', "FUNCTIONS_SignaturesCustomScoring",
 		'CodeFileName', "Code/FUNCTIONS_SignaturesCustomScoring.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "FUNCTION_SoldierFlankingCustomScore",
+		'CodeFileName', "Code/FUNCTION_SoldierFlankingCustomScore.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "FUNCTION_CustomArchetypeFunc",
@@ -529,6 +537,10 @@ return {
 		'CodeFileName', "Code/SOURCE_AIEvalZones.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "SOURCE_AITakeCover",
+		'CodeFileName', "Code/SOURCE_AITakeCover.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "vanilla_archetype_functions_forconsult",
 		'CodeFileName', "Code/vanilla_archetype_functions_forconsult.lua",
 	}),
@@ -547,6 +559,10 @@ return {
 	PlaceObj('ModItemCode', {
 		'name', "eval_dest",
 		'CodeFileName', "Code/eval_dest.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "AIExecuteUnitBehavior",
+		'CodeFileName', "Code/AIExecuteUnitBehavior.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "Test",
@@ -1089,11 +1105,11 @@ return {
 			}),
 			PlaceObj('PositioningAI', {
 				'BiasId', "SoldierFlanking",
-				'Weight', 20,
+				'Weight', 40,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SoldierFlanking",
-						'Value', -33,
+						'Value', -20,
 						'Period', 0,
 						'ApplyTo', "Team",
 					}),
@@ -1102,6 +1118,15 @@ return {
 				'RequiredKeywords', {
 					"Soldier",
 				},
+				'Score', function (self, unit, proto_context, debug_data)
+					unit.ai_context = unit.ai_context or AICreateContext(unit, proto_context)
+					local dest, score = AIScoreReachableVoxels(unit.ai_context, self.EndTurnPolicies, 0)
+					-----
+					local custom_score = getAISoldierFlankingBehaviorSelectionScore(unit, proto_context)
+					score = MulDivRound(score, custom_score, 100)
+					-----
+					return MulDivRound(score, self.Weight, 100)
+				end,
 				'OptLocWeight', 20,
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyDealDamage', nil),
@@ -1512,6 +1537,7 @@ return {
 		BaseAttackTargeting = set( "Torso" ),
 		Behaviors = {
 			PlaceObj('StandardAI', {
+				'Weight', 50,
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyDealDamage', nil),
 					PlaceObj('AIPolicyTakeCover', {
@@ -1748,7 +1774,7 @@ return {
 				},
 				'SignatureActions', {
 					PlaceObj('AIActionMGSetup', {
-						'Weight', 660,
+						'Weight', 500,
 						'Priority', true,
 						'CustomScoring', function (self, context)
 							local unit = context.unit
@@ -1759,8 +1785,8 @@ return {
 							return self.Weight, false, self.Priority
 						end,
 						'team_score', 0,
-						'min_score', 0,
-						'enemy_cover_mod', 120,
+						'min_score', 100,
+						'enemy_cover_mod', 30,
 						'cur_zone_mod', 140,
 					}),
 					PlaceObj('AIActionMGBurstFire', {
@@ -1796,14 +1822,27 @@ return {
 					PlaceObj('AIPolicyLastEnemyPos', {
 						'Required', true,
 					}),
+					PlaceObj('AIPolicyWeaponRange', {
+						'Weight', 50,
+						'RangeMin', 40,
+						'RangeMax', 100,
+					}),
 				},
 				'SignatureActions', {
 					PlaceObj('AIActionMGSetup', {
 						'Weight', 500,
 						'Priority', true,
+						'CustomScoring', function (self, context)
+							local unit = context.unit
+							if unit:HasStatusEffect("ManningEmplacement") or unit:HasStatusEffect("StationedMachineGun") then
+								return 0, true, false   
+							end
+							
+							return self.Weight, false, self.Priority
+						end,
 						'team_score', 0,
-						'min_score', 0,
-						'enemy_cover_mod', 100,
+						'min_score', 100,
+						'enemy_cover_mod', 30,
 						'cur_zone_mod', 140,
 					}),
 				},

@@ -10,6 +10,8 @@ function OnMsg.ModsReloaded()
 end
 
 ------------------------------------
+-----TODO: maybe remove handguns/melee from those guys that dont really use it
+------TODO: Flash specific action. Target overwatchers
 
 function GetGrenadeRoleData(unit)
 
@@ -28,11 +30,11 @@ function GetGrenadeRoleData(unit)
     -- @ flare
 
     local map = {
-        Marksman = {smoke = {0, 1}},
-        Demolitions = {explo = {2, 3}, timed = {2, 4}, aoe = {0, 4}},
-        Soldier = {explo = {0, 2}, smoke = {1, 2}},
-        Recon = {flash = {1, 3}, smoke = {0, 2}},
-        Stormer = {explo = {0, 2}, aoe = {1, 3}}
+        Marksman = {smoke = {0, 2}},
+        Demolitions = {explo = {2, 3}, timed = {1, 3}, aoe = {-2, 4}},
+        Soldier = {explo = {-2, 2}, smoke = {1, 2}},
+        Recon = {flash = {1, 3}, smoke = {-1, 2}},
+        Stormer = {explo = {-1, 3}, aoe = {1, 3}}
         -- Artillery = {},
     }
 
@@ -54,7 +56,7 @@ function GetGrenadeRoleData(unit)
     return gren_data
 end
 
-grenade_table = {}
+RATOAI_GrenadeTable = {}
 
 function RATOAI_BuildGrenadeTable()
     local exclusion_list = {
@@ -69,35 +71,45 @@ function RATOAI_BuildGrenadeTable()
         end
 
         if IsKindOf(item, "FlareStick") then
-            grenade_table['flare'] = grenade_table['flare'] or {}
-            table.insert(grenade_table['flare'], item.class)
+            RATOAI_GrenadeTable['flare'] = RATOAI_GrenadeTable['flare'] or {}
+            table.insert(RATOAI_GrenadeTable['flare'], item.class)
+
         elseif IsKindOfClasses(item, "ConcussiveGrenade", 'ConcussiveGrenade_IED') then
-            grenade_table['flash'] = grenade_table['flash'] or {}
-            table.insert(grenade_table['flash'], item.class)
+            RATOAI_GrenadeTable['flash'] = RATOAI_GrenadeTable['flash'] or {}
+            table.insert(RATOAI_GrenadeTable['flash'], item.class)
+
         elseif IsKindOf(item, 'ThrowableTrapItem') then
+
             if item.TriggerType == "Timed" then
-                grenade_table['timed'] = grenade_table['timed'] or {}
-                table.insert(grenade_table['timed'], item.class)
+                RATOAI_GrenadeTable['timed'] = RATOAI_GrenadeTable['timed'] or {}
+                table.insert(RATOAI_GrenadeTable['timed'], item.class)
+
             elseif item.TriggerType == "Proximity" then
-                grenade_table['proximity'] = grenade_table['proximity'] or {}
-                table.insert(grenade_table['proximity'], item.class)
+                RATOAI_GrenadeTable['proximity'] = RATOAI_GrenadeTable['proximity'] or {}
+                table.insert(RATOAI_GrenadeTable['proximity'], item.class)
             end
+
         elseif IsKindOf(item, 'Grenade') then
+
             local aoe_types = {"fire", "teargas"}
+
             if item.aoeType and table.find(aoe_types, item.aoeType) then
-                grenade_table['aoe'] = grenade_table['aoe'] or {}
-                table.insert(grenade_table['aoe'], item.class)
+                RATOAI_GrenadeTable['aoe'] = RATOAI_GrenadeTable['aoe'] or {}
+                table.insert(RATOAI_GrenadeTable['aoe'], item.class)
+
             elseif item.aoeType and item.aoeType == "smoke" then
-                grenade_table['smoke'] = grenade_table['smoke'] or {}
-                table.insert(grenade_table['smoke'], item.class)
+                RATOAI_GrenadeTable['smoke'] = RATOAI_GrenadeTable['smoke'] or {}
+                table.insert(RATOAI_GrenadeTable['smoke'], item.class)
+
             elseif item.BaseDamage > 0 then
-                grenade_table['explo'] = grenade_table['explo'] or {}
-                table.insert(grenade_table['explo'], item.class)
+                RATOAI_GrenadeTable['explo'] = RATOAI_GrenadeTable['explo'] or {}
+                table.insert(RATOAI_GrenadeTable['explo'], item.class)
+
             end
         end
     end
 
-    grenade_table = {}
+    RATOAI_GrenadeTable = {}
     ForEachPreset("InventoryItemCompositeDef", function(p)
         local item = g_Classes[p.id]
         if item and IsKindOf(item, "MishapProperties") then
@@ -106,95 +118,42 @@ function RATOAI_BuildGrenadeTable()
     end)
 end
 
-function RATOAI_ChangeExplosives(unit)
-    local role = unit.role or ''
-
-    -- if not (role == "Demolitions" or role == "Brute" or role == "Recon" ) then
-    --    return
-    -- end
-
-    local explosive_nades = build_explosive_grenade_table(unit)
-
-    local function check_and_change_grenade(slot, unit, data)
-        local not_explosive = {}
-        local explo = {}
-        unit:ForEachItemInSlot(slot, function(item)
-            if IsKindOf(item, 'ThrowableTrapItem') then
-                local substance = g_Classes[item.ExplosiveType]
-                if substance then
-                    if substance.BaseDamage <= 0 then
-                        table.insert(not_explosive, item)
-                    else
-                        table.insert(explo, item)
-                    end
-                end
-            elseif IsKindOf(item, 'Grenade') then
-                if item.BaseDamage <= 0 then
-                    table.insert(not_explosive, item)
-                else
-                    table.insert(explo, item)
-                end
-            end
-        end)
-
-        --[[ if role == "Demolitions" then
-            min_explosive_grenades = 2
-        elseif role == "Brute" then
-            min_explosive_grenades = Max(2, Max(#explo, #not_explosive))
-        end]]
-
-        data.current_explosives = data.current_explosives + #explo
-
-        local number_of_explosives = #explo
-        while number_of_explosives < data.min_explosive_grenades do
-            local amount = 3
-
-            if #not_explosive > 0 then
-                local rand_ind = InteractionRandRange(1, #not_explosive)
-                local item_to_remove = not_explosive[rand_ind]
-                amount = item_to_remove.Amount
-                unit:RemoveItem(slot, item_to_remove)
-                table.remove(not_explosive, rand_ind)
-            end
-
-            local explosive = explosive_nades[InteractionRandRange(1, #explosive_nades)]
-
-            local new_item = PlaceInventoryItem(explosive)
-            new_item.Amount = amount
-
-            unit:AddItem(slot, new_item)
-            ObjModified(unit)
-            number_of_explosives = number_of_explosives + 1
-            data.current_explosives = data.current_explosives + 1
-        end
-
-        return data
-    end
-
-    local data = {min_explosive_grenades = 3, current_explosives = 0}
-
-    data = check_and_change_grenade("Handheld A", unit, data)
-    data = check_and_change_grenade("Handheld B", unit, data)
-
-end
-
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 local grenade_immunity_list = {"ToxicGasGrenade"} ---- Will not be removed
 
 function RATOAI_UpdateUnitEquipedGrenades(unit)
+
     if not R_IsAI(unit) then
         return
     end
 
-    if not next(grenade_table) then
+    if not next(RATOAI_GrenadeTable) then
         RATOAI_BuildGrenadeTable()
+    end
+
+    local function RATOAI_GetReplacementIED(unit, explo_id)
+        local base_replacement = get_replacement_ied(unit, {class = explo_id})
+
+        if base_replacement then
+            return base_replacement
+        end
+
+        local item = g_Classes[explo_id]
+        local substances_prohibited = {"C4", "PETN"}
+        if item and IsKindOf(item, "ThrowableTrapItem") and item.TriggerType == "Timed" then
+            local subs = item.ExplosiveType or ''
+            if subs == "C4" then
+                return "PipeBomb"
+            elseif subs == "PETN" then
+                return "TimedTNT"
+            end
+        end
+        return nil
     end
 
     local grenade_data = GetGrenadeRoleData(unit)
     local desired_grenades_num = {}
     for type, data in pairs(grenade_data) do
         local amount = InteractionRandRange(data[1], data[2])
-        ic(type, amount)
         if amount > 0 then
             desired_grenades_num[type] = amount
         end
@@ -205,7 +164,7 @@ function RATOAI_UpdateUnitEquipedGrenades(unit)
     for _, slot in ipairs(slots) do
         unit:ForEachItemInSlot(slot, function(item)
             if IsKindOf(item, "MishapProperties") then
-                for type, grenades in pairs(grenade_table) do
+                for type, grenades in pairs(RATOAI_GrenadeTable) do
                     if table.find(grenades, item.class) then
                         local desired_num = desired_grenades_num[type]
                         if desired_num then
@@ -229,13 +188,13 @@ function RATOAI_UpdateUnitEquipedGrenades(unit)
     end
 
     for type, num in pairs(desired_grenades_num) do
-        local possible_types = grenade_table[type]
+        local possible_types = RATOAI_GrenadeTable[type]
         local explo_id = possible_types[InteractionRandRange(1, #possible_types)]
 
         if IsMod_loaded("RATONADE") then
             local affiliation = unit.Affiliation or ""
             local islegion_thug = affiliation == "Legion" or affiliation == "Thugs"
-            explo_id = islegion_thug and get_replacement_ied(unit, {class = explo_id}) or explo_id
+            explo_id = islegion_thug and RATOAI_GetReplacementIED(unit, explo_id) or explo_id
         end
 
         local new_item = PlaceInventoryItem(explo_id)
@@ -291,11 +250,7 @@ end
 
 ------------------------------------
 
------TODO: maybe remove handguns/melee from those guys that dont really use it
-
-------TODO: Flash specific action. Target overwatchers
-
-function RATOAI_AddFlare(unit, check)
+function RATOAI_AddFlare(unit, check) --------- Old Flare func
     if not CurrentModOptions.AddFlares then
         return
     end
@@ -318,153 +273,3 @@ function RATOAI_AddFlare(unit, check)
         end
     end
 end
-
-local function build_explosive_grenade_table(unit)
-    local legion_thug = unit.Affiliation and
-                            (unit.Affiliation == "Legion" or unit.Affiliation == "Thug")
-
-    local EO_loaded = IsMod_loaded("RATONADE")
-
-    local explosive_IEDs = {'PipeBomb'}
-    local EO_IEDS = {"TNTBolt_IED", "NailBomb_IED"}
-
-    local explosive_nades = {'FragGrenade', 'HE_Grenade'}
-    local EO_explosives = {"HE_Grenade_1"}
-
-    if EO_loaded then
-        for _, v in ipairs(EO_IEDS) do
-            table.insert(explosive_IEDs, v)
-        end
-
-        for _, v in ipairs(EO_explosives) do
-            table.insert(explosive_nades, v)
-        end
-    end
-
-    --- 
-
-    return (legion_thug and EO_loaded) and explosive_IEDs or explosive_nades
-end
-
-local function check_and_change_grenade(slot, unit, type)
-    local type_to_check = {}
-    local explo = {}
-    unit:ForEachItemInSlot(slot, function(item)
-        if IsKindOf(item, 'ThrowableTrapItem') then
-            local substance = g_Classes[item.ExplosiveType]
-            if substance then
-                if substance.BaseDamage <= 0 then
-                    table.insert(not_explosive, item)
-                else
-                    table.insert(explo, item)
-                end
-            end
-        elseif IsKindOf(item, 'Grenade') then
-            if item.BaseDamage <= 0 then
-                table.insert(not_explosive, item)
-            else
-                table.insert(explo, item)
-            end
-        end
-    end)
-
-    --[[ if role == "Demolitions" then
-		min_explosive_grenades = 2
-	elseif role == "Brute" then
-		min_explosive_grenades = Max(2, Max(#explo, #not_explosive))
-	end]]
-
-    data.current_explosives = data.current_explosives + #explo
-
-    local number_of_explosives = #explo
-
-    return data
-end
-
----------TODO: Make a complete explosive distribution based on role
----------TODO: Similar function to swap melee for handgun for snipers
-
----- Recon - Flashbang 
----- Demolitions - 1 explosive, 1 aoe, 1 smoke or trap?
----- Soldiers - mostly smoke i guess  
----- Stormer -- 2 explosves?  --- Im not sure brutes should have explo.
-
----- Also, think about a disabling check if target is too close (because of EO overhaul and possible miss)
-
----- possible version 2
-function POSSIBLEV2_RATOAI_ChangeExplosives(unit)
-    local role = unit.role or ''
-
-    -- if not (role == "Demolitions" or role == "Brute" or role == "Recon" ) then
-    --    return
-    -- end
-
-    local explosive_nades = build_explosive_grenade_table(unit)
-
-    local function get_equipped_inSlots(slot, unit, all_explosives)
-
-        local not_explosive = {}
-        local explo = {}
-        unit:ForEachItemInSlot(slot, function(item)
-            if IsKindOf(item, 'ThrowableTrapItem') then
-                local substance = g_Classes[item.ExplosiveType]
-                if substance then
-                    if substance.BaseDamage <= 0 then
-                        table.insert(all_explosives.non_damage, {item = item, slot = slot})
-                    else
-                        table.insert(all_explosives.damage, {item = item, slot = slot})
-                    end
-                end
-            elseif IsKindOf(item, 'Grenade') then
-                if item.BaseDamage <= 0 then
-                    table.insert(all_explosives.non_damage, {item = item, slot = slot})
-                else
-                    table.insert(all_explosives.damage, {item = item, slot = slot})
-                end
-            end
-        end)
-        return all_explosives
-    end
-
-    local function check_and_change_grenade(unit, all_explosives)
-
-        local explo = all_explosives.damage
-        local not_explosive = all_explosives.non_damage
-
-        local min_explosive_grenades = 1
-
-        if role == "Demolitions" then
-            min_explosive_grenades = 2
-        elseif role == "Brute" then
-            min_explosive_grenades = Max(2, Max(#explo, #not_explosive))
-        end
-
-        local number_of_explosives = #explo
-        while number_of_explosives < min_explosive_grenades do
-            local amount = 3
-
-            if #not_explosive > 0 then
-                local rand_ind = InteractionRandRange(1, #not_explosive)
-                local item_to_remove = not_explosive[rand_ind].item
-                amount = item_to_remove.Amount
-                unit:RemoveItem(slot, item_to_remove)
-                table.remove(not_explosive, rand_ind)
-            end
-
-            local explosive = explosive_nades[InteractionRandRange(1, #explosive_nades)]
-
-            local new_item = PlaceInventoryItem(explosive)
-            new_item.Amount = amount
-
-            unit:AddItem(slot, new_item)
-            ObjModified(unit)
-            number_of_explosives = number_of_explosives + 1
-        end
-    end
-
-    local all_explosives = {non_damage = {}, damage = {}}
-    all_explosives = get_equipped_inSlots("Handheld A", unit, all_explosives)
-    all_explosives = get_equipped_inSlots("Handheld B", unit, all_explosives)
-    check_and_change_grenade(unit, all_explosives)
-end
-
