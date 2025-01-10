@@ -1,6 +1,3 @@
-last_proto = {}
-last_context = {}
-
 ---- Parameters
 local angle_ap_threshold = 2 -- AP
 local closeness_threshold = 6 -- slab
@@ -14,11 +11,7 @@ local weight_enemy_in_cone = 35
 local weight_per_AP_stance = 10
 local weight_unbolted = 30
 
-local prone_cover_CTH = Presets.ChanceToHitModifier.Default.RangeAttackTargetStanceCover
-local cover_max_malus = prone_cover_CTH:ResolveValue("Cover")
-
 function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
-    last_proto = proto_context
 
     --[[if unit:HasStatusEffect("ManningEmplacement") or unit:HasStatusEffect("StationedMachineGun") then
         return 0
@@ -39,8 +32,6 @@ function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
     local no_enemy_in_range = true
     local att_pos = context.unit_pos or unit:GetPos()
 
-    last_context = context
-
     ----- Stance AP score
     local wep_stance_ap = GetWeapon_StanceAP(unit, weapon) or 1000
     score = score + MulDivRound(wep_stance_ap, weight_per_AP_stance, const.Scale.AP)
@@ -51,9 +42,6 @@ function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
     ----
 
     for enemy, pos in pairs(context.enemy_pos) do
-
-        --- Can use enemy_visible_by_team as well
-        ---- Beware the cover will not consider lack of line of sight, complete obstruction etc
         if not enemy:IsDowned() and context.enemy_visible[enemy] and IsValidPos(pos) and
             IsValidPos(att_pos) then
             local pos = IsValidZ(pos) and pos or pos:SetTerrainZ()
@@ -64,75 +52,35 @@ function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
                 score = score + weight_close_enemy
             end
 
-            if dist <= distance_to_check_lack_of_cover * const.SlabSizeX then
-                local enemy_weapon = enemy:GetActiveWeapons()
-                if enemy_weapon and not enemy_weapon:IsKindOf("MeleeWeapon") then
-                    local use, value = prone_cover_CTH:CalcValue(enemy, unit, false, nil,
-                                                                 enemy_weapon, nil, nil, 0, false,
-                                                                 pos, att_pos)
-                    value = value or 0
-                    if use then
-                        local ratio = 100 - Clamp(MulDivRound(value, 100, cover_max_malus), 0, 100)
-                        local add = MulDivRound(weight_no_cover, ratio, 100)
-                        score = score + add
-                        -- print("self cover", use, enemy.session_id, value, ratio, add)
-                    end
-                end
-            end
+            local enemy_visible = false
+            score, enemy_visible = RATOAI_GetEnemyCoverScore(unit, enemy, context, score, att_pos,
+                                                             pos, dist)
+            score = RATOAI_SelfCoverToEnemyScore(unit, enemy, context, score, att_pos, pos, dist)
 
-            local effective_range = context.EffectiveRange * const.SlabSizeX * effective_range_mul
-            if dist <= effective_range then
-                local angle_ap = unit:GetShootingStanceAP(enemy, weapon, 1, false, "rotate")
-                if angle_ap <= angle_ap_threshold * const.Scale.AP then
-                    local use, value = prone_cover_CTH:CalcValue(unit, enemy, false,
-                                                                 context.default_attack, weapon,
-                                                                 nil, nil, 0, false, att_pos, pos)
-
-                    value = value or 0
-                    if use then
-                        local ratio = 100 - Clamp(MulDivRound(value, 100, cover_max_malus), 0, 100)
-                        local add = MulDivRound(weight_enemy_in_cone, ratio, 100)
-                        score = score + add
-                        -- print("enemy cover", use, enemy.session_id, value, ratio, add)
-                    end
-                    no_enemy_in_range = false
-                end
+            if enemy_visible then
+                no_enemy_in_range = false
             end
         end
     end
 
     score = no_enemy_in_range and 0 or score
-    -- print(score)
     return score
 end
 
-function RATOAI_GetScoreCompareCoversAtPos(unit, enemy, context, score, att_pos, pos, dist,
-                                           angle_override)
-
+function RATOAI_GetEnemyCoverScore(unit, enemy, context, score, att_pos, target_pos, dist,
+                                   angle_override)
     local context = context or unit.ai_context
     local weapon = context.weapon or unit:GetActiveWeapons()
     local enemy_in_range = false
 
-    if not enemy:IsDowned() and context.enemy_visible[enemy] and IsValidPos(pos) and
-        IsValidPos(att_pos) then
-        local pos = IsValidZ(pos) and pos or pos:SetTerrainZ()
-        att_pos = IsValidZ(att_pos) and att_pos or att_pos:SetTerrainZ()
-        local dist = dist or att_pos:Dist(pos)
+    local prone_cover_CTH = Presets.ChanceToHitModifier.Default.RangeAttackTargetStanceCover
+    local cover_max_malus = prone_cover_CTH:ResolveValue("Cover")
 
-        if dist <= distance_to_check_lack_of_cover * const.SlabSizeX then
-            local enemy_weapon = enemy:GetActiveWeapons()
-            if enemy_weapon and not enemy_weapon:IsKindOf("MeleeWeapon") then
-                local use, value = prone_cover_CTH:CalcValue(enemy, unit, false, nil, enemy_weapon,
-                                                             nil, nil, 0, false, pos, att_pos)
-                value = value or 0
-                if use then
-                    local ratio = 100 - Clamp(MulDivRound(value, 100, cover_max_malus), 0, 100)
-                    local add = MulDivRound(weight_no_cover, ratio, 100)
-                    score = score + add
-                    -- print("self cover", use, enemy.session_id, value, ratio, add)
-                end
-            end
-        end
+    if not enemy:IsDowned() and context.enemy_visible[enemy] and IsValidPos(target_pos) and
+        IsValidPos(att_pos) then
+        local target_pos = IsValidZ(target_pos) and target_pos or target_pos:SetTerrainZ()
+        att_pos = IsValidZ(att_pos) and att_pos or att_pos:SetTerrainZ()
+        local dist = dist or att_pos:Dist(target_pos)
 
         local effective_range = context.EffectiveRange * const.SlabSizeX * effective_range_mul
         if dist <= effective_range then
@@ -143,7 +91,7 @@ function RATOAI_GetScoreCompareCoversAtPos(unit, enemy, context, score, att_pos,
             if angle_ap <= angle_ap_threshold * const.Scale.AP then
                 local use, value = prone_cover_CTH:CalcValue(unit, enemy, false,
                                                              context.default_attack, weapon, nil,
-                                                             nil, 0, false, att_pos, pos)
+                                                             nil, 0, false, att_pos, target_pos)
 
                 value = value or 0
                 if use then
@@ -155,7 +103,40 @@ function RATOAI_GetScoreCompareCoversAtPos(unit, enemy, context, score, att_pos,
                 enemy_in_range = true
             end
         end
+        return score, enemy_in_range
     end
-    return score, enemy_in_range
+end
+
+function RATOAI_SelfCoverToEnemyScore(unit, enemy, context, score, att_pos, target_pos, dist,
+                                      angle_override)
+    local context = context or unit.ai_context
+    local weapon = context.weapon or unit:GetActiveWeapons()
+    local enemy_in_range = false
+
+    local prone_cover_CTH = Presets.ChanceToHitModifier.Default.RangeAttackTargetStanceCover
+    local cover_max_malus = prone_cover_CTH:ResolveValue("Cover")
+
+    if not enemy:IsDowned() and context.enemy_visible[enemy] and IsValidPos(target_pos) and
+        IsValidPos(att_pos) then
+        local target_pos = IsValidZ(target_pos) and target_pos or target_pos:SetTerrainZ()
+        att_pos = IsValidZ(att_pos) and att_pos or att_pos:SetTerrainZ()
+        local dist = dist or att_pos:Dist(target_pos)
+
+        if dist <= distance_to_check_lack_of_cover * const.SlabSizeX then
+            local enemy_weapon = enemy:GetActiveWeapons()
+            if enemy_weapon and not enemy_weapon:IsKindOf("MeleeWeapon") then
+                local use, value = prone_cover_CTH:CalcValue(enemy, unit, false, nil, enemy_weapon,
+                                                             nil, nil, 0, false, target_pos, att_pos)
+                value = value or 0
+                if use then
+                    local ratio = 100 - Clamp(MulDivRound(value, 100, cover_max_malus), 0, 100)
+                    local add = MulDivRound(weight_no_cover, ratio, 100)
+                    score = score + add
+                    -- print("self cover", use, enemy.session_id, value, ratio, add)
+                end
+            end
+        end
+    end
+    return score
 end
 

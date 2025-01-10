@@ -67,39 +67,6 @@ local function CompareCovers(enemy, current_pos_cover_data, new_pos_cover_data)
     return cover_difference
 end
 
-function Update_AIPrecalcDamageScore(unit)
-    local context = unit.ai_context or {}
-    if not context.damage_score_precalced then
-        -- print("-- not precalced", GameTime())
-        AIPrecalcDamageScore(context)
-        -- unit.ai_context = context
-        return context
-    end
-    return nil
-    -- print("Already precalced", GameTime())
-end
-
---[[function Update_AICoverLOS_currentpos(unit, current_pos_arg)
-    local context = unit.ai_context
-    local context_copy = table.copy(unit.ai_context)
-    local current_pos = current_pos_arg or context.unit_stance_pos -- stance_pos_pack(unit:GetPos())
-    if current_pos then
-        if not context.dest_target_cover_score[current_pos] or
-            not context.dest_target_los[current_pos] then
-            print("-- not current_pos", GameTime())
-            AIPrecalcDamageScore(context_copy, {current_pos})
-
-            context.dest_target_cover_score[current_pos] =
-                context_copy.dest_target_cover_score[current_pos]
-            context.dest_target_los[current_pos] = context_copy.dest_target_los[current_pos]
-            -- unit.ai_context = context
-            return context
-        end
-
-    end
-    return nil
-end]]
-
 ---- Args
 local effective_range_mul = 1.0
 local distance_impact = 0.25
@@ -291,4 +258,25 @@ end
     local new_target_in_cover = IsInCover(unit, target, dest)
 
     return (target_in_cover and not new_target_in_cover) and self.Weight or 0
+end]]
+
+--[[function Update_AICoverLOS_currentpos(unit, current_pos_arg)
+    local context = unit.ai_context
+    local context_copy = table.copy(unit.ai_context)
+    local current_pos = current_pos_arg or context.unit_stance_pos -- stance_pos_pack(unit:GetPos())
+    if current_pos then
+        if not context.dest_target_cover_score[current_pos] or
+            not context.dest_target_los[current_pos] then
+            print("-- not current_pos", GameTime())
+            AIPrecalcDamageScore(context_copy, {current_pos})
+
+            context.dest_target_cover_score[current_pos] =
+                context_copy.dest_target_cover_score[current_pos]
+            context.dest_target_los[current_pos] = context_copy.dest_target_los[current_pos]
+            -- unit.ai_context = context
+            return context
+        end
+
+    end
+    return nil
 end]]

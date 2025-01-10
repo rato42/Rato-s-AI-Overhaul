@@ -51,7 +51,6 @@ function AITargetingEnemyInCover:EvalTarget(unit, target)
     return 0
 end
 
------------- Not used for now
 DefineClass.AIPolicyAttack_StanceAP = {
     __parents = {"AIPositioningPolicy"},
     __generated_by_class = "ClassDef",
