@@ -1,11 +1,7 @@
 function RATOAI_CUAEoptions()
 
     if IsMod_loaded("LDCUAE") then
-        local cuaeSettings = {
-            ExtraHandgun = true,
-            ExtraGrenadesChance = 100,
-            ExtraGrenadesCount = 5
-        }
+        local cuaeSettings = {ExtraHandgun = true, ExtraGrenadesChance = 75, ExtraGrenadesCount = 4}
         CUAEForceSettings(cuaeSettings)
 
         RATOAI_AddExclusionCUAE()
@@ -61,7 +57,7 @@ function RATOAI_AddExclusionCUAE()
 
     local end_game = {'BarretM82', 'AA12'}
 
-    --------- TODO: fix too much sks 
+    -- fix for too much sks 
     local excl_table = {
         Army = {},
         Adonis = {},

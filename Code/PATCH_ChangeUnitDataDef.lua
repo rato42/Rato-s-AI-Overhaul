@@ -6,6 +6,7 @@ end
 
 function RATOAI_ChangeUnitDataDef(class, props)
     for k, v in pairs(props) do
+        ic(class.class, k, v)
         if k == "add_HWS" then
             if CurrentModOptions.AddHWStoGunners then
                 AddStartingPerk(class, "HeavyWeaponsTraining")

@@ -76,17 +76,15 @@ function AICreateContext(unit, context)
     context.unit_grid_voxel = point_pack(gx, gy, gz)
     context.unit_world_voxel = point_pack(pos)
     context.unit_stance_pos = stance_pos_pack(wx, wy, wz, StancesList[unit.stance])
-    ----------------------------------------
-    ---- TODO: change the value to a constant
-    context.max_attacks = unit.MaxAttacks + 3
-    -----------------------------------------
     context.dest_target = {} -- dest -> picked target (if any)
     context.dest_target_score = {} -- dest -> estimated damage
     ------------------
+    ---- TODO: change the value to a constant
+    context.max_attacks = unit.MaxAttacks -- + 3
     context.currentpos_target_cover_score = {}
     context.dest_target_recoil_cth = {} -- dest -> recoil cth degradation
-    context.dest_target_cover_score = {} -- dest -> cover
-    context.dest_target_los = {}
+    context.dest_target_cover_score = {} -- dest -> cover -- CustomFlanking
+    context.dest_target_los = {} -- dest -> los -- CustomFlanking
     context.dest_flanking_pol_debug = {} ------------- DEBUGGER
     -----------------
     context.weapon = weapon

@@ -18,10 +18,10 @@ function Get_HeavyGunnerShouldUsePositioningBehavior(behavior, unit, proto_conte
             context.action_states[action] = {}
             action:PrecalcAction(context, context.action_states[action])
             if action:IsAvailable(context, context.action_states[action]) then
-                ic("MG Setup Available")
+                print("MG Setup Available")
                 return false
             end
-            ic("== MG Setup NOT Available")
+            print("== MG Setup NOT Available")
             return true
         end
     end

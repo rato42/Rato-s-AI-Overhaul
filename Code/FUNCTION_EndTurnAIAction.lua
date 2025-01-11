@@ -28,7 +28,6 @@ function RATOAI_TryChangeStance(unit)
         if not cover_high and not cover_low then
             local prone_AP = unit.stance == "Crouch" and 1000 or 2000
             if ap >= prone_AP then
-                -- AIPlayCombatAction("StanceProne", unit, prone_AP)
                 unit:SetActionCommand("ChangeStance", "RATOAI_ChangeStance", prone_AP, "Prone")
                 if angle then
                     unit:AnimatedRotation(angle)
@@ -40,7 +39,6 @@ function RATOAI_TryChangeStance(unit)
         if unit.stance ~= "Crouch" then
             local crouch_ap = 1000
             if ap >= crouch_ap then
-                -- AIPlayCombatAction("StanceCrouch", unit, crouch_ap)
                 unit:SetActionCommand("ChangeStance", "RATOAI_ChangeStance", crouch_ap, "Crouch")
                 if angle then
                     unit:AnimatedRotation(angle)

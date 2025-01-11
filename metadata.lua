@@ -1,6 +1,6 @@
 return PlaceObj('ModDef', {
 	'title', "Rato's AI Overhaul",
-	'description', "Features\n\nLogic for keeping stance AP\n\nAI will be able to use single shot instead of burst shot if  otherwise it wouldnt have enough AP to enter shooting stance\n\nAi will crouch or go prone if it has ap at the end of its turn\n\nMore aiming, more shooting stance entering.\n\nCustom decision making when AI decides to use special attacks like mobile attack, overwatch, limb shots, etc. The logic is based on distance, weapons and components, and takes into effect the new mechanics from GBO.\n\nThe AI will be able to use most of the abilities of new weapons/components added by CUAE (example, a stockless rifle will use run and gun, SKS users will use their mobile attacks, they will be able to use grenades).\n\nCustom logic for Grenadiers and MGs to try to attack targets in cover and destroy the cover\n\nMore use of grenades.\n\nUnits will throw flares at the enemy at night.\n\nCreated a custom experimental logic for AI to flank more efficiently \n\nRevamped source functions that control the inner workings of the AI decision making. Added recoil calculation, point blank mechanics changes from GBO, cover, mechanics changes. The AI will take into account Bolt Action costs when making decisions.\n\nFixed some behaviors that made AI use FreeMove ap for aiming.\n\nAlso took away some limitations AI had to make it less punishing in the base game.\n\nIncreased AI use of cover. \nIncreased AI use of MGsetup.\n\nSnipers will swap to handguns and start retreating behaviors when you get too close to them.\n\nNew lore friendly weapon progression to be used with CUAE!\n\nThe philosophy here was to change mostly/only the behavior of the AI, with no cheating (I even fixed some cheating the AI did). \n\n\nThe only additions to units are increased explosive stats skill (if you use Rato's Explosive Overhaul, this is recommended) and the addition of Heavy Weapon's Specialist to machine gunners. Both can be disabled in the mod options\n\n\n\nFair Play Philosophy\n\n    The AI improvements focus solely on enhancing behavior, avoiding any unfair advantages or \"cheating.\" \n\nImproved Tactics for Grenadiers and Machine Gunners\n\n    Grenadiers and MG units are more adept at targeting enemies in cover, prioritizing cover destruction.\n    Increased grenade usage for both offensive and tactical purposes.\n\nNight Combat Enhancements\n\n    Units now throw flares at enemies during night time engagements for improved visibility and tactical advantage.\n\nExperimental Flanking Logic\n\n    Custom experimental logic improves AI flanking behaviors for more effective positioning and tactical maneuvers.\n\nCore AI Mechanics Overhaul\n\n    Revamped source functions governing AI decision-making. Updates include:\n        Recoil calculation and point-blank mechanics from GBO.\n        Enhanced cover mechanics and Bolt Action AP cost considerations.\n        Fixed behaviors causing AI to misuse FreeMove AP for aiming in vanilla.\n\nBehavioral Adjustments for Realism and Balance\n\n    Removed certain base game limitations to make AI more challenging.\n    Increased AI usage of cover and MG setups for strategic advantage.\n    Snipers now swap to handguns and adopt retreat behaviors when enemies close in.\n\nLore-Friendly Weapon Progression (CUAE)\n\n    Added a lore-friendly progression system for new weapons compatible with CUAE.\n\nOptional:\n        Explosive skill stats increased for all units (recommended with Rato’s Explosive Overhaul, but optional).\n        Machine Gunners gain the Heavy Weapons Specialist perk (can be disabled via mod options).",
+	'description', "Features\n\nLogic for keeping stance AP\n\nAI will be able to use single shot instead of burst shot if  otherwise it wouldnt have enough AP to enter shooting stance\n\nAi will crouch or go prone if it has ap at the end of its turn\n\nEnemies wont hang back, they will enter the fight\n\nMore aiming, more shooting stance entering.\n\nCustom decision making when AI decides to use special attacks like mobile attack, overwatch, limb shots, etc. The logic is based on distance, weapons and components, and takes into effect the new mechanics from GBO.\n\nThe AI will be able to use most of the abilities of new weapons/components added by CUAE (example, a stockless rifle will use run and gun, SKS users will use their mobile attacks, they will be able to use grenades).\n\nCustom logic for Grenadiers and MGs to try to attack targets in cover and destroy the cover\n\nMore use of grenades. (specialists will use more)\n\nEnemies will try to not be flanked or out of cover. \n\nUnits will throw flares at the enemy at night.\n\nCreated a custom experimental logic for AI to flank more efficiently \n\nRevamped source functions that control the inner workings of the AI decision making. Added recoil calculation, point blank mechanics changes from GBO, cover, mechanics changes. The AI will take into account Bolt Action costs when making decisions.\n\nFixed some behaviors that made AI use FreeMove ap for aiming.\n\nAlso took away some limitations AI had to make it less punishing in the base game.\n\nIncreased AI use of cover. \nIncreased AI use of MGsetup.\n\nSnipers will swap to handguns and start retreating behaviors when you get too close to them.\n\nNew lore friendly weapon progression to be used with CUAE!\n\nThe philosophy here was to change mostly/only the behavior of the AI, with no cheating (I even fixed some cheating the AI did). \n\n\nThe only additions to units are increased explosive stats skill (if you use Rato's Explosive Overhaul, this is recommended) and the addition of Heavy Weapon's Specialist to machine gunners. Both can be disabled in the mod options\n\n\n\nFair Play Philosophy\n\n    The AI improvements focus solely on enhancing behavior, avoiding any unfair advantages or \"cheating.\" \n\nImproved Tactics for Grenadiers and Machine Gunners\n\n    Grenadiers and MG units are more adept at targeting enemies in cover, prioritizing cover destruction.\n    Increased grenade usage for both offensive and tactical purposes.\n\nNight Combat Enhancements\n\n    Units now throw flares at enemies during night time engagements for improved visibility and tactical advantage.\n\nExperimental Flanking Logic\n\n    Custom experimental logic improves AI flanking behaviors for more effective positioning and tactical maneuvers.\n\nCore AI Mechanics Overhaul\n\n    Revamped source functions governing AI decision-making. Updates include:\n        Recoil calculation and point-blank mechanics from GBO.\n        Enhanced cover mechanics and Bolt Action AP cost considerations.\n        Fixed behaviors causing AI to misuse FreeMove AP for aiming in vanilla.\n\nBehavioral Adjustments for Realism and Balance\n\n    Removed certain base game limitations to make AI more challenging.\n    Increased AI usage of cover and MG setups for strategic advantage.\n    Snipers now swap to handguns and adopt retreat behaviors when enemies close in.\n\nLore-Friendly Weapon Progression (CUAE)\n\n    Added a lore-friendly progression system for new weapons compatible with CUAE.\n\nOptional:\n        Explosive skill stats increased for all units (recommended with Rato’s Explosive Overhaul, but optional).\n        Machine Gunners gain the Heavy Weapons Specialist perk (can be disabled via mod options).",
 	'dependencies', {
 		PlaceObj('ModDependency', {
 			'id', "cfahRED",
@@ -11,7 +11,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "RATOAI",
 	'author', "rato",
-	'version', 2096,
+	'version', 2181,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -19,6 +19,7 @@ return PlaceObj('ModDef', {
 		"Code/CLASS_append_AISignatureAction.lua",
 		"Code/PATCH_UnitData.lua",
 		"Code/PATCH_call.lua",
+		"Code/PATCH_ChangeUnitDataDef.lua",
 		"Code/DEBUG.lua",
 		"Code/AIPOLICY_CustomFlanking.lua",
 		"Code/AIPOLICY_CustomSeekCover.lua",
@@ -33,10 +34,10 @@ return PlaceObj('ModDef', {
 		"Code/FUNCTION_EndTurnAIAction.lua",
 		"Code/FUNCTION_ShouldMaxAim.lua",
 		"Code/FUNCTION_getAIShootingStanceBehaviorSelectionScore.lua",
-		"Code/FUNCTION_ChangeUnitDataDef.lua",
-		"Code/FUNCTION_MGSetup.lua",
+		"Code/FUNCTION_getAISoldierFlankingBehaviorSelectionScore.lua",
+		"Code/FUNCTION_Get_HeavyGunnerShouldUsePositioningBehavior.lua",
+		"Code/FUNCTION_getAIGetCloserBehaviorSelectionScore.lua",
 		"Code/FUNCTIONS_SignaturesCustomScoring.lua",
-		"Code/FUNCTION_SoldierFlankingCustomScore.lua",
 		"Code/FUNCTION_CustomArchetypeFunc.lua",
 		"Code/PROPERTIES_Unit.lua",
 		"Code/SOURCE_AIPrecalcDamageScore.lua",
@@ -69,11 +70,11 @@ return PlaceObj('ModDef', {
 		AddHWStoGunners = true,
 		CUAELoreProgression = true,
 		ImproveExplosiveStat = true,
-		VanillaFreeMoveBonus = 100,
+		VanillaFreeMoveBonus = 0,
 	},
 	'has_data', true,
-	'saved', 1736490013,
-	'code_hash', 1977345752831388393,
+	'saved', 1736579756,
+	'code_hash', -7961109927467503193,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
@@ -163,6 +164,11 @@ return PlaceObj('ModDef', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
 			'Id', "Medic",
+			'ClassDisplayName', "AI Archetype",
+		}),
+		PlaceObj('ModResourcePreset', {
+			'Class', "AIArchetype",
+			'Id', "Medic_copy",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {

@@ -72,7 +72,6 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
             -- ic(action.action_id, w)
             -- if roll <= weight then
             if roll <= w then
-
                 return action
             end
             -- roll = roll - weight

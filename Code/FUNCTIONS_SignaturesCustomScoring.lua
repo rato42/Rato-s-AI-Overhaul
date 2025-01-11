@@ -129,6 +129,7 @@ function Overwatch_CustomScoring(self, context)
         return weight, disable, priority
     end
 
+    ---------
     local interrupt_cth_mod = 0
     local ow_cth = 0
     local use
@@ -140,7 +141,9 @@ function Overwatch_CustomScoring(self, context)
     end
 
     interrupt_cth_mod = interrupt_cth_mod + ow_cth
+    ---------
 
+    ---------
     local snap_penal = 0
     if unit and target then
         --[[local mul = GetWeaponHipfireOrSnapshotMul(unit:GetActiveWeapons(), unit, action, false, 1)
@@ -161,7 +164,9 @@ function Overwatch_CustomScoring(self, context)
     end
 
     interrupt_cth_mod = interrupt_cth_mod + snap_penal
+    ---------
 
+    ---------
     local cover_penal = 0
     if unit and target then -- TODO: Make a special ratio for the cover. The more cover/cth ratio, the more chances to use overwatch
         use, cover_penal = hit_modifiers.RangeAttackTargetStanceCover:CalcValue(unit, target, nil,
@@ -174,13 +179,22 @@ function Overwatch_CustomScoring(self, context)
 
     interrupt_cth_mod = interrupt_cth_mod + (cover_penal * -1)
 
+    ---------
+    --[[if attacker_pos then
+        local cover = GetCoversAt(attacker_pos)
+        interrupt_cth_mod = not cover and MulDivRound(interrupt_cth_mod, 50, 100) or
+                                interrupt_cth_mod
+    end]]
+    ---------
+
+    ---------
     local ratio, score_mod
     if dest_cth then
         ratio = MulDivRound(dest_cth + interrupt_cth_mod, 100, dest_cth)
         score_mod = 100 - (100 - ratio)
         weight = MulDivRound(weight, score_mod, 100)
     end
-
+    ---------
     -- ic(snap_penal, ow_cth, interrupt_cth_mod, weight, cover_penal)
     return Max(0, weight), weight < 0 and true or disable, priority
 end

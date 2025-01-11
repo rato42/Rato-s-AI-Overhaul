@@ -84,12 +84,6 @@ function AIPrecalcConeTargetZones(context, action_id, additional_target_pt, stan
     local action = CombatActions[action_id]
     local args = {target_spot_group = false}
 
-    ----
-    if action_id == "Overwatch" or action_id == "MGSetup" then
-        args.aim = 1
-    end
-    ----
-
     for i, attack_data in ipairs(targets_attack_data) do
         local target = targets[i]
         local chance_to_hit = 0

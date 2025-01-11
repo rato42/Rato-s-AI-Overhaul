@@ -1,4 +1,4 @@
---[[function UnitProperties:SelectArchetype(proto_context)
+function UnitProperties:SelectArchetype(proto_context)
     local archetype
     local func = empty_func
 
@@ -10,11 +10,6 @@
             archetype = "Panicked"
         elseif self:HasStatusEffect("Berserk") then
             archetype = "Berserk"
-            ----
-            elseif self:HasStatusEffect("shooting_stance") then
-            archetype = AIShootingStanceArchetypeSelection(self, proto_context)
-            ic(archetype)
-            ----
         elseif emplacement then
             assert(self.CanManEmplacements)
             archetype = "EmplacementGunner"
@@ -53,4 +48,4 @@
     end
 
     self.current_archetype = archetype or func(self, proto_context) or self.archetype or "Assault"
-end]] 
+end
