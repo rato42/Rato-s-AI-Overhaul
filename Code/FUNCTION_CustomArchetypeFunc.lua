@@ -40,8 +40,22 @@ function GetArgsForArchetypeAndWeaponSelection(unit)
     return args
 end
 
----- TODO: snipers should have Handgun
----- TODO: grenadiers only offensive grenades
+--[[function SniperGetArchetypeSelection(self, context)
+    local unbolted_archetype = UnboltedArchetypeSelection(self, context)
+    return unbolted_archetype or CloseRangeArchetypeSelection(self, context)
+end
+
+function UnboltedArchetypeSelection(unit, context)
+    local weapon = context and context.weapon or unit:GetActiveWeapons()
+    if not weapon or not rat_canBolt(weapon) or not weapon.unbolted then
+        return false
+    end
+
+    local stance_cost = GetWeapon_StanceAP(unit, context.weapon) + Get_AimCost(unit)
+
+end]]
+
+----
 
 function CloseRangeArchetypeSelection(self, context)
     local archetype = self.archetype

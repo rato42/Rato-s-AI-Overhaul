@@ -11,7 +11,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "RATOAI",
 	'author', "rato",
-	'version', 2181,
+	'version', 2310,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -27,16 +27,17 @@ return PlaceObj('ModDef', {
 		"Code/AIPOLICY_MGSetupPosScore.lua",
 		"Code/AIPOLICY_SaveAP.lua",
 		"Code/AIACTION_ThrowFlare.lua",
+		"Code/AIACTION_PrepareWeapon.lua",
 		"Code/UTIL.lua",
 		"Code/CUAE_options.lua",
-		"Code/FUNCTION_AddFlares.lua",
+		"Code/FUNCTION_ChangeEquipment.lua",
 		"Code/FUNCTION_ChangeVanillaFreeMove.lua",
 		"Code/FUNCTION_EndTurnAIAction.lua",
 		"Code/FUNCTION_ShouldMaxAim.lua",
 		"Code/FUNCTION_getAIShootingStanceBehaviorSelectionScore.lua",
 		"Code/FUNCTION_getAISoldierFlankingBehaviorSelectionScore.lua",
 		"Code/FUNCTION_Get_HeavyGunnerShouldUsePositioningBehavior.lua",
-		"Code/FUNCTION_getAIGetCloserBehaviorSelectionScore.lua",
+		"Code/FUNCTION_get_ShouldUseGetCloserPositioningBehavior.lua",
 		"Code/FUNCTIONS_SignaturesCustomScoring.lua",
 		"Code/FUNCTION_CustomArchetypeFunc.lua",
 		"Code/PROPERTIES_Unit.lua",
@@ -73,8 +74,8 @@ return PlaceObj('ModDef', {
 		VanillaFreeMoveBonus = 0,
 	},
 	'has_data', true,
-	'saved', 1736579756,
-	'code_hash', -7961109927467503193,
+	'saved', 1736660008,
+	'code_hash', 1319312126259460850,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
@@ -154,6 +155,11 @@ return PlaceObj('ModDef', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
 			'Id', "HeavyGunner",
+			'ClassDisplayName', "AI Archetype",
+		}),
+		PlaceObj('ModResourcePreset', {
+			'Class', "AIArchetype",
+			'Id', "RATOAI_UnboltedWeapon",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {

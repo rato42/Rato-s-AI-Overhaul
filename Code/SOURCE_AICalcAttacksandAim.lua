@@ -19,15 +19,16 @@ function AICalcAttacksAndAim(context, ap)
     local stance_cost = 0
     local recoil_aim_cost = 0
     local rotation_cost = 0
+    local aim_cost = Get_AimCost(unit)
 
+    local not_moved, has_stance
     if IsKindOf(context.weapon, "Firearm") then
         local unit_pos = unit and unit:GetPos()
         local attack_pos = context.attacker_pos
 
-        local not_moved, has_stance
         if attack_pos and unit_pos then
-            attack_pos = IsValidZ(attack_pos) and attack_pos or attack_pos:SetTerrainZ()
-            unit_pos = IsValidZ(unit_pos) and unit_pos or unit_pos:SetTerrainZ()
+            attack_pos = attack_pos:SetTerrainZ()
+            unit_pos = unit_pos:SetTerrainZ()
 
             not_moved = attack_pos == unit_pos
             has_stance = not_moved and context.unit:HasStatusEffect("shooting_stance")
@@ -47,12 +48,11 @@ function AICalcAttacksAndAim(context, ap)
             rotation_cost = unit:GetShootingStanceAP(context.current_target, context.weapon, 1,
                                                      context.default_attack, "rotate")
         else
-            stance_cost = GetWeapon_StanceAP(unit, context.weapon)
+            stance_cost = GetWeapon_StanceAP(unit, context.weapon) + aim_cost
         end
     end
     ------
 
-    local aim_cost = Get_AimCost(unit)
     local cost = context.default_attack_cost
 
     ---- Manual Cycling
@@ -76,7 +76,7 @@ function AICalcAttacksAndAim(context, ap)
 
     ---TODO:Check if this deduction is correct
     local ap = ap - free_move_ap --- Fixes considering free move ap as AP
-    local total_stance_cost = cost + stance_cost + aim_cost -- + recoil_aim_cost
+    local total_stance_cost = cost + stance_cost
 
     ---- support for reverting to basic attacks from AIPlayAttacks (always on the same position as the signature)
     total_stance_cost = (context.ap_after_signature and unit:HasStatusEffect("shooting_stance")) and
@@ -101,6 +101,7 @@ function AICalcAttacksAndAim(context, ap)
         Min((ap - stance_cost - rotation_cost) /
                 (cost + aim_cost * (max_aim - min_aim) +
                     (recoil_aim_cost * Min(3, (max_aim - min_aim)))), context.max_attacks)
+
         ------
     end
 
@@ -114,15 +115,20 @@ function AICalcAttacksAndAim(context, ap)
     if debug then
         print("----AI calc attacks and aim ----")
         print("min aim = ", min_aim)
+        print("has_stance =", has_stance)
+        print("not moved = ", not_moved)
         print("base cost = ", cost)
         print("stance cost = ", stance_cost)
-        print("recoil_aim_cost = ", recoil_aim_cost)
+        print("rotation_cost = ", rotation_cost)
+        print("cycling cost = ", bolting_cost, not is_unbolted)
+        -- print("recoil_aim_cost = ", recoil_aim_cost)
         print("total_stance_cost = ", total_stance_cost)
         print("has_stance_ap = ", has_stance_ap)
         print("baseap = ", ap)
         print("free_move_ap = ", free_move_ap)
         print("atts = ", num_attacks)
         print("remaining ap = ", remaining)
+        print("current target = ", context.current_target.session_id)
     end
     ------
 
@@ -161,10 +167,10 @@ function AICalcAttacksAndAim(context, ap)
     if debug then
         print("AI atks and aim = ", num_attacks, aims)
         print("-----------------------------------")
+        print(HasPerk(unit, "shooting_stance"))
     end
     ------
 
-    -- ic(is_unbolted, bolting_cost, cost, num_attacks, aims)
     return num_attacks, aims
 end
 

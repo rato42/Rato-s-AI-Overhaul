@@ -5,7 +5,7 @@ local distance_to_check_lack_of_cover = 30 -- slab
 local effective_range_mul = 1.5
 
 ----- Weights
-local weight_close_enemy = -50
+local weight_close_enemy = -60
 local weight_no_cover = -20
 local weight_enemy_in_cone = 35
 local weight_per_AP_stance = 10

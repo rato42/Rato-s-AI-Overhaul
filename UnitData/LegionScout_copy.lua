@@ -26,7 +26,7 @@ DefineClass.LegionScout_copy = {
 		"Flank",
 		"RunAndGun",
 	},
-	archetype = "Skirmisher",
+	archetype = "RATOAI_UnboltedWeapon",
 	role = "Recon",
 	OpeningAttackType = "Overwatch",
 	MaxAttacks = 2,

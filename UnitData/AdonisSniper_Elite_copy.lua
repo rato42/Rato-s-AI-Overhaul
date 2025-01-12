@@ -26,6 +26,7 @@ DefineClass.AdonisSniper_Elite_copy = {
 	AIKeywords = {
 		"Sniper",
 	},
+	archetype = "RATOAI_UnboltedWeapon",
 	role = "Marksman",
 	MaxAttacks = 1,
 	PickCustomArchetype = function (self, proto_context)  end,

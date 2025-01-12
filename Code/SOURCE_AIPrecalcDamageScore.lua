@@ -287,8 +287,8 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         end
 
                         ----- Clear Context from my additions
-                        context.current_target = nil
-                        context.attacker_pos = nil
+                        -- context.current_target = nil
+                        -- context.attacker_pos = nil
                         -----
 
                         ------------ Debug
