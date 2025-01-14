@@ -1,3 +1,14 @@
+function OnMsg.TurnEnded(teamId)
+    local t = g_Teams and g_Teams[teamId]
+    if t and not (t.side == NetPlayerSide()) then
+        for _, unit in ipairs(g_Units) do
+            if R_IsAI(unit) then
+                RATOAI_EndTurnAIAction(unit)
+            end
+        end
+    end
+end
+
 function RATOAI_EndTurnAIAction(unit)
 
     if not CurrentThread() then
@@ -11,9 +22,11 @@ function RATOAI_EndTurnAIAction(unit)
     ---- Make sure we are not saving AP that we spent in the actions in this function
     local ap = unit.ActionPoints
     local effect = unit:GetStatusEffect("shooting_stance")
-    local saved_ap = effect:ResolveValue("AP_Carried") or 0
-    saved_ap = Min(ap, saved_ap)
-    effect:SetParameter('AP_Carried', saved_ap)
+    if effect then
+        local saved_ap = effect:ResolveValue("AP_Carried") or 0
+        saved_ap = Min(ap, saved_ap)
+        effect:SetParameter('AP_Carried', saved_ap)
+    end
     ----
 end
 
@@ -36,7 +49,10 @@ function RATOAI_TryChangeStance(unit)
         return 0
     end
 
-    -- local enemies = GetAllEnemyUnits(unit)
+    local weapon = unit:GetActiveWeapons()
+    if not weapon or not IsKindOf(weapon, "Firearm") then
+        return 0
+    end
 
     local stance_effect = unit:GetStatusEffect("shooting_stance")
     local aim_pos = GetAimPos_ShootingStance(stance_effect)
@@ -46,25 +62,21 @@ function RATOAI_TryChangeStance(unit)
         angle = CalcOrientation(unit:GetPos(), aim_pos)
     end
 
-    local weapon = unit:GetActiveWeapons()
-    if not weapon or not IsKindOf(weapon, "Firearm") then
-        return 0
-    end
-
     if unit.species == "Human" and unit.stance ~= "Prone" then
         local cover_high, cover_low = GetCoverTypes(unit)
         local ap = unit.ActionPoints
         if not cover_high and not cover_low then
             local prone_AP = unit.stance == "Crouch" and 1000 or 2000
             if HasPerk(unit, "HitTheDeck") then
-                -- prone_AP = 0
+                prone_AP = 0
             end
             if ap >= prone_AP then
                 unit:SetActionCommand("ChangeStance", "RATOAI_ChangeStance", prone_AP, "Prone")
                 unit.ActionPoints = unit.ActionPoints - prone_AP
                 if angle then
-                    Sleep(1000)
+                    -- Sleep(1000)
                     unit:AnimatedRotation(angle)
+                    -- unit:SetCommand("AnimatedRotation", angle)
                 end
                 return prone_AP
             end
@@ -76,8 +88,9 @@ function RATOAI_TryChangeStance(unit)
                 unit:SetActionCommand("ChangeStance", "RATOAI_ChangeStance", crouch_ap, "Crouch")
                 unit.ActionPoints = unit.ActionPoints - crouch_ap
                 if angle then
-                    Sleep(1000)
+                    -- Sleep(1000)
                     unit:AnimatedRotation(angle)
+                    -- unit:SetCommand("AnimatedRotation", angle)
                 end
                 return crouch_ap
             end
@@ -86,13 +99,3 @@ function RATOAI_TryChangeStance(unit)
     return 0
 end
 
-function OnMsg.TurnEnded(teamId)
-    local t = g_Teams and g_Teams[teamId]
-    if t and not (t.side == NetPlayerSide()) then
-        for _, unit in ipairs(g_Units) do
-            if R_IsAI(unit) then
-                RATOAI_EndTurnAIAction(unit)
-            end
-        end
-    end
-end

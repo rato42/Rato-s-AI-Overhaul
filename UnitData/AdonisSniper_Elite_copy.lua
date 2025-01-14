@@ -16,7 +16,7 @@ DefineClass.AdonisSniper_Elite_copy = {
 	Explosives = 42,
 	Medical = 53,
 	Portrait = "UI/EnemiesPortraits/AdonisSniper",
-	Name = T(652358849761, --[[ModItemUnitDataCompositeDef AdonisSniper_Elite_copy Name]] "Elite Marksman"),
+	Name = T(652358849761, "Elite Marksman"),
 	Randomization = true,
 	elite = true,
 	eliteCategory = "Foreigners",
@@ -26,7 +26,7 @@ DefineClass.AdonisSniper_Elite_copy = {
 	AIKeywords = {
 		"Sniper",
 	},
-	archetype = "RATOAI_UnboltedWeapon",
+	archetype = "RATOAI_Sniper",
 	role = "Marksman",
 	MaxAttacks = 1,
 	PickCustomArchetype = function (self, proto_context)  end,

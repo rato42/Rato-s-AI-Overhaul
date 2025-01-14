@@ -5,7 +5,8 @@ local function GetDestArgs(self, context)
     local unit = context.unit
     context = Update_AIPrecalcDamageScore(unit) or context
 
-    local action = CombatActions[self.action_id]
+    local action = IsKindOf(self, "AIActionPinDown") and CombatActions["PinDown"] or
+                       CombatActions[self.action_id]
     local dist, target, dest_cth, dest_recoil, attacker_pos
     local upos = context.ai_destination
 
@@ -92,13 +93,22 @@ function SingleShotTargeted_CustomScoring(self, context)
     local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
                                                                                               context)
 
+    local leg_mul = 115
+
     local body_part = "Head"
-    for part, boleano in pairs(self.AttackTargeting) do
-        if boleano then
-            body_part = part
-            break
+
+    if IsKindOf(self, "AIActionPinDown") then
+        body_part = self.AttackTargeting
+    else
+        for part, boleano in pairs(self.AttackTargeting) do
+            if boleano then
+                body_part = part
+                break
+            end
         end
     end
+
+    local leg_shot = body_part == "Legs"
 
     local ratio, score_mod
     if upos and target then
@@ -116,6 +126,13 @@ function SingleShotTargeted_CustomScoring(self, context)
         -- ic(targeted_penal, dest_cth, score_mod)
     end
 
+    if target and leg_shot then
+        local target_weapon = target:GetActiveWeapons()
+        if IsKindOfClasses(target_weapon, "SubmachineGun", "MeleeWeapon", "Pistol", "Revolver") then
+            weight = MulDivRound(weight, leg_mul, 100)
+        end
+    end
+
     return Max(0, weight), weight < 0 and true or disable, priority
 end
 
@@ -129,6 +146,8 @@ function Overwatch_CustomScoring(self, context)
         return weight, disable, priority
     end
 
+    local under_timed_multiplier = 125
+    local sniper_mul = 60
     ---------
     local interrupt_cth_mod = 0
     local ow_cth = 0
@@ -192,9 +211,63 @@ function Overwatch_CustomScoring(self, context)
     if dest_cth then
         ratio = MulDivRound(dest_cth + interrupt_cth_mod, 100, dest_cth)
         score_mod = 100 - (100 - ratio)
+
         weight = MulDivRound(weight, score_mod, 100)
     end
     ---------
+
+    if target and (target:IsUnderTimedTrap() or target:IsUnderBombard()) then
+        weight = MulDivRound(weight, under_timed_multiplier, 100)
+    end
+
+    if context.unit and (context.unit.role or '') == "Marksman" then
+        weight = MulDivRound(weight, sniper_mul, 100)
+    end
+
     -- ic(snap_penal, ow_cth, interrupt_cth_mod, weight, cover_penal)
+    return Max(0, weight), weight < 0 and true or disable, priority
+end
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----- TODO: ADD increased chances when aim is above 
+function Pindown_CustomScoring(self, context)
+    local weight, disable, priority = self.Weight, false, self.Priority
+
+    local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
+                                                                                              context)
+
+    if not upos then
+        return weight, disable, priority
+    end
+    -------------------------------------------------------
+    if self.AttackTargeting ~= "Torso" then
+        weight = SingleShotTargeted_CustomScoring(self, context)
+    end
+    -------------------------------------------------------
+    local aim_above_mul = 120
+
+    local pindown_score = 0
+    ---------
+    local cover_penal = 0
+    local use
+    if unit and target then -- TODO: Make a special ratio for the cover. The more cover/cth ratio, the more chances to use overwatch
+        use, cover_penal = hit_modifiers.RangeAttackTargetStanceCover:CalcValue(unit, target, nil,
+                                                                                context.default_attack,
+                                                                                unit:GetActiveWeapons(),
+                                                                                nil, nil, 1, false,
+                                                                                attacker_pos,
+                                                                                target:GetPos())
+    end
+
+    pindown_score = pindown_score + (cover_penal * -1)
+
+    local ratio, score_mod
+    if dest_cth then --------- revisa essass pora kkkk
+        ratio = MulDivRound(dest_cth + pindown_score, 100, dest_cth)
+        score_mod = 100 - (100 - ratio)
+
+        weight = MulDivRound(weight, score_mod, 100)
+    end
+
     return Max(0, weight), weight < 0 and true or disable, priority
 end
