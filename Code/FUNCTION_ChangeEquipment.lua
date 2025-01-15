@@ -40,6 +40,7 @@ function GetGrenadeRoleData(unit)
         Marksman = {smoke = {-1, 2}, flash = {-1, 2}},
         Demolitions = {explo = {2, 3}, timed = {1, 3}, aoe = {0, 4}},
         Soldier = {explo = {-2, 2}, smoke = {1, 2}},
+        Commander = {explo = {1, 2}, flash = {1, 2}},
         Recon = {flash = {1, 3}, explo = {-1, 3}},
         Stormer = {smoke = {-1, 2}, aoe = {1, 3}}
         -- Artillery = {},

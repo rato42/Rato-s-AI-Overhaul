@@ -1,7 +1,7 @@
 function RATOAI_CUAEoptions()
 
     if IsMod_loaded("LDCUAE") then
-        local cuaeSettings = {ExtraHandgun = true, ExtraGrenadesChance = 75, ExtraGrenadesCount = 4}
+        local cuaeSettings = {ExtraHandgun = true, ExtraGrenadesChance = 75, ExtraGrenadesCount = 2}
         CUAEForceSettings(cuaeSettings)
 
         RATOAI_AddExclusionCUAE()

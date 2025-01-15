@@ -65,6 +65,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
     local aim_mod = Presets.ChanceToHitModifier.Default.Aim
     ---
     local pb_cth_mod = Presets.ChanceToHitModifier.Default.PointBlank
+    local scope_cth_mod = Presets.ChanceToHitModifier.Default.ScopePenal
     ---
     local dest_cth = {}
     context.dest_cth = dest_cth
@@ -240,7 +241,6 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                     end]]
 
                     --------------------- Point blank rework
-                    --- TODO: #19 add scope penalty
                     if not is_heavy then
                         local pb_apply, pb_value =
                             pb_cth_mod:CalcValue(unit, target, target_spot_group, action, weapon,
@@ -259,7 +259,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 
                         mod = 0
                         for i = 1, attacks do
-                            local use, bonus
+                            local use, bonus, scope_use, scope_penal
 
                             if (aims[i] or 0) > 0 then
 
@@ -269,9 +269,16 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                                 use, bonus = aim_mod:CalcValue(unit, context.current_target, nil,
                                                                context.default_attack,
                                                                context.weapon, nil, nil, aims[i])
+                                --------- Scope Addition
+                                scope_use, scope_penal =
+                                    scope_cth_mod:CalcValue(unit, context.current_target, nil,
+                                                            context.default_attack, context.weapon,
+                                                            nil, nil, aims[i], nil,
+                                                            context.attacker_pos)
                             end
 
-                            mod = mod + base_mod + (use and bonus or 0)
+                            mod = mod + base_mod + (use and bonus or 0) +
+                                      (scope_use and scope_penal or 0)
                             ------
                             --[[local hip_mod = Presets.ChanceToHitModifier.Default.HipshotPenalty
                             local hip_use, hip_bonus
@@ -461,6 +468,4 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
         -- end
         -----
     end
-
-    ---- End looping destinations
 end

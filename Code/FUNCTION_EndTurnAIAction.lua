@@ -16,6 +16,10 @@ function RATOAI_EndTurnAIAction(unit)
         return
     end
 
+    if unit:HasStatusEffect("Unaware") then
+        return
+    end
+
     RATOAI_EndTurnCycleWeapon(unit)
     RATOAI_TryChangeStance(unit)
 

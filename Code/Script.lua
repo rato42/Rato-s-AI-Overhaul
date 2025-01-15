@@ -1,7 +1,3 @@
----- TODO: change grenadier positioning to be in range of the grenade throw (first one)
----- TODO: change grenade AI action so i can use both timed and instant ones
------ TODO: grenade throw is not removing shooting stance :(
----- TODO: Bandage
 local function IsUnitHit(hit)
     if not IsKindOf(hit.obj, "Unit") then
         return false

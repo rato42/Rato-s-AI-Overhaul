@@ -1,4 +1,5 @@
-function OnMsg.ClassesGenerate(classdefs)
+-- Moved to RATOs GBO
+--[[function OnMsg.ClassesGenerate(classdefs)
 
     local RATOAI_OptionValue = CurrentModOptions.VanillaFreeMoveBonus or 100
 
@@ -48,3 +49,4 @@ function OnMsg.ClassesGenerate(classdefs)
     end
 
 end
+]] 

@@ -229,9 +229,12 @@ function Overwatch_CustomScoring(self, context)
 end
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
------ TODO: ADD increased chances when aim is above 
+
 function Pindown_CustomScoring(self, context)
     local weight, disable, priority = self.Weight, false, self.Priority
+    if true then
+        return weight, disable, priority
+    end
 
     local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
                                                                                               context)
@@ -244,22 +247,32 @@ function Pindown_CustomScoring(self, context)
         weight = SingleShotTargeted_CustomScoring(self, context)
     end
     -------------------------------------------------------
-    local aim_above_mul = 120
+
+    local _, max_aim = unit:GetBaseAimLevelRange(action, target) or 0, 3
+    local extra_aim = Max(0, max_aim - 3)
+    local extra_aim_bonus_mul = (extra_aim * 12) + 100
+    -----------
 
     local pindown_score = 0
     ---------
     local cover_penal = 0
-    local use
+    local use, cover_type
     if unit and target then -- TODO: Make a special ratio for the cover. The more cover/cth ratio, the more chances to use overwatch
-        use, cover_penal = hit_modifiers.RangeAttackTargetStanceCover:CalcValue(unit, target, nil,
-                                                                                context.default_attack,
-                                                                                unit:GetActiveWeapons(),
-                                                                                nil, nil, 1, false,
-                                                                                attacker_pos,
-                                                                                target:GetPos())
+        use, cover_penal, cover_type = hit_modifiers.RangeAttackTargetStanceCover:CalcValue(unit,
+                                                                                            target,
+                                                                                            nil,
+                                                                                            context.default_attack,
+                                                                                            unit:GetActiveWeapons(),
+                                                                                            nil,
+                                                                                            nil, 1,
+                                                                                            false,
+                                                                                            attacker_pos,
+                                                                                            target:GetPos())
     end
 
-    pindown_score = pindown_score + (cover_penal * -1)
+    if use and (cover_type or "") == "Cover" then
+        pindown_score = pindown_score + (cover_penal * -1)
+    end
 
     local ratio, score_mod
     if dest_cth then --------- revisa essass pora kkkk
@@ -268,6 +281,19 @@ function Pindown_CustomScoring(self, context)
 
         weight = MulDivRound(weight, score_mod, 100)
     end
+
+    -----------------
+    if target and IsKindOf(target, "Unit") then
+        if target:HasStatusEffect("Slowed") then
+            weight = MulDivRound(weight, 120, 100)
+        end
+        if target:IsThreatened(nil, 'overwatch') or target:IsThreatened(nil, "melee") then
+            weight = MulDivRound(weight, 120, 100)
+        end
+    end
+    -----------------
+
+    weight = MulDivRound(weight, extra_aim_bonus_mul, 100)
 
     return Max(0, weight), weight < 0 and true or disable, priority
 end

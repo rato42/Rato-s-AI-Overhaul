@@ -56,7 +56,7 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
 
     if weight > 0 then
         local roll = InteractionRand(weight, "AISignatureAction", context.unit)
-
+        ic(weight)
         ----
         if #available > 0 then
             ic(roll)

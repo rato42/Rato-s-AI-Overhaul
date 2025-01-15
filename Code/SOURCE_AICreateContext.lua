@@ -1,3 +1,4 @@
+local extra_max_attacks = 3
 function AICreateContext(unit, context)
     local gx, gy, gz = unit:GetGridCoords()
     local weapon = unit:GetActiveWeapons()
@@ -80,7 +81,7 @@ function AICreateContext(unit, context)
     context.dest_target_score = {} -- dest -> estimated damage
     ------------------
     ---- TODO: change the value to a constant
-    context.max_attacks = unit.MaxAttacks -- + 3
+    context.max_attacks = unit.MaxAttacks + extra_max_attacks
     context.currentpos_target_cover_score = {}
     context.dest_target_recoil_cth = {} -- dest -> recoil cth degradation
     context.dest_target_cover_score = {} -- dest -> cover -- CustomFlanking

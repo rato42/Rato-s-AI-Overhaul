@@ -11,11 +11,10 @@ return PlaceObj('ModDef', {
 	},
 	'id', "RATOAI",
 	'author', "rato",
-	'version', 2441,
+	'version', 2490,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
-		"Code/Const_APstance.lua",
 		"Code/PATCH_AppendClass_source_classes.lua",
 		"Code/PATCH_UnitData.lua",
 		"Code/PATCH_call.lua",
@@ -27,9 +26,10 @@ return PlaceObj('ModDef', {
 		"Code/AIPOLICYPOS_MGSetupPosScore.lua",
 		"Code/AIPOLICYPOS_Attack_StanceAP.lua",
 		"Code/AIPOLICYPOS_MGSetupAP.lua",
-		"Code/AIPOLICYTARG_EnemyInCover.lua",
 		"Code/AIPOLICYPOS_SaveAP.lua",
 		"Code/AIPOLICYPOS_GrenadeRange.lua",
+		"Code/AIPOLICYTARG_EnemyInCover.lua",
+		"Code/AIPOLICYTARG_PindownTargeting.lua",
 		"Code/AIACTION_ThrowFlare.lua",
 		"Code/AIACTION_PrepareWeapon.lua",
 		"Code/UTIL.lua",
@@ -56,7 +56,8 @@ return PlaceObj('ModDef', {
 		"Code/SOURCE_AIEvalZones.lua",
 		"Code/SOURCE_AITakeCover.lua",
 		"Code/SOURCE_AIPolicyIndoorsOutdoors_EvalDest.lua",
-		"Code/SOURCE_AIActionThrowGrenadePrecalcAction.lua",
+		"Code/SOURCE_AIActionThrowGrenade_PrecalcAction.lua",
+		"Code/SOURCE_AIActionPinDown_PrecalcAction.lua",
 		"Code/vanilla_archetype_functions_forconsult.lua",
 		"Code/vanilla_action_functions_forconsult1.lua",
 		"Code/AIPrecalcConeTargetZones.lua",
@@ -78,22 +79,11 @@ return PlaceObj('ModDef', {
 		AddHWStoGunners = true,
 		CUAELoreProgression = true,
 		ImproveExplosiveStat = true,
-		VanillaFreeMoveBonus = 0,
 	},
 	'has_data', true,
-	'saved', 1736842509,
-	'code_hash', 8873859702124773377,
+	'saved', 1736922422,
+	'code_hash', 3733577488670074161,
 	'affected_resources', {
-		PlaceObj('ModResourcePreset', {
-			'Class', "AIArchetype",
-			'Id', "ShootingStance_Archetype",
-			'ClassDisplayName', "AI Archetype",
-		}),
-		PlaceObj('ModResourcePreset', {
-			'Class', "AIArchetype",
-			'Id', "ShootingStance_Archetype_copy",
-			'ClassDisplayName', "AI Archetype",
-		}),
 		PlaceObj('ModResourcePreset', {
 			'Class', "LootDef",
 			'Id', "FLARES",
@@ -146,22 +136,7 @@ return PlaceObj('ModDef', {
 		}),
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
-			'Id', "RATOAI_Sniper",
-			'ClassDisplayName', "AI Archetype",
-		}),
-		PlaceObj('ModResourcePreset', {
-			'Class', "AIArchetype",
 			'Id', "Skirmisher",
-			'ClassDisplayName', "AI Archetype",
-		}),
-		PlaceObj('ModResourcePreset', {
-			'Class', "AIArchetype",
-			'Id', "RATOAI_RetreatingMarksman",
-			'ClassDisplayName', "AI Archetype",
-		}),
-		PlaceObj('ModResourcePreset', {
-			'Class', "AIArchetype",
-			'Id', "RATOAI_Demolition",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {
@@ -176,12 +151,27 @@ return PlaceObj('ModDef', {
 		}),
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
-			'Id', "Medic",
+			'Id', "RATOAI_Sniper",
+			'ClassDisplayName', "AI Archetype",
+		}),
+		PlaceObj('ModResourcePreset', {
+			'Class', "AIArchetype",
+			'Id', "RATOAI_RetreatingMarksman",
+			'ClassDisplayName', "AI Archetype",
+		}),
+		PlaceObj('ModResourcePreset', {
+			'Class', "AIArchetype",
+			'Id', "RATOAI_Demolition",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
 			'Id', "RATOAI_UnboltedWeapon",
+			'ClassDisplayName', "AI Archetype",
+		}),
+		PlaceObj('ModResourcePreset', {
+			'Class', "AIArchetype",
+			'Id', "Medic",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {
