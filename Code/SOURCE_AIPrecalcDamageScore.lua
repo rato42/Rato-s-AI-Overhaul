@@ -182,7 +182,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                                             nil, nil, nil, nil, attacker_pos)
                 end
                 recoil_score[target] = recoil_cth
-                -------
+                -------------
 
                 if dist <= (max_check_range or dist) and
                     (is_melee or targets_attack_data[k] and not targets_attack_data[k].stuck) then
@@ -195,6 +195,8 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                                           MinGroundDifference and modLowGround or 0)
                         hit_mod = hit_mod + (unit:GetLastAttack() == target and modSameTarget or 0)
                     end
+
+                    -------
 
                     --[[local target_cover = GetCoverFrom(tpos, upos)
                     if target_cover == const.CoverLow or target_cover == const.CoverHigh then
@@ -293,21 +295,14 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                             print("hip bonus", hip_bonus)]]
                         end
 
-                        ----- Clear Context from my additions
-                        -- context.current_target = nil
-                        -- context.attacker_pos = nil
-                        -----
-
                         ------------ Debug
                         local old_mod, old_base_mod = mod, base_mod
                         ------------
 
                         ------------------- Recoil addition
-                        -- base_mod = base_mod + recoil_cth
                         if action.id == "BurstFire" or action.id == "MGBurstFire" or action.id ==
                             "BuckshotBurst" then
-                            mod = mod + recoil_cth ----------TODO: #3 Weight HERE!
-                            -- ic(recoil_cth)
+                            mod = Max(mod >= 5 and 5 or 0, mod + recoil_cth) ----------TODO: #3 Weight HERE!
                         end
                         -------------------
 
@@ -373,7 +368,6 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         ----------------- DEBUG
                         old_scores_dbg[target] = old_mod
                         old_cth_debug[target] = old_base_mod
-
                         ------------
 
                         best_score = Max(best_score, mod)
@@ -393,6 +387,11 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                             end
                             -- best_target, best_score, best_cth = target, mod, base_mod
                         end
+
+                        ----- Clear Context from my additions
+                        context.current_target = nil
+                        context.attacker_pos = nil
+                        -----
                     end
                 end
             end

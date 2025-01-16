@@ -11,10 +11,11 @@ return PlaceObj('ModDef', {
 	},
 	'id', "RATOAI",
 	'author', "rato",
-	'version', 2490,
+	'version', 2573,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
+		"Code/constants_AI.lua",
 		"Code/PATCH_AppendClass_source_classes.lua",
 		"Code/PATCH_UnitData.lua",
 		"Code/PATCH_call.lua",
@@ -43,6 +44,8 @@ return PlaceObj('ModDef', {
 		"Code/FUNCTION_get_ShouldUseGetCloserPositioningBehavior.lua",
 		"Code/FUNCTION_SignaturesCustomScoring.lua",
 		"Code/FUNCTION_CustomArchetypeFunc.lua",
+		"Code/FUNCTION_CanDegradeToSingleShot.lua",
+		"Code/REACTIONS_StopMGPackingUp.lua",
 		"Code/PROPERTIES_Unit.lua",
 		"Code/SOURCE_FreeMove.lua",
 		"Code/SOURCE_AIPrecalcDamageScore.lua",
@@ -81,8 +84,8 @@ return PlaceObj('ModDef', {
 		ImproveExplosiveStat = true,
 	},
 	'has_data', true,
-	'saved', 1736922422,
-	'code_hash', 3733577488670074161,
+	'saved', 1737005605,
+	'code_hash', -5121599990334648815,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "LootDef",

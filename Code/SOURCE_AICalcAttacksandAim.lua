@@ -89,6 +89,7 @@ function AICalcAttacksAndAim(context, ap)
 
     if not has_stance_ap then
         stance_cost = 0
+        ---RATOAI_TryDegradeToSingleShot(context)
     else ---- and modify min aim level if it has
         min_aim = min_aim + 1
     end
@@ -102,6 +103,10 @@ function AICalcAttacksAndAim(context, ap)
         Min((ap - stance_cost - rotation_cost) /
                 (cost + aim_cost * (max_aim - min_aim) +
                     (recoil_aim_cost * Min(3, (max_aim - min_aim)))), context.max_attacks)
+
+        -- if num_attacks < 1 then
+        -- RATOAI_TryDegradeToSingleShot(context)
+        -- end
 
         num_attacks = (not can_bolt) and Max(1, num_attacks) or num_attacks
         ------

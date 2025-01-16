@@ -81,3 +81,4 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
 
     return -- available[#available]
 end
+

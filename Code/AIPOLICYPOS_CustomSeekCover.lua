@@ -1,27 +1,24 @@
 DefineClass.AIPolicyCustomSeekCover = {
-    __parents = {"AIPositioningPolicy"},
+    __parents = {"AIPolicyTakeCover"}, -- "AIPositioningPolicy"},
     __generated_by_class = "ClassDef",
 
     properties = {
-        {id = "end_of_turn", editor = "bool", default = true, read_only = true, no_edit = true}, {
-            id = "ReserveAttackAP",
-            name = "Reserve Attack AP",
-            help = "do not consider locations where the unit will be out of ap and couldn't attack",
+        {
+            id = "ScalePerDistance",
             editor = "bool",
-            default = false
-        }, {
-            id = "visibility_mode",
-            name = "Visibility Mode",
-            editor = "choice",
-            default = "self",
-            items = function(self)
-                return {"self", "team", "all"}
-            end
-        },
-        {id = "optimal_location", editor = "bool", default = true, read_only = true, no_edit = true},
-        {id = "OnlyTarget", editor = "bool", default = false, read_only = false, no_edit = false}
+            default = true,
+            read_only = false,
+            no_edit = false
+        }
     }
 }
+
+local distance_impact = 1.00
+local max_range = 30
+
+function AIPolicyCustomSeekCover:GetEditorView()
+    return "Custom Seek Cover"
+end
 
 function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
     local score = 0
@@ -29,6 +26,11 @@ function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
     local ux, uy, uz, ustance_idx = stance_pos_unpack(dest)
 
     local tbl = context.enemies or empty_table
+
+    ---
+    local denominador = 0
+    local total_score = 0
+    ---
     for _, enemy in ipairs(tbl) do
         local visible = true
         if self.visibility_mode == "self" then
@@ -36,53 +38,101 @@ function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
         elseif self.visibility_mode == "team" then
             visible = context.enemy_visible_by_team[enemy]
         end
-        if visible then
-            local cover = GetCoverFrom(dest, context.enemy_pack_pos_stance[enemy])
 
-            score = score + self.CoverScores[cover]
+        if visible then
+
+            local cover = GetCoverFrom(dest, context.enemy_pack_pos_stance[enemy])
+            local cover_score = self.CoverScores[cover] or 0
+
+            -------------
+            total_score = total_score + cover_score
+            denominador = denominador + 1
+
+            local cover_score1 = cover_score
+            if self.ScalePerDistance and cover_score > 0 then
+                local ux, uy, uz, ustance_idx = stance_pos_unpack(dest)
+                local new_pos = point(ux, uy, uz)
+
+                local dist = new_pos:Dist(enemy:GetPos())
+                local range = max_range * const.Scale.AP
+                local ratio = 100 - ((Min(range, dist) * 1.00) / (range * 1.00)) *
+                                  (100 * distance_impact)
+
+                cover_score = MulDivRound(cover_score, ratio, 100)
+                -- print(enemy.session_id, dist / const.SlabSizeX, cover_score1, cover_score, ratio)
+            end
+
+            -------------
+            score = score + cover_score
+
         end
     end
 
-    return score -- / Max(1, #tbl)
+    return score / Max(1, #tbl)
 end
 
-AIPolicyCustomSeekCover.CoverScores = {
-    [const.CoverPass] = 0,
-    [const.CoverNone] = 0,
-    [const.CoverLow] = 50,
-    [const.CoverHigh] = 100
-}
+--[[function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
+    local score = 0
 
-local function IsInCover(unit, enemy, cover_data, los_data)
-    local cover_penalty =
-        Presets["ChanceToHitModifier"]["Default"]["RangeAttackTargetStanceCover"]:ResolveValue(
-            "Cover")
+    local ux, uy, uz, ustance_idx = stance_pos_unpack(dest)
 
-    if not los_data or (not los_data[enemy] or los_data[enemy] == 0) then
-        return true, cover_penalty, "No LOS"
+    local tbl = context.enemies or empty_table
+
+    ---
+    local denominador = 0
+    local total_score = 0
+    ---
+    for _, enemy in ipairs(tbl) do
+        local visible = true
+        if self.visibility_mode == "self" then
+            visible = context.enemy_visible[enemy]
+        elseif self.visibility_mode == "team" then
+            visible = context.enemy_visible_by_team[enemy]
+        end
+
+        if visible then
+
+            local cover = GetCoverFrom(dest, context.enemy_pack_pos_stance[enemy])
+            local cover_score = self.CoverScores[cover] or 0
+
+            -------------
+            total_score = total_score + cover_score
+            denominador = denominador + 1
+
+            local cover_score1 = cover_score
+            if self.ScalePerDistance and cover_score > 0 then
+                local ux, uy, uz, ustance_idx = stance_pos_unpack(dest)
+                local new_pos = point(ux, uy, uz)
+
+                local dist = new_pos:Dist(enemy:GetPos())
+                local range = max_range * const.Scale.AP
+                local ratio = 100 - ((Min(range, dist) * 1.00) / (range * 1.00)) *
+                                  (100 * distance_impact)
+
+                cover_score = MulDivRound(cover_score, ratio, 100)
+                print(enemy.session_id, dist / const.SlabSizeX, cover_score1, cover_score, ratio)
+
+            end
+
+            -------------
+            score = score + cover_score
+
+        end
     end
 
-    if cover_data and cover_data[enemy] then
-        return true, cover_data[enemy]
+    local score_ratio = 0
+    if total_score > 0 then
+        total_score = total_score / Max(1, denominador)
+        -- score = score / Max(1, denominador)
+
+        local ux, uy, uz, ustance_idx = stance_pos_unpack(dest)
+        local new_pos = point(ux, uy, uz)
+
+        score_ratio = ((score * 1.00) / (total_score * 1.00)) * 100
+        DbgAddText(total_score .. " / " .. score .. " = " .. score_ratio, new_pos)
     end
 
-    return false
-end
-
-local function CompareCovers(enemy, current_pos_cover_data, new_pos_cover_data)
-    local cover_penalty =
-        Presets["ChanceToHitModifier"]["Default"]["RangeAttackTargetStanceCover"]:ResolveValue(
-            "Cover")
-
-    local current_cover_cth = current_pos_cover_data[enemy].cover_cth or 0
-    local new_cover_cth = new_pos_cover_data[enemy].cover_cth or 0
-    local new_ratio = new_cover_cth * 1.00 / cover_penalty
-    local current_ratio = current_cover_cth * 1.00 / cover_penalty
-
-    local cover_difference = current_ratio - new_ratio
-
-    -- ic(enemy.session_id, new_cover_cth, current_cover_cth, cover_difference)
-    -- ic(new_ratio, current_ratio)
-    return cover_difference
-end
-
+    local final_score = MulDivRound(self.Score, score_ratio, 100)
+    ic(total_score, score, final_score)
+    return score / Max(1, #tbl)
+end]]

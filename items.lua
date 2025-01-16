@@ -1,5 +1,9 @@
 return {
 	PlaceObj('ModItemCode', {
+		'name', "constants_AI",
+		'CodeFileName', "Code/constants_AI.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "PATCH_AppendClass_source_classes",
 		'CodeFileName', "Code/PATCH_AppendClass_source_classes.lua",
 	}),
@@ -111,6 +115,14 @@ return {
 	PlaceObj('ModItemCode', {
 		'name', "FUNCTION_CustomArchetypeFunc",
 		'CodeFileName', "Code/FUNCTION_CustomArchetypeFunc.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "FUNCTION_CanDegradeToSingleShot",
+		'CodeFileName', "Code/FUNCTION_CanDegradeToSingleShot.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "REACTIONS_StopMGPackingUp",
+		'CodeFileName', "Code/REACTIONS_StopMGPackingUp.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "PROPERTIES_Unit",
@@ -711,7 +723,7 @@ return {
 				'BiasId', "Standard",
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyTakeCover', {
-						'Weight', 400,
+						'Weight', 500,
 					}),
 					PlaceObj('AIPolicyDealDamage', {
 						'Weight', 500,
@@ -730,6 +742,9 @@ return {
 						'RangeMin', 30,
 						'RangeMax', 50,
 					}),
+					PlaceObj('AIPolicyCustomSeekCover', {
+						'Weight', 500,
+					}),
 				},
 				'TakeCoverChance', 50,
 			}),
@@ -745,7 +760,6 @@ return {
 			}),
 			PlaceObj('PositioningAI', {
 				'BiasId', "SoldierFlanking",
-				'Weight', 50,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SoldierFlanking",
@@ -857,7 +871,6 @@ return {
 			}),
 		},
 		Comment = "Keywords: Soldier, Sniper, Control, Ordnance, Smoke, Explosives",
-		FallbackAction = "overwatch",
 		OptLocPolicies = {
 			PlaceObj('AIPolicyTakeCover', {
 				'Weight', 500,
@@ -962,9 +975,26 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
+				'Weight', 90,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "AssaultGrenadeThrow",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+				},
+				'self_score_mod', -1000,
+				'min_score', 100,
+				'MinDist', 6000,
+				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
+			}),
+			PlaceObj('AIActionThrowGrenade', {
+				'BiasId', "AssaultGrenadeThrow200",
+				'Weight', 150,
+				'Priority', true,
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "AssaultGrenadeThrow200",
 						'Effect', "disable",
 						'Period', 0,
 					}),
@@ -975,6 +1005,7 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "SmokeGrenade",
+				'Weight', 150,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SmokeGrenade",
@@ -1020,7 +1051,6 @@ return {
 			}),
 			PlaceObj('AIActionHeavyWeaponAttack', {
 				'BiasId', "LauncherFire",
-				'Weight', 150,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "LauncherFire",
@@ -1035,6 +1065,7 @@ return {
 					}),
 				},
 				'self_score_mod', -1000,
+				'min_score', 100,
 				'enemy_cover_mod', 50,
 				'MinDist', 7000,
 				'LimitRange', true,
@@ -1042,7 +1073,6 @@ return {
 			}),
 			PlaceObj('AIActionHeavyWeaponAttack', {
 				'BiasId', "RocketFire",
-				'Weight', 150,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "RocketFire",
@@ -1051,7 +1081,7 @@ return {
 					}),
 				},
 				'self_score_mod', -1000,
-				'min_score', 150,
+				'min_score', 100,
 				'enemy_cover_mod', 50,
 				'MinDist', 10000,
 				'action_id', "RocketLauncherFire",
@@ -1060,7 +1090,6 @@ return {
 			}),
 			PlaceObj('AIConeAttack', {
 				'BiasId', "SpamOverwatch",
-				'Weight', 200,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SpamOverwatch",
@@ -1097,7 +1126,7 @@ return {
 						'Weight', 150,
 					}),
 					PlaceObj('AIPolicyTakeCover', {
-						'visibility_mode', "team",
+						'Weight', 200,
 					}),
 					PlaceObj('AIPolicyCustomFlanking', {
 						'Weight', 200,
@@ -1333,6 +1362,7 @@ return {
 				},
 				'SignatureActions', {
 					PlaceObj('AIActionMGSetup', {
+						'BiasId', "MGSetup",
 						'Weight', 500,
 						'Priority', true,
 						'CustomScoring', function (self, context)
@@ -1412,9 +1442,13 @@ return {
 					PlaceObj('AIPolicyIndoorsOutdoors', {
 						'Indoors', false,
 					}),
+					PlaceObj('AIPolicyMGSetupAP', {
+						'Required', true,
+					}),
 				},
 				'SignatureActions', {
 					PlaceObj('AIActionMGSetup', {
+						'BiasId', "MGSetup",
 						'Weight', 500,
 						'Priority', true,
 						'CustomScoring', function (self, context)
@@ -1505,6 +1539,7 @@ return {
 				},
 				'SignatureActions', {
 					PlaceObj('AIActionMGSetup', {
+						'BiasId', "MGSetup",
 						'Weight', 500,
 					}),
 					PlaceObj('AIPrepareWeapon', nil),
@@ -1544,10 +1579,10 @@ return {
 			PlaceObj('StandardAI', {
 				'turn_phase', "Late",
 				'EndTurnPolicies', {
-					PlaceObj('AIPolicyDealDamage', nil),
-					PlaceObj('AIPolicyTakeCover', {
-						'Weight', 40,
+					PlaceObj('AIPolicyDealDamage', {
+						'Weight', 200,
 					}),
+					PlaceObj('AIPolicyTakeCover', nil),
 				},
 				'TakeCoverChance', 0,
 			}),
@@ -1644,6 +1679,7 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "StunGrenade",
+				'Weight', 50,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "StunGrenade",
@@ -1657,6 +1693,7 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "SmokeGrenade",
+				'Weight', 200,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SmokeGrenade",
@@ -1959,6 +1996,7 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
+				'Weight', 50,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "AssaultGrenadeThrow",
@@ -1967,6 +2005,7 @@ return {
 					}),
 				},
 				'self_score_mod', -1000,
+				'min_score', 100,
 				'MinDist', 6000,
 				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 			}),
@@ -2019,7 +2058,7 @@ return {
 		TargetScoreRandomization = 10,
 		TargetingPolicies = {
 			PlaceObj('AITargetingPindownTargeting', {
-				'Score', 20,
+				'Score', 15,
 			}),
 		},
 		group = "Default",

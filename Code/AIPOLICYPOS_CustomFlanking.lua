@@ -68,7 +68,7 @@ local function CompareCovers(enemy, current_pos_cover_data, new_pos_cover_data)
 end
 
 ---- Args
-local effective_range_mul = 1.0
+local effective_range_mul = 1.00
 local distance_impact = 0.25
 local extra_target_weight = 100
 local unit_weight = 100
@@ -79,8 +79,10 @@ function AIPolicyCustomFlanking:GetEnemyWeight(unit, enemy, dist, effective_rang
     if target and enemy == target then
         weight = weight + extra_target_weight
     end
+
     if self.ScalePerDistance then
-        weight = MulDivRound(weight, Max(0, unit_weight - (dist / effective_range) *
+        weight = MulDivRound(weight, Max(0,
+                                         unit_weight - ((dist * 1.00) / (effective_range * 1.00)) *
                                              (100 * distance_impact)), 100)
     end
     return weight
