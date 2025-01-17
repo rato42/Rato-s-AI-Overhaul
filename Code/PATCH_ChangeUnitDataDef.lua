@@ -10,7 +10,7 @@ function RATOAI_ChangeUnitDataDef(class, props)
             if CurrentModOptions.AddHWStoGunners then
                 AddStartingPerk(class, "HeavyWeaponsTraining")
             end
-        elseif k == "Explosives" then
+        elseif k == "Explosives" or k == "Dexterity" then
             if CurrentModOptions.ImproveExplosiveStat then
                 class[k] = v
             end

@@ -189,6 +189,21 @@ function AIScoreReachableVoxels(context, policies, opt_loc_weight, dest_score_de
     return context.best_end_dest, context.best_end_score
 end
 
+local function DbgCollapsePointsInBox(b, steps)
+    local pts = {}
+    ForEachPassSlab(b, function(x, y, z)
+        pts[#pts + 1] = stance_pos_pack(x, y, z, 0)
+    end)
+    local collapsed = CollapsePoints(pts, steps)
+    for _, pt in ipairs(pts) do
+        local x, y, z = stance_pos_unpack(pt)
+        if table.find(collapsed, pt) then
+            ShowMe(point(x, y, z))
+        else
+        end
+    end
+end
+
 function AIFindOptimalLocation(context, dest_score_details)
     if context.best_dest then
         -- optimal location doesn't change across behaviors, no need to recalc it
@@ -262,6 +277,9 @@ function AIFindOptimalLocation(context, dest_score_details)
         local pf_dests = {}
         for i, dest in ipairs(context.collapsed) do
             local x, y, z = stance_pos_unpack(dest)
+            ---
+            -- DbgAddCircle(point(x, y, z))
+            ---
             pf_dests[i] = point(x, y, z)
         end
 

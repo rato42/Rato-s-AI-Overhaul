@@ -108,7 +108,7 @@ function AICalcAttacksAndAim(context, ap)
         -- RATOAI_TryDegradeToSingleShot(context)
         -- end
 
-        num_attacks = (not can_bolt) and Max(1, num_attacks) or num_attacks
+        -- num_attacks = (not can_bolt) and Max(1, num_attacks) or num_attacks
         ------
     end
 

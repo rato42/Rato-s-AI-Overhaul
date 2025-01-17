@@ -15,3 +15,13 @@ function R_IsAI(unit)
     return true
 end
 
+function RATOAI_UnpackPos(pos)
+    if not pos then
+        return
+    end
+    local ux, uy, uz, ustance_idx = stance_pos_unpack(pos)
+    local new_pos = point(ux, uy, uz)
+    return new_pos
+end
+
+-- GetPackedPosAndStance(unit, stance)

@@ -49,9 +49,5 @@ function OnMsg.ClassesGenerate(classdefs)
         }
     }
 
-    -- AppendClass.AIPolicyTakeCover = {
-    --     properties = {{id = "ScalePerDistance", editor = "bool", default = true}}
-    -- }
-
 end
 
