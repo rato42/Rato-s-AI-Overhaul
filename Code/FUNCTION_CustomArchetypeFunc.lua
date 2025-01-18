@@ -4,7 +4,7 @@ function GetArgsForArchetypeAndWeaponSelection(unit)
         return false
     end
 
-    local role = unit.role or ''
+    local role = unit.custom_role or unit.role or ''
 
     local map = {
         Marksman = {
@@ -21,10 +21,17 @@ function GetArgsForArchetypeAndWeaponSelection(unit)
         },
         Artillery = {
             main_w_classes = {"Artillery", "GrenadeLauncher"},
-            close_w_classes = {"Firearm"},
+            close_w_classes = {"SubmachineGun", "Revolver", "Pistol", "AssaultRifle"},
             close_archetype = "RATOAI_RetreatingMarksman",
             vr = "AIArchetypeScared",
             dist = 7
+        },
+        Rocketeer = {
+            main_w_classes = {"Artillery", "RocketLauncher"},
+            close_w_classes = {"SubmachineGun", "Revolver", "Pistol", "AssaultRifle"},
+            close_archetype = "RATOAI_RetreatingMarksman",
+            vr = "AIArchetypeScared",
+            dist = 6
         }
 
     }

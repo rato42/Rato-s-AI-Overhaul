@@ -76,7 +76,7 @@ function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
             table_num = table_num + 1
             local cover = GetCoverFrom(dest, context.enemy_pack_pos_stance[enemy])
             local cover_score = self:GetCoverScore(context, self.CoverScores[cover] or 0, dest,
-                                                   enemy)
+                                                   grid_voxel, enemy)
 
             score = score + cover_score
         end
@@ -99,7 +99,7 @@ function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
     return MulDivRound(score / Max(1, table_num), extra_mul, 100)
 end
 
-function AIPolicyCustomSeekCover:GetCoverScore(context, cover_score, dest, enemy)
+function AIPolicyCustomSeekCover:GetCoverScore(context, cover_score, dest, grid_voxel, enemy)
 
     if not dest then
         return cover_score
@@ -108,7 +108,9 @@ function AIPolicyCustomSeekCover:GetCoverScore(context, cover_score, dest, enemy
     local new_pos
     if self.ScalePerDistance and cover_score > 0 then
         new_pos = RATOAI_UnpackPos(dest)
+        new_pos = IsValidZ(new_pos) and new_pos or new_pos:SetTerrainZ()
         local enemy_pos = IsValid(enemy) and enemy:GetPos() or enemy
+        new_pos = IsValidZ(enemy_pos) and enemy_pos or enemy_pos:SetTerrainZ()
 
         if enemy_pos then
             dist = Max(min_dist, new_pos:Dist(enemy_pos))
@@ -121,19 +123,23 @@ function AIPolicyCustomSeekCover:GetCoverScore(context, cover_score, dest, enemy
         -- print(enemy.session_id, dist / const.SlabSizeX, cover_score1, cover_score, ratio)
     end
 
-    if self.ExposedAtCloseRange_Score ~= 0 and cover_score <= 0 and context.enemy_grid_voxel[enemy] then
-        new_pos = new_pos or RATOAI_UnpackPos(dest)
+    new_pos = new_pos or RATOAI_UnpackPos(dest)
+    new_pos = IsValidZ(new_pos) and new_pos or new_pos:SetTerrainZ()
+
+    if self.ExposedAtCloseRange_Score ~= 0 and cover_score <= 0 and context.enemy_grid_voxel[enemy] and
+        grid_voxel then
+
         local x1, y1, z1 = point_unpack(context.enemy_grid_voxel[enemy])
-        local x2, y2, z2 = point_unpack(new_pos)
+        local x2, y2, z2 = point_unpack(grid_voxel)
         if IsCloser(x1, y1, z1, x2, y2, z2, close_exposed_range + 1) then
             cover_score = self.ExposedAtCloseRange_Score
         end
-        -- print(enemy.session_id, cover_score)
 
+        -- print(enemy.session_id, cover_score)
     end
 
     if new_pos then
-        -- DbgAddText(enemy.session_id .. cover_score, new_pos)
+        DbgAddText(enemy.session_id .. " " .. cover_score, new_pos)
     end
 
     return cover_score

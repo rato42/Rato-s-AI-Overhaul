@@ -276,6 +276,64 @@ return {
 		'name', "Tests",
 	}, {
 		PlaceObj('ModItemUnitDataCompositeDef', {
+			'Group', "Legion",
+			'Id', "LegionRocketeer_copy",
+			'object_class', "UnitData",
+			'Health', 28,
+			'Agility', 83,
+			'Dexterity', 8,
+			'Strength', 88,
+			'Wisdom', 14,
+			'Leadership', 10,
+			'Marksmanship', 12,
+			'Mechanical', 0,
+			'Explosives', 41,
+			'Medical', 0,
+			'Portrait', "UI/EnemiesPortraits/LegionArtillery",
+			'BigPortrait', "UI/Enemies/LegionRaider",
+			'Name', T(532378367503, --[[ModItemUnitDataCompositeDef LegionRocketeer_copy Name]] "Rocket Man"),
+			'Randomization', true,
+			'Affiliation', "Legion",
+			'neutral_retaliate', true,
+			'AIKeywords', {
+				"Ordnance",
+			},
+			'archetype', "RATOAI_Rocketeer",
+			'role', "Artillery",
+			'CanManEmplacements', false,
+			'MaxAttacks', 1,
+			'MaxHitPoints', 50,
+			'AppearancesList', {
+				PlaceObj('AppearanceWeight', {
+					'Preset', "Legion_Artillery",
+				}),
+				PlaceObj('AppearanceWeight', {
+					'Preset', "Legion_Artillery02",
+				}),
+				PlaceObj('AppearanceWeight', {
+					'Preset', "Legion_Artillery03",
+				}),
+			},
+			'Equipment', {
+				"LegionRocketeer",
+			},
+			'AdditionalGroups', {
+				PlaceObj('AdditionalGroup', {
+					'Weight', 50,
+					'Exclusive', true,
+					'Name', "LegionMale_1",
+				}),
+				PlaceObj('AdditionalGroup', {
+					'Weight', 50,
+					'Exclusive', true,
+					'Name', "LegionMale_2",
+				}),
+			},
+			'pollyvoice', "Joey",
+			'gender', "Male",
+			'VoiceResponseId', "LegionRaider",
+		}),
+		PlaceObj('ModItemUnitDataCompositeDef', {
 			'Group', "Adonis",
 			'Id', "AdonisSniper_Elite_copy",
 			'object_class', "UnitData",
@@ -2189,7 +2247,6 @@ return {
 						'Weight', 50,
 					}),
 					PlaceObj('AIPolicyIndoorsOutdoors', {
-						'Weight', 200,
 						'Indoors', false,
 					}),
 					PlaceObj('AIPolicySaveAP', {
@@ -2374,6 +2431,190 @@ return {
 		TargetScoreRandomization = 10,
 		group = "RatoAI",
 		id = "RATOAI_Demolition",
+	}),
+	PlaceObj('ModItemAIArchetype', {
+		BaseAttackTargeting = set( "Torso" ),
+		Behaviors = {
+			PlaceObj('StandardAI', {
+				'Weight', 75,
+				'turn_phase', "Early",
+				'OptLocWeight', 200,
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyDealDamage', nil),
+					PlaceObj('AIPolicyWeaponRange', {
+						'RangeBase', "Absolute",
+						'RangeMin', 12,
+						'RangeMax', 18,
+					}),
+					PlaceObj('AIPolicyTryNotToBeFlanked', nil),
+					PlaceObj('AIPolicyCustomSeekCover', nil),
+				},
+				'TakeCoverChance', 50,
+			}),
+			PlaceObj('HoldPositionAI', {
+				'Weight', 10,
+				'Comment', "ShootingStance",
+				'Fallback', false,
+				'Score', function (self, unit, proto_context, debug_data)
+					local score = getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
+					return MulDivRound(score, self.Weight, 100)
+				end,
+				'TakeCoverChance', 0,
+			}),
+			PlaceObj('PositioningAI', {
+				'BiasId', "RocketeerPositioning",
+				'Weight', 50,
+				'Comment', "Rocketeer Positioning",
+				'Fallback', false,
+				'turn_phase', "Early",
+				'OptLocWeight', 0,
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyTryNotToBeFlanked', {
+						'Weight', 50,
+					}),
+					PlaceObj('AIPolicyIndoorsOutdoors', {
+						'Indoors', false,
+					}),
+					PlaceObj('AIPolicySaveAP', {
+						'Required', true,
+						'ReserveAP', 6,
+					}),
+					PlaceObj('AIPolicyLosToEnemy', nil),
+					PlaceObj('AIPolicyCustomFlanking', {
+						'Weight', 0,
+						'visibility_mode', "team",
+						'OnlyTarget', true,
+					}),
+					PlaceObj('AIPolicyCustomSeekCover', {
+						'Weight', 150,
+					}),
+					PlaceObj('AIPolicyWeaponRange', {
+						'RangeBase', "Absolute",
+						'RangeMin', 10,
+						'RangeMax', 16,
+					}),
+				},
+				'TakeCoverChance', 100,
+			}),
+			PlaceObj('PositioningAI', {
+				'BiasId', "",
+				'Comment', "Get Closer",
+				'Fallback', false,
+				'Score', function (self, unit, proto_context, debug_data)
+					unit.ai_context = unit.ai_context or AICreateContext(unit, proto_context)
+					---
+					if not get_ShouldUseGetCloserPositioningBehavior(unit, unit.ai_context,nil, 18) then
+						return 0
+					end
+					---
+					
+					local dest, score = AIScoreReachableVoxels(unit.ai_context, self.EndTurnPolicies, 0)
+					return MulDivRound(score, self.Weight, 100)
+				end,
+				'OptLocWeight', 20,
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyTryNotToBeFlanked', {
+						'Weight', 50,
+					}),
+					PlaceObj('AIPolicyWeaponRange', {
+						'Weight', 500,
+						'RangeBase', "Absolute",
+						'RangeMin', 10,
+						'RangeMax', 18,
+					}),
+					PlaceObj('AIPolicyWeaponRange', {
+						'RangeBase', "Absolute",
+						'RangeMin', 19,
+						'RangeMax', 26,
+					}),
+					PlaceObj('AIPolicyLastEnemyPos', {
+						'Weight', 400,
+						'Required', true,
+					}),
+					PlaceObj('AIPolicyLosToEnemy', {
+						'Weight', 50,
+						'Invert', true,
+					}),
+					PlaceObj('AIPolicySaveAP', {
+						'Required', true,
+					}),
+					PlaceObj('AIPolicyCustomSeekCover', nil),
+				},
+				'TakeCoverChance', 0,
+			}),
+		},
+		Comment = "Keywords: Flank, Explosives",
+		OptLocPolicies = {
+			PlaceObj('AIPolicyWeaponRange', {
+				'RangeBase', "Absolute",
+				'RangeMin', 12,
+				'RangeMax', 18,
+			}),
+			PlaceObj('AIPolicyLosToEnemy', nil),
+			PlaceObj('AIPolicyIndoorsOutdoors', {
+				'Indoors', false,
+			}),
+		},
+		OptLocSearchRadius = 100,
+		SignatureActions = {
+			PlaceObj('AIActionThrowFlare', {
+				'BiasId', "FlareThrow",
+				'Weight', 300,
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "FlareThrow",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "FlareThrow",
+						'Value', -30,
+						'Period', 0,
+						'ApplyTo', "Team",
+					}),
+				},
+				'enemy_score', 110,
+				'team_score', -1,
+				'self_score_mod', -1,
+				'min_score', 100,
+			}),
+			PlaceObj('AIActionMobileShot', {
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
+			}),
+			PlaceObj('AIActionMobileShot', {
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
+				'action_id', "RunAndGun",
+			}),
+			PlaceObj('AIAttackSingleTarget', {
+				'BiasId', "Autofire",
+				'Weight', 150,
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return AutoFire_CustomScoring(self, context)
+				end,
+				'action_id', "AutoFire",
+				'Aiming', "Maximum",
+				'AttackTargeting', set( "Torso" ),
+			}),
+			PlaceObj('AIActionHeavyWeaponAttack', {
+				'Weight', 600,
+				'min_score', 100,
+				'enemy_cover_mod', 50,
+				'MinDist', 6000,
+				'action_id', "RocketLauncherFire",
+				'LimitRange', true,
+				'MaxTargetRange', 40,
+			}),
+		},
+		TargetScoreRandomization = 10,
+		group = "RatoAI",
+		id = "RATOAI_Rocketeer",
 	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseMovementWeight = 10,

@@ -11,7 +11,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "RATOAI",
 	'author', "rato",
-	'version', 2676,
+	'version', 2707,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -71,6 +71,7 @@ return PlaceObj('ModDef', {
 		"Code/Script.lua",
 		"Code/AIExecuteUnitBehavior.lua",
 		"Code/Test.lua",
+		"UnitData/LegionRocketeer_copy.lua",
 		"UnitData/AdonisSniper_Elite_copy.lua",
 		"UnitData/LegionGrenadier_copy.lua",
 		"UnitData/LegionGunner_copy.lua",
@@ -86,8 +87,8 @@ return PlaceObj('ModDef', {
 		ImproveExplosiveStat = true,
 	},
 	'has_data', true,
-	'saved', 1737094287,
-	'code_hash', -1379969655553456814,
+	'saved', 1737175302,
+	'code_hash', 6093582003188664482,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "LootDef",
@@ -98,6 +99,11 @@ return PlaceObj('ModDef', {
 			'Class', "LootDef",
 			'Id', "he",
 			'ClassDisplayName', "Loot definition",
+		}),
+		PlaceObj('ModResourcePreset', {
+			'Class', "UnitDataCompositeDef",
+			'Id', "LegionRocketeer_copy",
+			'ClassDisplayName', "Unit",
 		}),
 		PlaceObj('ModResourcePreset', {
 			'Class', "UnitDataCompositeDef",
@@ -167,6 +173,11 @@ return PlaceObj('ModDef', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",
 			'Id', "RATOAI_Demolition",
+			'ClassDisplayName', "AI Archetype",
+		}),
+		PlaceObj('ModResourcePreset', {
+			'Class', "AIArchetype",
+			'Id', "RATOAI_Rocketeer",
 			'ClassDisplayName', "AI Archetype",
 		}),
 		PlaceObj('ModResourcePreset', {
