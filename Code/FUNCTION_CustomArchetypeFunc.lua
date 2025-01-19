@@ -32,6 +32,13 @@ function GetArgsForArchetypeAndWeaponSelection(unit)
             close_archetype = "RATOAI_RetreatingMarksman",
             vr = "AIArchetypeScared",
             dist = 6
+        },
+        ArmyCommander = { ---- ????? not sure why they had this in vanilla
+            main_w_classes = {"Firearm"},
+            close_w_classes = {"Firearm"},
+            close_archetype = "Soldier",
+            vr = "AIArchetypeAngry",
+            dist = 12
         }
 
     }
@@ -47,21 +54,6 @@ function GetArgsForArchetypeAndWeaponSelection(unit)
     return args
 end
 
---[[function SniperGetArchetypeSelection(self, context)
-    local unbolted_archetype = UnboltedArchetypeSelection(self, context)
-    return unbolted_archetype or CloseRangeArchetypeSelection(self, context)
-end
-
-function UnboltedArchetypeSelection(unit, context)
-    local weapon = context and context.weapon or unit:GetActiveWeapons()
-    if not weapon or not rat_canBolt(weapon) or not weapon.unbolted then
-        return false
-    end
-
-    local stance_cost = GetWeapon_StanceAP(unit, context.weapon) + Get_AimCost(unit)
-
-end]]
-
 ----
 
 function CloseRangeArchetypeSelection(self, context)
@@ -73,6 +65,12 @@ function CloseRangeArchetypeSelection(self, context)
     end
 
     local enemy, dist = GetNearestEnemy(self)
+
+    ----- This is wrong, it should then look at the next closer enemy, but ok.
+    if not enemy or enemy:IsIncapacitated() then
+        return archetype
+    end
+
     local weapon_classes = args.main_w_classes
 
     local check_dist = args.dist or const.Weapons.PointBlankRange

@@ -1,7 +1,7 @@
 return {
 	PlaceObj('ModItemCode', {
-		'name', "constants_AI",
-		'CodeFileName', "Code/constants_AI.lua",
+		'name', "CONSTANTS_AI_source",
+		'CodeFileName', "Code/CONSTANTS_AI_source.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "PATCH_AppendClass_source_classes",
@@ -29,7 +29,6 @@ return {
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "AIPOLICYPOS_CustomSeekCover",
-		'comment', "--- unfinished",
 		'CodeFileName', "Code/AIPOLICYPOS_CustomSeekCover.lua",
 	}),
 	PlaceObj('ModItemCode', {
@@ -54,7 +53,7 @@ return {
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "AIPOLICYPOS_DontBeExposedAtCloserRange",
-		'comment', "--- discontinued",
+		'comment', "--- moved to custom seek cover",
 		'CodeFileName', "Code/AIPOLICYPOS_DontBeExposedAtCloserRange.lua",
 	}),
 	PlaceObj('ModItemCode', {
@@ -84,6 +83,10 @@ return {
 	PlaceObj('ModItemCode', {
 		'name', "CUAE_options",
 		'CodeFileName', "Code/CUAE_options.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "REACTIONS_StopMGPackingUp",
+		'CodeFileName', "Code/REACTIONS_StopMGPackingUp.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "FUNCTION_ChangeEquipment",
@@ -126,34 +129,16 @@ return {
 		'CodeFileName', "Code/FUNCTION_CanDegradeToSingleShot.lua",
 	}),
 	PlaceObj('ModItemCode', {
-		'name', "REACTIONS_StopMGPackingUp",
-		'CodeFileName', "Code/REACTIONS_StopMGPackingUp.lua",
-	}),
-	PlaceObj('ModItemCode', {
 		'name', "PROPERTIES_Unit",
 		'CodeFileName', "Code/PROPERTIES_Unit.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "SOURCE_FreeMove",
-		'CodeFileName', "Code/SOURCE_FreeMove.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AIPrecalcDamageScore",
 		'CodeFileName', "Code/SOURCE_AIPrecalcDamageScore.lua",
 	}),
 	PlaceObj('ModItemCode', {
-		'name', "SOURCE_AIPlayAttacks",
-		'comment', "----- Not Used",
-		'CodeFileName', "Code/SOURCE_AIPlayAttacks.lua",
-	}),
-	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AICalcAttacksandAim",
 		'CodeFileName', "Code/SOURCE_AICalcAttacksandAim.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "SOURCE_SelectArchetype",
-		'comment', "---- Not Used",
-		'CodeFileName', "Code/SOURCE_SelectArchetype.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AICreateContext",
@@ -163,11 +148,6 @@ return {
 	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AIGetAttackArgs",
 		'CodeFileName', "Code/SOURCE_AIGetAttackArgs.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "SOURCE_AIGetBias",
-		'comment', "---- Not used",
-		'CodeFileName', "Code/SOURCE_AIGetBias.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AISelectAction",
@@ -193,45 +173,10 @@ return {
 		'name', "SOURCE_AIActionPinDown_PrecalcAction",
 		'CodeFileName', "Code/SOURCE_AIActionPinDown_PrecalcAction.lua",
 	}),
-	PlaceObj('ModItemCode', {
-		'name', "SOURCE_AIPolicyTakeCover_EvalDest",
-		'CodeFileName', "Code/SOURCE_AIPolicyTakeCover_EvalDest.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "vanilla_archetype_functions_forconsult",
-		'CodeFileName', "Code/vanilla_archetype_functions_forconsult.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "vanilla_action_functions_forconsult1",
-		'CodeFileName', "Code/vanilla_action_functions_forconsult1.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "AIPrecalcConeTargetZones",
-		'CodeFileName', "Code/AIPrecalcConeTargetZones.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "AIScoreReachableVoxels",
-		'CodeFileName', "Code/AIScoreReachableVoxels.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "eval_dest",
-		'CodeFileName', "Code/eval_dest.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'CodeFileName', "Code/Script.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "AIExecuteUnitBehavior",
-		'CodeFileName', "Code/AIExecuteUnitBehavior.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "Test",
-		'CodeFileName', "Code/Test.lua",
-	}),
 	PlaceObj('ModItemOptionToggle', {
 		'name', "ImproveExplosiveStat",
-		'DisplayName', "Improve Explosive Stat",
-		'Help', "This option will moderately improve the enemies Explosive stat. Specialists (like Grenadier) will have a bigger boost. Highly recommended if using Rato's Explosive Overhaul 2. Restart after applying.",
+		'DisplayName', "Improve Explosives Stat",
+		'Help', "This option will moderately improve the enemies Explosive stat. Specialists (like Grenadier) will have a bigger boost. Some enemies will also have a small Dexterity boost. Some units may receive a small Dexterity boost as well. Highly recommended if using Rato's Explosive Overhaul 2. Restart after applying.",
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {
@@ -252,535 +197,6 @@ return {
 		'Help', "When using CUAE, enable a (subjective) lore friendly weapon progression based on unit affiliation.",
 		'DefaultValue', true,
 	}),
-	PlaceObj('ModItemLootDef', {
-		group = "Default",
-		id = "FLARES",
-		loot = "all",
-		PlaceObj('LootEntryInventoryItem', {
-			item = "FlareStick",
-			stack_max = 10,
-			stack_min = 10,
-		}),
-	}),
-	PlaceObj('ModItemLootDef', {
-		group = "Default",
-		id = "he",
-		loot = "all",
-		PlaceObj('LootEntryInventoryItem', {
-			item = "HE_Grenade",
-			stack_max = 10,
-			stack_min = 10,
-		}),
-	}),
-	PlaceObj('ModItemFolder', {
-		'name', "Tests",
-	}, {
-		PlaceObj('ModItemUnitDataCompositeDef', {
-			'Group', "Legion",
-			'Id', "LegionRocketeer_copy",
-			'object_class', "UnitData",
-			'Health', 28,
-			'Agility', 83,
-			'Dexterity', 8,
-			'Strength', 88,
-			'Wisdom', 14,
-			'Leadership', 10,
-			'Marksmanship', 12,
-			'Mechanical', 0,
-			'Explosives', 41,
-			'Medical', 0,
-			'Portrait', "UI/EnemiesPortraits/LegionArtillery",
-			'BigPortrait', "UI/Enemies/LegionRaider",
-			'Name', T(532378367503, --[[ModItemUnitDataCompositeDef LegionRocketeer_copy Name]] "Rocket Man"),
-			'Randomization', true,
-			'Affiliation', "Legion",
-			'neutral_retaliate', true,
-			'AIKeywords', {
-				"Ordnance",
-			},
-			'archetype', "RATOAI_Rocketeer",
-			'role', "Artillery",
-			'CanManEmplacements', false,
-			'MaxAttacks', 1,
-			'MaxHitPoints', 50,
-			'AppearancesList', {
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Artillery",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Artillery02",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Artillery03",
-				}),
-			},
-			'Equipment', {
-				"LegionRocketeer",
-			},
-			'AdditionalGroups', {
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_1",
-				}),
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_2",
-				}),
-			},
-			'pollyvoice', "Joey",
-			'gender', "Male",
-			'VoiceResponseId', "LegionRaider",
-		}),
-		PlaceObj('ModItemUnitDataCompositeDef', {
-			'Group', "Adonis",
-			'Id', "AdonisSniper_Elite_copy",
-			'object_class', "UnitData",
-			'Health', 71,
-			'Agility', 90,
-			'Dexterity', 100,
-			'Strength', 85,
-			'Wisdom', 80,
-			'Leadership', 20,
-			'Marksmanship', 80,
-			'Mechanical', 50,
-			'Explosives', 42,
-			'Medical', 53,
-			'Portrait', "UI/EnemiesPortraits/AdonisSniper",
-			'Name', T(652358849761, --[[ModItemUnitDataCompositeDef AdonisSniper_Elite_copy Name]] "Elite Marksman"),
-			'Randomization', true,
-			'elite', true,
-			'eliteCategory', "Foreigners",
-			'Affiliation', "Adonis",
-			'StartingLevel', 5,
-			'neutral_retaliate', true,
-			'AIKeywords', {
-				"Sniper",
-			},
-			'archetype', "RATOAI_Sniper",
-			'role', "Marksman",
-			'MaxAttacks', 1,
-			'PickCustomArchetype', function (self, proto_context)  end,
-			'MaxHitPoints', 50,
-			'StartingPerks', {
-				"Deadeye",
-				"Shatterhand",
-			},
-			'AppearancesList', {
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Adonis_Marksman",
-				}),
-			},
-			'Equipment', {
-				"AdonisSniper",
-			},
-			'AdditionalGroups', {
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "AdonisMale_1",
-				}),
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "AdonisMale_2",
-				}),
-			},
-			'Tier', "Veteran",
-			'pollyvoice', "Joey",
-			'gender', "Male",
-			'VoiceResponseId', "AdonisAssault",
-		}),
-		PlaceObj('ModItemUnitDataCompositeDef', {
-			'Group', "Legion",
-			'Id', "LegionGrenadier_copy",
-			'object_class', "UnitData",
-			'Health', 53,
-			'Agility', 80,
-			'Dexterity', 30,
-			'Strength', 53,
-			'Wisdom', 14,
-			'Leadership', 14,
-			'Marksmanship', 43,
-			'Mechanical', 0,
-			'Explosives', 25,
-			'Medical', 0,
-			'Portrait', "UI/EnemiesPortraits/LegionDemo",
-			'BigPortrait', "UI/Enemies/LegionRaider",
-			'Name', T(757912188960, --[[ModItemUnitDataCompositeDef LegionGrenadier_copy Name]] "Grenadier"),
-			'Randomization', true,
-			'Affiliation', "Legion",
-			'StartingLevel', 2,
-			'neutral_retaliate', true,
-			'AIKeywords', {
-				"Explosives",
-				"MobileShot",
-			},
-			'archetype', "RATOAI_Demolition",
-			'role', "Demolitions",
-			'CanManEmplacements', false,
-			'MaxAttacks', 1,
-			'PickCustomArchetype', function (self, proto_context)  end,
-			'MaxHitPoints', 50,
-			'StartingPerks', {
-				"Throwing",
-				"MinFreeMove",
-			},
-			'AppearancesList', {
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Demolishion",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Demolishion02",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Demolishion03",
-				}),
-			},
-			'Equipment', {
-				"he",
-				"Grunty",
-			},
-			'AdditionalGroups', {
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_1",
-				}),
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_2",
-				}),
-			},
-			'pollyvoice', "Russell",
-			'gender', "Male",
-			'VoiceResponseId', "LegionRaider",
-		}),
-		PlaceObj('ModItemUnitDataCompositeDef', {
-			'Group', "Legion",
-			'Id', "LegionGunner_copy",
-			'object_class', "UnitData",
-			'Health', 62,
-			'Agility', 65,
-			'Dexterity', 39,
-			'Strength', 89,
-			'Wisdom', 30,
-			'Leadership', 20,
-			'Marksmanship', 55,
-			'Mechanical', 0,
-			'Explosives', 0,
-			'Medical', 0,
-			'Portrait', "UI/EnemiesPortraits/LegionHeavy",
-			'BigPortrait', "UI/Enemies/LegionRaider",
-			'Name', T(692210764193, --[[ModItemUnitDataCompositeDef LegionGunner_copy Name]] "Gunner"),
-			'Randomization', true,
-			'Affiliation', "Legion",
-			'StartingLevel', 2,
-			'neutral_retaliate', true,
-			'archetype', "HeavyGunner",
-			'role', "Heavy",
-			'MaxAttacks', 2,
-			'PickCustomArchetype', function (self, proto_context)  end,
-			'MaxHitPoints', 85,
-			'StartingPerks', {
-				"HeavyWeaponsTraining",
-			},
-			'AppearancesList', {
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Heavy",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Heavy02",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Heavy03",
-				}),
-			},
-			'Equipment', {
-				"LegionGunner",
-			},
-			'AdditionalGroups', {
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_1",
-				}),
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_2",
-				}),
-			},
-			'pollyvoice', "Joey",
-			'gender', "Male",
-			'VoiceResponseId', "LegionRaider",
-		}),
-		PlaceObj('ModItemUnitDataCompositeDef', {
-			'Group', "Legion",
-			'Id', "LegionRaider_copy_copy",
-			'object_class', "UnitData",
-			'Agility', 70,
-			'Dexterity', 34,
-			'Strength', 70,
-			'Wisdom', 24,
-			'Leadership', 10,
-			'Marksmanship', 70,
-			'Mechanical', 0,
-			'Explosives', 0,
-			'Medical', 0,
-			'Portrait', "UI/EnemiesPortraits/LegionSoldier",
-			'BigPortrait', "UI/Enemies/LegionRaider",
-			'Name', T(609237866839, --[[ModItemUnitDataCompositeDef LegionRaider_copy_copy Name]] "Marauder"),
-			'Randomization', true,
-			'Affiliation', "Legion",
-			'neutral_retaliate', true,
-			'AIKeywords', {
-				"Soldier",
-			},
-			'role', "Soldier",
-			'MaxAttacks', 2,
-			'PickCustomArchetype', function (self, proto_context)  end,
-			'MaxHitPoints', 50,
-			'StartingPerks', {
-				"AutoWeapons",
-				"MinFreeMove",
-			},
-			'AppearancesList', {
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier02",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier03",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier04",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier05",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier06",
-				}),
-			},
-			'Equipment', {
-				"LegionRaiders",
-			},
-			'AdditionalGroups', {
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_1",
-				}),
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_2",
-				}),
-			},
-			'pollyvoice', "Joey",
-			'gender', "Male",
-			'VoiceResponseId', "LegionRaider",
-		}),
-		PlaceObj('ModItemUnitDataCompositeDef', {
-			'Group', "Legion",
-			'Id', "LegionRaider_copy",
-			'object_class', "UnitData",
-			'Agility', 70,
-			'Dexterity', 34,
-			'Strength', 70,
-			'Wisdom', 24,
-			'Leadership', 10,
-			'Marksmanship', 70,
-			'Mechanical', 0,
-			'Explosives', 0,
-			'Medical', 0,
-			'Portrait', "UI/EnemiesPortraits/LegionSoldier",
-			'BigPortrait', "UI/Enemies/LegionRaider",
-			'Name', T(157748759185, --[[ModItemUnitDataCompositeDef LegionRaider_copy Name]] "Marauder"),
-			'Randomization', true,
-			'Affiliation', "Legion",
-			'neutral_retaliate', true,
-			'AIKeywords', {
-				"Soldier",
-			},
-			'role', "Soldier",
-			'MaxAttacks', 2,
-			'PickCustomArchetype', function (self, proto_context)  end,
-			'MaxHitPoints', 50,
-			'StartingPerks', {
-				"AutoWeapons",
-				"MinFreeMove",
-			},
-			'AppearancesList', {
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier02",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier03",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier04",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier05",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Soldier06",
-				}),
-			},
-			'Equipment', {
-				"LegionRaiders",
-				"FLARES",
-			},
-			'AdditionalGroups', {
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_1",
-				}),
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_2",
-				}),
-			},
-			'pollyvoice', "Joey",
-			'gender', "Male",
-			'VoiceResponseId', "LegionRaider",
-		}),
-		PlaceObj('ModItemUnitDataCompositeDef', {
-			'Group', "Legion",
-			'Id', "LegionScout_copy",
-			'object_class', "UnitData",
-			'Health', 36,
-			'Agility', 79,
-			'Dexterity', 73,
-			'Strength', 48,
-			'Wisdom', 71,
-			'Leadership', 29,
-			'Marksmanship', 58,
-			'Mechanical', 0,
-			'Explosives', 0,
-			'Medical', 0,
-			'Portrait', "UI/EnemiesPortraits/LegionRecon",
-			'BigPortrait', "UI/Enemies/LegionRaider",
-			'Name', T(933831333354, --[[ModItemUnitDataCompositeDef LegionScout_copy Name]] "Scout"),
-			'Randomization', true,
-			'Affiliation', "Legion",
-			'StartingLevel', 2,
-			'neutral_retaliate', true,
-			'AIKeywords', {
-				"Flank",
-				"RunAndGun",
-			},
-			'archetype', "RATOAI_UnboltedWeapon",
-			'role', "Recon",
-			'OpeningAttackType', "Overwatch",
-			'MaxAttacks', 2,
-			'PickCustomArchetype', function (self, proto_context)  end,
-			'MaxHitPoints', 50,
-			'AppearancesList', {
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Recon",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Recon02",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Recon03",
-				}),
-			},
-			'Equipment', {
-				"LegionScout",
-			},
-			'AdditionalGroups', {
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_1",
-				}),
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_2",
-				}),
-			},
-			'pollyvoice', "Joey",
-			'gender', "Male",
-			'VoiceResponseId', "LegionRaider",
-		}),
-		PlaceObj('ModItemUnitDataCompositeDef', {
-			'Group', "Legion",
-			'Id', "LegionButcher_copy",
-			'object_class', "UnitData",
-			'Health', 50,
-			'Agility', 85,
-			'Dexterity', 74,
-			'Strength', 47,
-			'Wisdom', 19,
-			'Leadership', 9,
-			'Marksmanship', 15,
-			'Mechanical', 0,
-			'Explosives', 11,
-			'Medical', 0,
-			'Portrait', "UI/EnemiesPortraits/LegionStormer",
-			'BigPortrait', "UI/Enemies/LegionRaider",
-			'Name', T(503339752786, --[[ModItemUnitDataCompositeDef LegionButcher_copy Name]] "Butcher"),
-			'Randomization', true,
-			'Affiliation', "Legion",
-			'StartingLevel', 2,
-			'neutral_retaliate', true,
-			'AIKeywords', {
-				"Explosives",
-			},
-			'role', "Stormer",
-			'CanManEmplacements', false,
-			'MaxAttacks', 2,
-			'PickCustomArchetype', function (self, proto_context)  end,
-			'MaxHitPoints', 60,
-			'StartingPerks', {
-				"MeleeTraining",
-				"MinFreeMove",
-				"InstantAutopsy",
-			},
-			'AppearancesList', {
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Stormer",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Stormer02",
-				}),
-				PlaceObj('AppearanceWeight', {
-					'Preset', "Legion_Stormer03",
-				}),
-			},
-			'Equipment', {
-				"LegionMeleeFighter",
-			},
-			'AdditionalGroups', {
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_1",
-				}),
-				PlaceObj('AdditionalGroup', {
-					'Weight', 50,
-					'Exclusive', true,
-					'Name', "LegionMale_2",
-				}),
-			},
-			'gender', "Male",
-			'VoiceResponseId', "LegionRaider",
-		}),
-		}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
 		BaseAttackWeight = 150,
@@ -868,7 +284,7 @@ return {
 						'Weight', 400,
 						'Required', true,
 						'visibility_mode', "team",
-						'ExposedAtCloseRange_Score', -10,
+						'ExposedAtCloseRange_Score', -30,
 					}),
 				},
 				'TakeCoverChance', 100,
@@ -944,7 +360,7 @@ return {
 			PlaceObj('AIPolicyCustomSeekCover', {
 				'Weight', 200,
 				'visibility_mode', "team",
-				'ExposedAtCloseRange_Score', -20,
+				'ExposedAtCloseRange_Score', -30,
 			}),
 			PlaceObj('AIPolicyLosToEnemy', nil),
 			PlaceObj('AIPolicyWeaponRange', {
@@ -1131,25 +547,7 @@ return {
 				'enemy_cover_mod', 50,
 				'MinDist', 7000,
 				'LimitRange', true,
-				'MaxTargetRange', 30,
-			}),
-			PlaceObj('AIActionHeavyWeaponAttack', {
-				'BiasId', "RocketFire",
-				'Weight', 200,
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "RocketFire",
-						'Effect', "disable",
-						'Period', 0,
-					}),
-				},
-				'self_score_mod', -1000,
-				'min_score', 100,
-				'enemy_cover_mod', 50,
-				'MinDist', 10000,
-				'action_id', "RocketLauncherFire",
-				'LimitRange', true,
-				'MaxTargetRange', 30,
+				'MaxTargetRange', 35,
 			}),
 			PlaceObj('AIActionCharge', {
 				'Weight', 150,
@@ -1157,6 +555,9 @@ return {
 			}),
 		},
 		TargetScoreRandomization = 10,
+		TargetingPolicies = {
+			PlaceObj('AITargetingCancelShot', nil),
+		},
 		group = "Default",
 		id = "Soldier",
 	}),
@@ -1291,7 +692,7 @@ return {
 			PlaceObj('AIPolicyTryNotToBeFlanked', nil),
 			PlaceObj('AIPolicyCustomSeekCover', {
 				'visibility_mode', "team",
-				'ExposedAtCloseRange_Score', -20,
+				'ExposedAtCloseRange_Score', -5,
 			}),
 		},
 		OptLocSearchRadius = 80,
@@ -1819,6 +1220,156 @@ return {
 		id = "Brute",
 	}),
 	PlaceObj('ModItemAIArchetype', {
+		BaseAttackTargeting = set( "Arms", "Torso" ),
+		BaseAttackWeight = 80,
+		BaseMovementWeight = 10,
+		Behaviors = {
+			PlaceObj('StandardAI', {
+				'BiasId', "Standard",
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyDealDamage', {
+						'Weight', 20,
+					}),
+					PlaceObj('AIPolicyWeaponRange', {
+						'RangeMin', 30,
+						'RangeMax', 50,
+					}),
+					PlaceObj('AIPolicyCustomSeekCover', {
+						'visibility_mode', "team",
+					}),
+				},
+				'SignatureActions', {
+					PlaceObj('AIActionMobileShot', {
+						'Priority', true,
+						'NotificationText', "",
+						'CustomScoring', function (self, context)
+							return MobileAttack_CustomScoring(self, context)
+						end,
+						'action_id', "RunAndGun",
+					}),
+					PlaceObj('AIActionMobileShot', {
+						'Priority', true,
+						'NotificationText', "",
+						'CustomScoring', function (self, context)
+							return MobileAttack_CustomScoring(self, context)
+						end,
+					}),
+				},
+				'TakeCoverChance', 50,
+			}),
+			PlaceObj('StandardAI', {
+				'BiasId', "Healer",
+				'Priority', true,
+				'Fallback', false,
+				'Score', function (self, unit, proto_context, debug_data)
+					for _, ally in ipairs(unit.team.units) do
+						if not ally:IsDead() and ally.HitPoints < MulDivRound(ally.MaxHitPoints, 70, 100) then
+							return self.Weight
+						end
+					end
+					return 0
+				end,
+				'turn_phase', "Late",
+				'OptLocWeight', 1,
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyHealingRange', {
+						'Weight', 300,
+						'BleedingWeight', 80,
+						'CanUseMod', 1000,
+					}),
+				},
+				'SignatureActions', {
+					PlaceObj('AIActionBandage', {
+						'Priority', true,
+						'RequiredKeywords', {
+							"Heal",
+						},
+						'BleedingWeight', 80,
+						'CanUseMod', 1000,
+					}),
+					PlaceObj('AIActionStim', {
+						'Priority', true,
+						'RequiredKeywords', {
+							"Stim",
+						},
+						'TargetRules', {
+							PlaceObj('AIStimRule', {
+								'Keyword', "Flank",
+								'Weight', 100,
+							}),
+							PlaceObj('AIStimRule', {
+								'Keyword', "Control",
+								'Weight', 50,
+							}),
+							PlaceObj('AIStimRule', {
+								'Keyword', "Explosives",
+								'Weight', 50,
+							}),
+							PlaceObj('AIStimRule', {
+								'Keyword', "Ordnance",
+								'Weight', 50,
+							}),
+							PlaceObj('AIStimRule', {
+								'Keyword', "RunAndGun",
+								'Weight', 100,
+							}),
+						},
+					}),
+				},
+				'TakeCoverChance', 0,
+			}),
+		},
+		OptLocPolicies = {
+			PlaceObj('AIPolicyCustomSeekCover', {
+				'visibility_mode', "team",
+			}),
+			PlaceObj('AIPolicyLosToEnemy', nil),
+		},
+		OptLocSearchRadius = 80,
+		PrefStance = "Crouch",
+		TargetScoreRandomization = 10,
+		TargetingPolicies = {
+			PlaceObj('AITargetingCancelShot', {
+				'Weight', 200,
+			}),
+		},
+		group = "Simplified",
+		id = "Medic",
+	}),
+	PlaceObj('ModItemAIArchetype', {
+		BaseMovementWeight = 10,
+		Behaviors = {
+			PlaceObj('StandardAI', {
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyCustomSeekCover', {
+						'visibility_mode', "team",
+					}),
+				},
+				'TakeCoverChance', 0,
+			}),
+		},
+		Comment = "used to advance toward last known enemy location",
+		FallbackAction = "overwatch",
+		OptLocPolicies = {
+			PlaceObj('AIPolicyLastEnemyPos', nil),
+			PlaceObj('AIPolicyCustomSeekCover', {
+				'visibility_mode', "team",
+			}),
+		},
+		OptLocSearchRadius = 80,
+		SignatureActions = {
+			PlaceObj('AIPrepareWeapon', nil),
+			PlaceObj('AIActionThrowFlare', {
+				'team_score', -1,
+				'self_score_mod', -1,
+				'min_score', 100,
+				'TargetLastAttackPos', true,
+			}),
+		},
+		group = "System",
+		id = "Scout_LastLocation",
+	}),
+	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
 		BaseAttackWeight = 150,
 		BaseMovementWeight = 10,
@@ -2104,6 +1655,7 @@ return {
 			PlaceObj('AITargetingPindownTargeting', {
 				'Score', 15,
 			}),
+			PlaceObj('AITargetingCancelShot', nil),
 		},
 		group = "Default",
 		id = "RATOAI_Sniper",
@@ -2118,6 +1670,7 @@ return {
 					PlaceObj('AIPolicyTryNotToBeFlanked', nil),
 					PlaceObj('AIPolicyCustomSeekCover', {
 						'visibility_mode', "team",
+						'ExposedAtCloseRange_Score', -30,
 					}),
 				},
 				'TakeCoverChance', 0,
@@ -2140,6 +1693,7 @@ return {
 					PlaceObj('AIPolicyCustomSeekCover', {
 						'Required', true,
 						'visibility_mode', "team",
+						'ExposedAtCloseRange_Score', -30,
 					}),
 				},
 				'TakeCoverChance', 50,
@@ -2163,11 +1717,18 @@ return {
 				'RangeMin', 10,
 				'RangeMax', 15,
 			}),
+			PlaceObj('AIPolicyWeaponRange', {
+				'Weight', 20,
+				'RangeBase', "Absolute",
+				'RangeMin', 16,
+				'RangeMax', 20,
+			}),
 			PlaceObj('AIPolicyLosToEnemy', nil),
 			PlaceObj('AIPolicyTryNotToBeFlanked', nil),
 			PlaceObj('AIPolicyCustomSeekCover', {
 				'Weight', 150,
 				'visibility_mode', "team",
+				'ExposedAtCloseRange_Score', -30,
 			}),
 		},
 		OptLocSearchRadius = 80,
@@ -2249,24 +1810,16 @@ return {
 					PlaceObj('AIPolicyIndoorsOutdoors', {
 						'Indoors', false,
 					}),
-					PlaceObj('AIPolicySaveAP', {
-						'Required', true,
-						'ReserveAP', 6,
-					}),
 					PlaceObj('AIPolicyLosToEnemy', nil),
 					PlaceObj('AIPolicyGrenadeRange', {
 						'Weight', 400,
 						'RangeMin', 35,
 						'RangeMax', 55,
 						'AllowedTriggerTypes', set( "Contact", "Timed" ),
-					}),
-					PlaceObj('AIPolicyGrenadeRange', {
-						'Weight', 50,
-						'RangeMin', 56,
-						'RangeMax', 60,
-						'AllowedTriggerTypes', set( "Contact", "Timed" ),
+						'SaveAP', true,
 					}),
 					PlaceObj('AIPolicyCustomFlanking', {
+						'Weight', 50,
 						'OnlyTarget', true,
 					}),
 					PlaceObj('AIPolicyCustomSeekCover', {
@@ -2480,15 +2033,11 @@ return {
 						'ReserveAP', 6,
 					}),
 					PlaceObj('AIPolicyLosToEnemy', nil),
-					PlaceObj('AIPolicyCustomFlanking', {
-						'Weight', 0,
-						'visibility_mode', "team",
-						'OnlyTarget', true,
-					}),
 					PlaceObj('AIPolicyCustomSeekCover', {
 						'Weight', 150,
 					}),
 					PlaceObj('AIPolicyWeaponRange', {
+						'Weight', 200,
 						'RangeBase', "Absolute",
 						'RangeMin', 10,
 						'RangeMax', 16,
@@ -2617,61 +2166,162 @@ return {
 		id = "RATOAI_Rocketeer",
 	}),
 	PlaceObj('ModItemAIArchetype', {
-		BaseMovementWeight = 10,
 		Behaviors = {
 			PlaceObj('StandardAI', {
+				'Priority', true,
+				'Comment', "breaking pindown",
+				'Score', function (self, unit, proto_context, debug_data)
+					local enemies = {}
+					for _, descr in pairs(g_Pindown) do
+						if descr.target == self then
+							enemies[#enemies + 1] = enemy
+						end
+					end
+					return #enemies > 0 and self.Weight or 0
+				end,
 				'EndTurnPolicies', {
-					PlaceObj('AIPolicyCustomSeekCover', {
-						'visibility_mode', "team",
+					PlaceObj('AIPolicyLosToEnemy', {
+						'Invert', true,
+					}),
+					PlaceObj('AIPolicyDealDamage', nil),
+				},
+				'TakeCoverChance', 0,
+			}),
+			PlaceObj('StandardAI', {
+				'Comment', "fallback (aggressive)",
+				'Fallback', false,
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyDealDamage', {
+						'Weight', 600,
+					}),
+					PlaceObj('AIPolicyWeaponRange', {
+						'RangeBase', "Absolute",
+						'RangeMin', 0,
+						'RangeMax', 5,
 					}),
 				},
 				'TakeCoverChance', 0,
 			}),
 		},
-		Comment = "used to advance toward last known enemy location",
-		FallbackAction = "overwatch",
 		OptLocPolicies = {
-			PlaceObj('AIPolicyLastEnemyPos', nil),
-			PlaceObj('AIPolicyCustomSeekCover', {
-				'visibility_mode', "team",
-			}),
+			PlaceObj('AIPolicyLosToEnemy', nil),
 		},
 		OptLocSearchRadius = 80,
 		SignatureActions = {
-			PlaceObj('AIPrepareWeapon', nil),
-			PlaceObj('AIActionThrowFlare', {
-				'team_score', -1,
-				'self_score_mod', -1,
-				'min_score', 100,
-				'TargetLastAttackPos', true,
+			PlaceObj('AIActionMobileShot', {
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
+			}),
+			PlaceObj('AIActionMobileShot', {
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
+				'action_id', "RunAndGun",
 			}),
 		},
 		group = "System",
-		id = "Scout_LastLocation",
+		id = "PinnedDown",
 	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
-		BaseAttackWeight = 0,
+		BaseAttackWeight = 150,
+		BaseMovementWeight = 10,
 		Behaviors = {
 			PlaceObj('StandardAI', {
-				'Comment', "PrepareWeapon",
-				'Fallback', false,
-				'RequiredKeywords', {
-					"Sniper",
+				'BiasId', "Standard",
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyDealDamage', nil),
+					PlaceObj('AIPolicyCustomFlanking', {
+						'RequiredKeywords', {
+							"Soldier",
+						},
+						'Weight', 200,
+						'ReserveAttackAP', "Stance",
+						'OnlyTarget', true,
+					}),
+					PlaceObj('AIPolicyTryNotToBeFlanked', nil),
+					PlaceObj('AIPolicyWeaponRange', {
+						'Weight', 150,
+						'RangeBase', "Absolute",
+						'RangeMin', 6,
+						'RangeMax', 10,
+					}),
+					PlaceObj('AIPolicyCustomSeekCover', {
+						'Weight', 200,
+						'visibility_mode', "team",
+						'ExposedAtCloseRange_Score', -10,
+					}),
 				},
+				'TakeCoverChance', 50,
+			}),
+			PlaceObj('HoldPositionAI', {
+				'Weight', 50,
+				'Comment', "ShootingStance",
+				'Fallback', false,
+				'Score', function (self, unit, proto_context, debug_data)
+					local score = getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
+					return MulDivRound(score, self.Weight, 100)
+				end,
+				'TakeCoverChance', 0,
+			}),
+			PlaceObj('PositioningAI', {
+				'BiasId', "",
+				'Comment', "Get Closer",
+				'Fallback', false,
+				'Score', function (self, unit, proto_context, debug_data)
+					unit.ai_context = unit.ai_context or AICreateContext(unit, proto_context)
+					---
+					if not get_ShouldUseGetCloserPositioningBehavior(unit, unit.ai_context) then
+						return 0
+					end
+					---
+					
+					local dest, score = AIScoreReachableVoxels(unit.ai_context, self.EndTurnPolicies, 0)
+					return MulDivRound(score, self.Weight, 100)
+				end,
 				'OptLocWeight', 20,
 				'EndTurnPolicies', {
-					PlaceObj('AIPolicySaveAP', {
-						'Required', true,
-						'SaveforBoltingAction', true,
-						'SaveforShootingStance', true,
-					}),
-					PlaceObj('AIPolicyTakeCover', {
-						'Weight', 300,
+					PlaceObj('AIPolicyTryNotToBeFlanked', {
+						'Weight', 50,
 					}),
 					PlaceObj('AIPolicyWeaponRange', {
 						'RangeMin', 30,
-						'RangeMax', 60,
+						'RangeMax', 35,
+					}),
+					PlaceObj('AIPolicyWeaponRange', {
+						'Weight', 500,
+						'RangeMin', 36,
+						'RangeMax', 40,
+					}),
+					PlaceObj('AIPolicyWeaponRange', {
+						'Weight', 200,
+						'RangeMin', 41,
+						'RangeMax', 80,
+					}),
+					PlaceObj('AIPolicyLastEnemyPos', {
+						'Weight', 400,
+						'Required', true,
+					}),
+					PlaceObj('AIPolicyLosToEnemy', {
+						'Weight', 50,
+						'Invert', true,
+					}),
+					PlaceObj('AIPolicySaveAP', {
+						'Required', true,
+					}),
+					PlaceObj('AIPolicyProximity', {
+						'Weight', 200,
+						'AllyPlannedPosition', true,
+						'TargetUnits', "allies",
+						'TargetDist', "average",
+						'MinScore', 10,
+					}),
+					PlaceObj('AIPolicyCustomSeekCover', {
+						'visibility_mode', "team",
+						'ExposedAtCloseRange_Score', 0,
 					}),
 				},
 				'SignatureActions', {
@@ -2682,422 +2332,201 @@ return {
 				'TakeCoverChance', 0,
 			}),
 		},
+		Comment = "Keywords: Soldier, Sniper, Control, Ordnance, Smoke, Explosives",
 		OptLocPolicies = {
-			PlaceObj('AIPolicyWeaponRange', {
-				'RangeMin', 40,
-				'RangeMax', 60,
-			}),
-			PlaceObj('AIPolicyLosToEnemy', {
-				'Weight', 200,
-			}),
-			PlaceObj('AIPolicyTakeCover', {
-				'Weight', 200,
-			}),
-			PlaceObj('AIPolicyTryNotToBeFlanked', {
-				'Weight', 50,
-			}),
-		},
-		OptLocSearchRadius = 100,
-		PrefStance = "Crouch",
-		SignatureActions = {
-			PlaceObj('AIPrepareWeapon', {
-				'Priority', true,
-			}),
-		},
-		TargetScoreRandomization = 10,
-		comment = "not used",
-		group = "Simplified",
-		id = "RATOAI_UnboltedWeapon",
-	}),
-	PlaceObj('ModItemAIArchetype', {
-		BaseAttackTargeting = set( "Arms", "Torso" ),
-		BaseAttackWeight = 80,
-		BaseMovementWeight = 10,
-		Behaviors = {
-			PlaceObj('StandardAI', {
-				'BiasId', "Standard",
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicyDealDamage', {
-						'Weight', 20,
-					}),
-					PlaceObj('AIPolicyTakeCover', {
-						'visibility_mode', "team",
-					}),
-					PlaceObj('AIPolicyWeaponRange', {
-						'RangeMin', 60,
-						'RangeMax', 100,
-					}),
-				},
-				'SignatureActions', {
-					PlaceObj('AIActionMobileShot', {
-						'Priority', true,
-						'NotificationText', "",
-						'CustomScoring', function (self, context)
-							return MobileAttack_CustomScoring(self, context)
-						end,
-						'action_id', "RunAndGun",
-					}),
-					PlaceObj('AIActionMobileShot', {
-						'Priority', true,
-						'NotificationText', "",
-						'CustomScoring', function (self, context)
-							return MobileAttack_CustomScoring(self, context)
-						end,
-					}),
-				},
-				'TakeCoverChance', 50,
-			}),
-			PlaceObj('StandardAI', {
-				'BiasId', "Healer",
-				'Priority', true,
-				'Fallback', false,
-				'Score', function (self, unit, proto_context, debug_data)
-					for _, ally in ipairs(unit.team.units) do
-						if not ally:IsDead() and ally.HitPoints < MulDivRound(ally.MaxHitPoints, 70, 100) then
-							return self.Weight
-						end
-					end
-					return 0
-				end,
-				'turn_phase', "Late",
-				'OptLocWeight', 1,
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicyHealingRange', {
-						'Weight', 300,
-						'CanUseMod', 1000,
-					}),
-				},
-				'SignatureActions', {
-					PlaceObj('AIActionBandage', {
-						'Priority', true,
-						'RequiredKeywords', {
-							"Heal",
-						},
-						'CanUseMod', 1000,
-					}),
-					PlaceObj('AIActionStim', {
-						'Priority', true,
-						'RequiredKeywords', {
-							"Stim",
-						},
-						'TargetRules', {
-							PlaceObj('AIStimRule', {
-								'Keyword', "Flank",
-								'Weight', 100,
-							}),
-							PlaceObj('AIStimRule', {
-								'Keyword', "Control",
-								'Weight', 50,
-							}),
-							PlaceObj('AIStimRule', {
-								'Keyword', "Explosives",
-								'Weight', 50,
-							}),
-							PlaceObj('AIStimRule', {
-								'Keyword', "Ordnance",
-								'Weight', 50,
-							}),
-							PlaceObj('AIStimRule', {
-								'Keyword', "RunAndGun",
-								'Weight', 100,
-							}),
-						},
-					}),
-				},
-				'TakeCoverChance', 0,
-			}),
-		},
-		OptLocPolicies = {
-			PlaceObj('AIPolicyTakeCover', {
+			PlaceObj('AIPolicyCustomSeekCover', {
 				'visibility_mode', "team",
+				'ExposedAtCloseRange_Score', -10,
 			}),
 			PlaceObj('AIPolicyLosToEnemy', nil),
-		},
-		OptLocSearchRadius = 80,
-		PrefStance = "Crouch",
-		TargetScoreRandomization = 10,
-		TargetingPolicies = {
-			PlaceObj('AITargetingCancelShot', {
-				'Weight', 200,
-			}),
-		},
-		group = "Simplified",
-		id = "Medic",
-	}),
-	PlaceObj('ModItemAIArchetype', {
-		BaseAttackTargeting = set( "Arms", "Torso" ),
-		BaseAttackWeight = 80,
-		BaseMovementWeight = 10,
-		Behaviors = {
-			PlaceObj('StandardAI', {
-				'BiasId', "Standard",
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicyDealDamage', {
-						'Weight', 20,
-					}),
-					PlaceObj('AIPolicyTakeCover', {
-						'visibility_mode', "team",
-					}),
-					PlaceObj('AIPolicyWeaponRange', {
-						'RangeMin', 60,
-						'RangeMax', 100,
-					}),
-				},
-				'SignatureActions', {
-					PlaceObj('AIActionMobileShot', {
-						'Priority', true,
-						'NotificationText', "",
-						'CustomScoring', function (self, context)
-							return MobileAttack_CustomScoring(self, context)
-						end,
-						'action_id', "RunAndGun",
-					}),
-					PlaceObj('AIActionMobileShot', {
-						'Priority', true,
-						'NotificationText', "",
-						'CustomScoring', function (self, context)
-							return MobileAttack_CustomScoring(self, context)
-						end,
-					}),
-				},
-				'TakeCoverChance', 50,
-			}),
-			PlaceObj('PositioningAI', {
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicyWeaponRange', {
-						'Required', true,
-						'RangeMin', 1,
-						'RangeMax', 80,
-					}),
-					PlaceObj('AIPolicyLosToEnemy', {
-						'Required', true,
-					}),
-				},
-			}),
-			PlaceObj('StandardAI', {
-				'BiasId', "Healer",
-				'Priority', true,
-				'Fallback', false,
-				'Score', function (self, unit, proto_context, debug_data)
-					for _, ally in ipairs(unit.team.units) do
-						if not ally:IsDead() and ally.HitPoints < MulDivRound(ally.MaxHitPoints, 70, 100) then
-							return self.Weight
-						end
-					end
-					return 0
-				end,
-				'turn_phase', "Late",
-				'OptLocWeight', 1,
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicyHealingRange', {
-						'Weight', 300,
-						'CanUseMod', 1000,
-					}),
-				},
-				'SignatureActions', {
-					PlaceObj('AIActionBandage', {
-						'Priority', true,
-						'RequiredKeywords', {
-							"Heal",
-						},
-						'CanUseMod', 1000,
-					}),
-					PlaceObj('AIActionStim', {
-						'Priority', true,
-						'RequiredKeywords', {
-							"Stim",
-						},
-						'TargetRules', {
-							PlaceObj('AIStimRule', {
-								'Keyword', "Flank",
-								'Weight', 100,
-							}),
-							PlaceObj('AIStimRule', {
-								'Keyword', "Control",
-								'Weight', 50,
-							}),
-							PlaceObj('AIStimRule', {
-								'Keyword', "Explosives",
-								'Weight', 50,
-							}),
-							PlaceObj('AIStimRule', {
-								'Keyword', "Ordnance",
-								'Weight', 50,
-							}),
-							PlaceObj('AIStimRule', {
-								'Keyword', "RunAndGun",
-								'Weight', 100,
-							}),
-						},
-					}),
-				},
-				'TakeCoverChance', 0,
-			}),
-		},
-		OptLocPolicies = {
-			PlaceObj('AIPolicyTakeCover', {
-				'visibility_mode', "team",
-			}),
-			PlaceObj('AIPolicyLosToEnemy', nil),
-		},
-		OptLocSearchRadius = 80,
-		PrefStance = "Crouch",
-		TargetScoreRandomization = 10,
-		TargetingPolicies = {
-			PlaceObj('AITargetingCancelShot', {
-				'Weight', 200,
-			}),
-		},
-		group = "Simplified",
-		id = "Medic_copy",
-	}),
-	PlaceObj('ModItemAIArchetype', {
-		Behaviors = {
-			PlaceObj('StandardAI', {
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicyDealDamage', {
-						'CheckLOS', false,
-					}),
-				},
-			}),
-		},
-		MoveStance = "Crouch",
-		OptLocPolicies = {
+			PlaceObj('AIPolicyTryNotToBeFlanked', nil),
 			PlaceObj('AIPolicyWeaponRange', {
-				'RangeBase', "Absolute",
-				'RangeMin', 20,
-				'RangeMax', 50,
+				'RangeBase', "Melee",
 			}),
 		},
 		OptLocSearchRadius = 80,
-		PrefStance = "Crouch",
 		SignatureActions = {
-			PlaceObj('AIActionHeavyWeaponAttack', {
-				'BiasId', "MortarShot",
-				'Priority', true,
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "MortarShot",
-						'Effect', "disable",
-					}),
-				},
-				'team_score', 0,
-				'self_score_mod', 0,
-				'MinDist', 12000,
-				'action_id', "Bombard",
-			}),
-		},
-		TargetScoreRandomization = 10,
-		group = "Simplified",
-		id = "Artillery",
-	}),
-	PlaceObj('ModItemAIArchetype', {
-		BaseAttackTargeting = set( "Arms", "Groin", "Legs", "Torso" ),
-		BaseMovementWeight = 10,
-		Behaviors = {
-			PlaceObj('StandardAI', {
-				'BiasId', "Standard",
+			PlaceObj('AIAttackSingleTarget', {
+				'BiasId', "Autofire",
 				'Weight', 150,
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicyTakeCover', {
-						'Weight', 50,
-						'visibility_mode', "team",
-					}),
-					PlaceObj('AIPolicyDealDamage', nil),
-				},
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return AutoFire_CustomScoring(self, context)
+				end,
+				'action_id', "AutoFire",
+				'Aiming', "Maximum",
+				'AttackTargeting', set( "Torso" ),
 			}),
-		},
-		MoveStance = "Crouch",
-		OptLocPolicies = {
-			PlaceObj('AIPolicyTakeCover', nil),
-			PlaceObj('AIPolicyLosToEnemy', {
-				'Weight', 300,
+			PlaceObj('AIConeAttack', {
+				'BiasId', "Overwatch",
+				'Weight', 120,
+				'CustomScoring', function (self, context)
+					return Overwatch_CustomScoring(self, context)
+				end,
+				'team_score', 0,
+				'min_score', 140,
+				'enemy_cover_mod', 80,
+				'action_id', "Overwatch",
 			}),
-			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 10,
-				'RangeMin', 10,
-				'RangeMax', 25,
+			PlaceObj('AIActionMobileShot', {
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
+				'action_id', "RunAndGun",
 			}),
-			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 20,
-				'RangeMin', 26,
-				'RangeMax', 49,
+			PlaceObj('AIActionMobileShot', {
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
 			}),
-			PlaceObj('AIPolicyWeaponRange', {
-				'RangeMin', 50,
-				'RangeMax', 100,
+			PlaceObj('AIAttackSingleTarget', {
+				'BiasId', "GroinShot",
+				'CustomScoring', function (self, context)
+					return SingleShotTargeted_CustomScoring(self, context)
+				end,
+				'Aiming', "Remaining AP",
+				'AttackTargeting', set( "Groin" ),
 			}),
-		},
-		OptLocSearchRadius = 80,
-		PrefStance = "Crouch",
-		SignatureActions = {
-			PlaceObj('AIActionHeavyWeaponAttack', {
-				'BiasId', "PierreGuardLauncherFire",
-				'Weight', 1000,
+			PlaceObj('AIAttackSingleTarget', {
+				'BiasId', "ArmShot",
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
-						'BiasId', "PierreGuardLauncherFire",
+						'BiasId', "ArmShot",
 						'Effect', "disable",
-						'Period', 10,
+						'Period', 0,
+					}),
+				},
+				'CustomScoring', function (self, context)
+					return SingleShotTargeted_CustomScoring(self, context)
+				end,
+				'Aiming', "Remaining AP",
+				'AttackTargeting', set( "Arms" ),
+			}),
+			PlaceObj('AIAttackSingleTarget', {
+				'BiasId', "LegShot",
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "LegShot",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+				},
+				'CustomScoring', function (self, context)
+					return SingleShotTargeted_CustomScoring(self, context)
+				end,
+				'Aiming', "Remaining AP",
+				'AttackTargeting', set( "Legs" ),
+			}),
+			PlaceObj('AIActionThrowGrenade', {
+				'BiasId', "AssaultGrenadeThrow",
+				'Weight', 80,
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "AssaultGrenadeThrow",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+				},
+				'self_score_mod', -1000,
+				'min_score', 100,
+				'MinDist', 6000,
+				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
+			}),
+			PlaceObj('AIActionThrowGrenade', {
+				'BiasId', "AssaultGrenadeThrow200",
+				'Weight', 200,
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "AssaultGrenadeThrow200",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+				},
+				'self_score_mod', -1000,
+				'MinDist', 6000,
+				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
+			}),
+			PlaceObj('AIActionThrowGrenade', {
+				'BiasId', "SmokeGrenade",
+				'Weight', 200,
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "SmokeGrenade",
+						'Effect', "disable",
 					}),
 					PlaceObj('AIBiasModification', {
-						'BiasId', "PierreGuardLauncherFire",
-						'Effect', "disable",
+						'BiasId', "SmokeGrenade",
 						'Value', -50,
-						'Period', 10,
+						'Period', 0,
+						'ApplyTo', "Team",
+					}),
+				},
+				'enemy_score', -50,
+				'team_score', 100,
+				'self_score_mod', 100,
+				'MinDist', 0,
+				'AllowedAoeTypes', set( "smoke" ),
+			}),
+			PlaceObj('AIActionThrowFlare', {
+				'BiasId', "FlareThrow",
+				'Weight', 200,
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "FlareThrow",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "FlareThrow",
+						'Value', -30,
+						'Period', 0,
+						'ApplyTo', "Team",
+					}),
+				},
+				'CustomScoring', function (self, context)
+					 return self.Weight, false, self.Priority
+				end,
+				'enemy_score', 110,
+				'team_score', -1,
+				'self_score_mod', -1,
+				'min_score', 100,
+				'MinDist', 5000,
+			}),
+			PlaceObj('AIActionHeavyWeaponAttack', {
+				'BiasId', "LauncherFire",
+				'Weight', 200,
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "LauncherFire",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "LauncherFire",
+						'Value', -20,
+						'Period', 0,
 						'ApplyTo', "Team",
 					}),
 				},
 				'self_score_mod', -1000,
 				'min_score', 100,
-				'MinDist', 5000,
-			}),
-		},
-		TargetScoreRandomization = 10,
-		group = "Lieutenants",
-		id = "PierreGuard",
-	}),
-	PlaceObj('ModItemAIArchetype', {
-		BaseAttackTargeting = set( "Neck", "Torso" ),
-		BaseMovementWeight = 10,
-		Behaviors = {
-			PlaceObj('StandardAI', {
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicyDealDamage', nil),
-				},
-				'TakeCoverChance', 0,
-			}),
-		},
-		OptLocPolicies = {
-			PlaceObj('AIPolicyWeaponRange', {
-				'RangeBase', "Melee",
-				'RangeMin', 0,
-				'RangeMax', 6,
-			}),
-			PlaceObj('AIPolicyLosToEnemy', nil),
-		},
-		OptLocSearchRadius = 80,
-		SignatureActions = {
-			PlaceObj('AIActionThrowGrenade', {
-				'BiasId', "StunGrenade",
-				'OnActivationBiases', {
-					PlaceObj('AIBiasModification', {
-						'BiasId', "StunGrenade",
-						'Effect', "disable",
-					}),
-				},
-				'min_score', 100,
-				'MinDist', 3000,
-				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
+				'enemy_cover_mod', 50,
+				'MinDist', 7000,
+				'LimitRange', true,
+				'MaxTargetRange', 35,
 			}),
 			PlaceObj('AIActionCharge', {
-				'BiasId', "PierreCharge",
-				'Weight', 300,
+				'Weight', 800,
+				'DestPreference', "nearest",
 			}),
 		},
-		TargetChangePolicy = "restart",
 		TargetScoreRandomization = 10,
-		group = "Lieutenants",
+		TargetingPolicies = {
+			PlaceObj('AITargetingCancelShot', nil),
+		},
+		group = "Default",
 		id = "Pierre",
 	}),
 	PlaceObj('ModItemAIArchetype', {
@@ -3187,625 +2616,8 @@ return {
 				'Weight', 80,
 			}),
 		},
+		comment = "not changed",
 		group = "Lieutenants",
 		id = "TheMajor",
 	}),
-	PlaceObj('ModItemAIArchetype', {
-		Behaviors = {
-			PlaceObj('StandardAI', {
-				'Priority', true,
-				'Comment', "breaking pindown",
-				'Score', function (self, unit, proto_context, debug_data)
-					local enemies = {}
-					for _, descr in pairs(g_Pindown) do
-						if descr.target == self then
-							enemies[#enemies + 1] = enemy
-						end
-					end
-					return #enemies > 0 and self.Weight or 0
-				end,
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicyLosToEnemy', {
-						'Invert', true,
-					}),
-					PlaceObj('AIPolicyDealDamage', nil),
-				},
-				'TakeCoverChance', 0,
-			}),
-			PlaceObj('StandardAI', {
-				'Comment', "fallback (aggressive)",
-				'Fallback', false,
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicyDealDamage', {
-						'Weight', 600,
-					}),
-					PlaceObj('AIPolicyWeaponRange', {
-						'RangeBase', "Absolute",
-						'RangeMin', 0,
-						'RangeMax', 5,
-					}),
-				},
-				'TakeCoverChance', 0,
-			}),
-		},
-		OptLocPolicies = {
-			PlaceObj('AIPolicyLosToEnemy', nil),
-		},
-		OptLocSearchRadius = 80,
-		group = "System",
-		id = "PinnedDown_copy",
-	}),
-	PlaceObj('ModItemFolder', {
-		'name', "New folder",
-	}, {
-		PlaceObj('ModItemAIArchetype', {
-			BaseAttackTargeting = set( "Arms", "Legs", "Torso" ),
-			BaseAttackWeight = 50,
-			BaseMovementWeight = 0,
-			Behaviors = {
-				PlaceObj('HoldPositionAI', {
-					'BiasId', "HoldPositionBehavior",
-					'EndTurnPolicies', {
-						PlaceObj('AIPolicyDealDamage', nil),
-					},
-					'TakeCoverChance', 0,
-				}),
-			},
-			OptLocPolicies = {
-				PlaceObj('AIPolicyLosToEnemy', nil),
-			},
-			OptLocSearchRadius = 80,
-			PrefStance = "Crouch",
-			SignatureActions = {
-				PlaceObj('AIAttackSingleTarget', {
-					'BiasId', "Autofire",
-					'OnActivationBiases', {
-						PlaceObj('AIBiasModification', {
-							'BiasId', "Autofire",
-							'Effect', "disable",
-						}),
-					},
-					'NotificationText', "",
-					'action_id', "AutoFire",
-					'Aiming', "Remaining AP",
-					'AttackTargeting', set( "Torso" ),
-				}),
-			},
-			TargetScoreRandomization = 10,
-			group = "Simplified",
-			id = "Turret_copy",
-		}),
-		PlaceObj('ModItemAIArchetype', {
-			BaseAttackWeight = 0,
-			Behaviors = {
-				PlaceObj('StandardAI', {
-					'EndTurnPolicies', {
-						PlaceObj('AIPolicyDealDamage', {
-							'Weight', 600,
-						}),
-						PlaceObj('AIPolicyWeaponRange', {
-							'Weight', 300,
-							'RangeBase', "Absolute",
-							'RangeMin', 2,
-							'RangeMax', 2,
-						}),
-					},
-				}),
-			},
-			MoveStance = "",
-			OptLocPolicies = {
-				PlaceObj('AIPolicyWeaponRange', {
-					'RangeBase', "Absolute",
-					'RangeMin', 2,
-					'RangeMax', 2,
-				}),
-				PlaceObj('AIPolicyLosToEnemy', nil),
-			},
-			OptLocSearchRadius = 80,
-			PrefStance = "",
-			TargetChangePolicy = "restart",
-			group = "Beasts",
-			id = "Beast_Crocodile_copy",
-		}),
-		PlaceObj('ModItemAIArchetype', {
-			BaseAttackWeight = 0,
-			Behaviors = {
-				PlaceObj('StandardAI', {
-					'EndTurnPolicies', {
-						PlaceObj('AIPolicyDealDamage', {
-							'Weight', 600,
-						}),
-					},
-					'SignatureActions', {
-						PlaceObj('AIActionHyenaCharge', nil),
-					},
-				}),
-			},
-			MoveStance = "",
-			OptLocPolicies = {
-				PlaceObj('AIPolicyWeaponRange', {
-					'RangeBase', "Melee",
-					'RangeMin', 1000,
-					'RangeMax', 1000,
-				}),
-				PlaceObj('AIPolicyLosToEnemy', nil),
-			},
-			OptLocSearchRadius = 80,
-			PrefStance = "",
-			SignatureActions = {
-				PlaceObj('AIActionCharge', {
-					'BiasId', "HyenaCharge",
-					'Weight', 200,
-					'OnActivationBiases', {
-						PlaceObj('AIBiasModification', {
-							'BiasId', "HyenaCharge",
-							'Effect', "disable",
-						}),
-					},
-					'ForbiddenInState', set( "RainHeavy" ),
-					'DestPreference', "nearest",
-				}),
-			},
-			TargetChangePolicy = "restart",
-			group = "Beasts",
-			id = "Beast_Hyena_copy",
-		}),
-		PlaceObj('ModItemAIArchetype', {
-			Behaviors = {
-				PlaceObj('CustomAI', {
-					'EndTurnPolicies', {
-						PlaceObj('AIPolicyTakeCover', {
-							'visibility_mode', "team",
-						}),
-					},
-					'TakeCoverChance', 100,
-					'EnumDests', function (self, unit, context, debug_data)
-						if g_Encounter then 
-							return g_Encounter:EnumDestsInAssignedArea(unit, context)
-						end
-					end,
-					'PickEndTurnPolicies', function (self, unit, context, debug_data)
-						if g_Encounter then
-							return g_Encounter:SelectEndTurnPolicies(unit, context)
-						end
-					end,
-					'PickOptimalLoc', function (self, unit, context, debug_data)
-						if g_Encounter then
-							return g_Encounter:FindOptimalLocationInAssignedArea(unit, context)
-						end
-					end,
-					'PickEndTurnLoc', function (self, unit, context, debug_data)
-						AITacticCalcPathDistances(unit, context, "disable bias")
-						
-						local policies = self:PickEndTurnPolicies(unit, context) or self.EndTurnPolicies
-						context.ai_destination = AIScoreReachableVoxels(context, policies, self.OptLocWeight, nil, "prefer")
-						return true
-					end,
-					'SelectSignatureActions', function (self, unit, context, debug_data)
-						if g_Encounter then
-							return g_Encounter:SelectSignatureActions(unit, context)
-						end
-					end,
-				}),
-			},
-			Comment = "generic implementation, try reaching assigned area, valid positions are in assigned & current areas only",
-			group = "BossFights",
-			id = "Bossfight_GuardArea_copy",
-		}),
-		PlaceObj('ModItemAIArchetype', {
-			Behaviors = {
-				PlaceObj('CustomAI', {
-					'turn_phase', "Early",
-					'EndTurnPolicies', {
-						PlaceObj('AIPolicyTakeCover', {
-							'visibility_mode', "team",
-						}),
-					},
-					'TakeCoverChance', 100,
-					'EnumDests', function (self, unit, context, debug_data)
-						if not g_Encounter then return end
-						
-						return CorazonEnumDestsInAssignedArea(unit, context)
-					end,
-					'PickOptimalLoc', function (self, unit, context, debug_data)
-						if g_Encounter:GetUnitArea(unit) == g_Encounter.areaFinalRoom then
-							context.best_dest = GetPackedPosAndStance(unit)
-							return true
-						end
-						
-						local _, positions = CorazonGetAreaMarkerPositions(g_Encounter.areaFinalRoom)
-						positions = positions or empty_table
-						if #positions > 0 then
-							local goto_pos = table.interaction_rand(positions, "Behavior")
-							local x, y, z = point_unpack(goto_pos)
-							context.best_dest = stance_pos_pack(x, y, z, StancesList.Standing)
-							return true
-						end
-					end,
-					'PickEndTurnLoc', function (self, unit, context, debug_data)
-						CorazonCalcPathDistances(unit, context, "disable bias")
-					end,
-				}),
-			},
-			group = "BossFights",
-			id = "Corazon_BossRetreating_copy",
-		}),
-		PlaceObj('ModItemAIArchetype', {
-			Behaviors = {
-				PlaceObj('CustomAI', {
-					'EndTurnPolicies', {
-						PlaceObj('AIPolicyTakeCover', {
-							'visibility_mode', "team",
-						}),
-					},
-					'TakeCoverChance', 100,
-					'EnumDests', function (self, unit, context, debug_data)
-						if not g_Encounter then return end
-						
-						return CorazonEnumDestsInAssignedArea(unit, context)
-					end,
-					'PickEndTurnPolicies', function (self, unit, context, debug_data)
-						if IsKindOf(g_Encounter, "BossfightCorazon") then
-							return g_Encounter:SelectEndTurnPolicies(unit, context)
-						end
-					end,
-					'PickOptimalLoc', function (self, unit, context, debug_data)
-						return CorazonOptimalLocationInAssignedArea(unit, context)
-					end,
-					'PickEndTurnLoc', function (self, unit, context, debug_data)
-						CorazonCalcPathDistances(unit, context, "disable bias")
-						
-						local policies = self:PickEndTurnPolicies(unit, context) or self.EndTurnPolicies
-						context.ai_destination = AIScoreReachableVoxels(context, policies, self.OptLocWeight, nil, "prefer")
-						return true
-					end,
-					'SelectSignatureActions', function (self, unit, context, debug_data)
-						if IsKindOf(g_Encounter, "BossfightCorazon") then
-							return g_Encounter:SelectSignatureActions(unit, context)
-						end
-					end,
-					'Execute', function (self, unit, context, debug_data)
-						-- todo: set context.force_max_aim if smoke
-						-- todo: swap to shotgun if in close range, out of it if not
-					end,
-				}),
-			},
-			Comment = "basic logic: move to assigned area, engange enemies in/from it until assigned elsewhere",
-			group = "BossFights",
-			id = "Corazon_GuardArea_copy",
-		}),
-		PlaceObj('ModItemAIArchetype', {
-			Behaviors = {
-				PlaceObj('CustomAI', {
-					'EndTurnPolicies', {
-						PlaceObj('AIPolicyTakeCover', {
-							'visibility_mode', "team",
-						}),
-					},
-					'TakeCoverChance', 100,
-					'EnumDests', function (self, unit, context, debug_data)
-						if not g_Encounter then return end
-						
-						return CorazonEnumDestsInAssignedArea(unit, context)
-					end,
-					'PickOptimalLoc', function (self, unit, context, debug_data)
-						return CorazonOptimalLocationInAssignedArea(unit, context)
-					end,
-					'PickEndTurnLoc', function (self, unit, context, debug_data)
-						CorazonCalcPathDistances(unit, context, "disable bias")
-					end,
-					'SelectSignatureActions', function (self, unit, context, debug_data)
-						if IsKindOf(g_Encounter, "BossfightCorazon") then
-							return g_Encounter:SelectSignatureActions(unit, context)
-						end
-					end,
-					'Execute', function (self, unit, context, debug_data)
-						-- todo: set context.force_max_aim if smoke
-						-- todo: swap to shotgun if in close range, out of it if not
-					end,
-				}),
-			},
-			Comment = "right corridor kite back - similar to GuardArea but maybe more defensive?",
-			group = "BossFights",
-			id = "Corazon_KiteBack_copy",
-		}),
-		PlaceObj('ModItemAIArchetype', {
-			Behaviors = {
-				PlaceObj('CustomAI', {
-					'EndTurnPolicies', {
-						PlaceObj('AIPolicyTakeCover', {
-							'visibility_mode', "team",
-						}),
-					},
-					'TakeCoverChance', 100,
-					'EnumDests', function (self, unit, context, debug_data)
-						if not g_Encounter then return end
-						
-						return CorazonEnumDestsInAssignedArea(unit, context)
-					end,
-					'EvalDamageScore', function (self, unit, context, debug_data)
-						context.max_attacks = 1
-						AIPrecalcDamageScore(context)
-					end,
-					'PickOptimalLoc', function (self, unit, context, debug_data)
-						return CorazonOptimalLocationInAssignedArea(unit, context)
-					end,
-					'PickEndTurnLoc', function (self, unit, context, debug_data)
-						-- we need 2 destinations: attack one and end turn one
-						local hide_dests = {}
-						local attack_dest, attack_score, scoot_ap
-						
-						for _, dest in ipairs(context.destinations) do
-							if not g_AIDestEnemyLOSCache[dest] then
-								hide_dests[#hide_dests+1] = dest
-							else
-								local score = context.dest_target_score or 0
-								if score > 0 then
-									-- modify score by remaining ap at dest
-									local move_stance_idx = context.dest_combat_path[dest]
-									local cpath = context.combat_paths[move_stance_idx]
-									local ap_at_dest = cpath:GetAP(dest)
-									score = MulDivRound(score, ap_at_dest, Max(1, unit.ActionPoints))
-									
-									if score > (attack_score or 0) then
-										attack_dest, attack_score, scoot_ap = dest, score, ap_at_dest - context.default_attack_cost
-									end
-								end
-							end
-						end
-						
-						if not attack_dest or #hide_dests < 1 or not scoot_ap then return end
-						
-						-- pick a reachable hiding dest
-						local x, y, z, stance_idx = stance_pos_unpack(attack_dest)
-						local atk_pos = point(x, y, z)
-						local combat_path = CombatPath:new()
-						local weights, total_weight = {}, 0
-						local hide_dest
-						
-						combat_path:RebuildPaths(unit, scoot_ap, atk_pos, StancesList[stance_idx])
-						for i, dest in ipairs(hide_dests) do
-							local x, y, z = stance_pos_unpack(dest)
-							local pos = point_pack(x, y, z)
-							local ap = combat_path:GetAP(pos)
-							weights[i] = ap
-							total_weight = total_weight + ap
-						end
-						
-						if total_weight < 1 then return end
-						local roll = unit:Random(total_weight)
-						for i = 1, #hide_dests - 1 do
-							local w = weights[i]
-							if w >= roll then
-								hide_dest = hide_dests[i]
-								break
-							end
-						end
-						
-						context.ai_destination = attack_dest
-						context.scoot_and_shoot_dest = hide_dest or hide_dests[#hide_dests]
-						DoneObject(combat_path)
-						return true
-					end,
-					'SelectSignatureActions', function (self, unit, context, debug_data)
-						if IsKindOf(g_Encounter, "BossfightCorazon") then
-							return g_Encounter:SelectSignatureActions(unit, context)
-						end
-					end,
-					'Execute', function (self, unit, context, debug_data)
-						if not context.scoot_and_shoot_dest then return end
-						
-						-- do a single attack, then scoot to the hidey place
-						local dest = GetPackedPosAndStance(unit)
-						AIPrecalcDamageScore(context, {dest})
-						local target = (context.dest_target or empty_table)[dest]
-						
-						local args = { target = target }--, voiceResponse = voice_response }
-						AIPlayCombatAction(context.default_attack.id, unit, nil, args)
-						
-						-- recalc path to make sure the position is free
-						local x, y, z = stance_pos_unpack(context.scoot_and_shoot_dest)
-						local combat_path = CombatPath:new()
-						combat_path:RebuildPaths(unit)
-						
-						if not combat_path:GetAP(point_pack(x, y, z)) then
-							local hide_dests = {}
-							for _, dest in ipairs(context.destinations) do
-								local x, y, z = stance_pos_unpack(dest)
-								if not g_AIDestEnemyLOSCache[dest] and combat_path:GetAP(point_pack(x, y, z)) then			
-									hide_dests[#hide_dests+1] = dest
-								end
-							end
-							if #hide_dests > 0 then
-								local dest = table.interaction_rand(hide_dests, "Behavior")
-								local x, y, z = stance_point_unpack(dest)
-								AIPlayCombatAction("Move", unit, unit.ActionPoints, { goto_pos = point(x, y, z) })
-							else
-								AIPlayAttacks(unit, context)
-							end
-						else
-							AIPlayCombatAction("Move", unit, unit.ActionPoints, { goto_pos = point(x, y, z) })
-						end
-						AITakeCover(unit)
-						DoneObject(combat_path)
-						return "done"
-					end,
-				}),
-			},
-			Comment = "right corridor shoot-and-scoot action",
-			group = "BossFights",
-			id = "Corazon_ShootAndScoot_copy",
-		}),
-		PlaceObj('ModItemAIArchetype', {
-			Behaviors = {
-				PlaceObj('CustomAI', {
-					'turn_phase', "Early",
-					'EndTurnPolicies', {
-						PlaceObj('AIPolicyTakeCover', {
-							'visibility_mode', "team",
-						}),
-					},
-					'TakeCoverChance', 100,
-					'EnumDests', function (self, unit, context, debug_data)
-						if g_TacticalMap then 
-							return g_TacticalMap:EnumDestsInAssignedArea(unit, context)
-						end
-					end,
-					'PickOptimalLoc', function (self, unit, context, debug_data)
-						if g_TacticalMap then
-							return g_TacticalMap:FindOptimalLocationInAssignedArea(unit, context)
-						end
-					end,
-					'PickEndTurnLoc', function (self, unit, context, debug_data)
-						AITacticCalcPathDistances(unit, context, "disable bias")
-						
-						local policies = self:PickEndTurnPolicies(unit, context) or self.EndTurnPolicies
-						context.ai_destination = AIScoreReachableVoxels(context, policies, self.OptLocWeight, nil, "avoid")
-						return true
-					end,
-					'SelectSignatureActions', function (self, unit, context, debug_data)
-						return AITacticSelectSignatureActions(unit, context)
-					end,
-				}),
-			},
-			group = "BossFights",
-			id = "Faucheaux_BossRetreating_copy",
-		}),
-		PlaceObj('ModItemAIArchetype', {
-			BaseMovementWeight = 10,
-			Behaviors = {
-				PlaceObj('StandardAI', {
-					'EndTurnPolicies', {
-						PlaceObj('AIPolicyTakeCover', {
-							'visibility_mode', "team",
-						}),
-						PlaceObj('AIPolicyProximity', {
-							'Weight', 1000,
-							'MinScore', 10,
-						}),
-					},
-					'TakeCoverChance', 100,
-				}),
-			},
-			OptLocPolicies = {
-				PlaceObj('AIPolicyTakeCover', {
-					'visibility_mode', "team",
-				}),
-				PlaceObj('AIPolicyProximity', {
-					'Weight', 1000,
-					'MinScore', 10,
-				}),
-			},
-			OptLocSearchRadius = 80,
-			PrefStance = "Crouch",
-			SignatureActions = {
-				PlaceObj('AIActionMobileShot', {
-					'Weight', 200,
-					'NotificationText', "",
-					'action_id', "RunAndGun",
-				}),
-			},
-			TargetScoreRandomization = 40,
-			group = "Lieutenants",
-			id = "CorazonBoss_copy",
-		}),
-		PlaceObj('ModItemAIArchetype', {
-			BaseAttackTargeting = set( "Torso" ),
-			BaseAttackWeight = 50,
-			BaseMovementWeight = 0,
-			Behaviors = {
-				PlaceObj('HoldPositionAI', {
-					'BiasId', "HoldPositionBehavior",
-					'EndTurnPolicies', {
-						PlaceObj('AIPolicyDealDamage', nil),
-					},
-					'SignatureActions', {
-						PlaceObj('AIAttackSingleTarget', {
-							'BiasId', "LegShot",
-							'Weight', 120,
-							'OnActivationBiases', {
-								PlaceObj('AIBiasModification', {
-									'BiasId', "LegShot",
-									'Effect', "disable",
-								}),
-								PlaceObj('AIBiasModification', {
-									'BiasId', "DefensiveOverwatch",
-									'Effect', "priority",
-									'Period', 0,
-								}),
-							},
-							'Aiming', "Remaining AP",
-							'AttackTargeting', set( "Legs" ),
-						}),
-						PlaceObj('AIAttackSingleTarget', {
-							'BiasId', "ArmShot",
-							'Weight', 120,
-							'OnActivationBiases', {
-								PlaceObj('AIBiasModification', {
-									'BiasId', "ArmShot",
-									'Effect', "disable",
-								}),
-								PlaceObj('AIBiasModification', {
-									'BiasId', "DefensiveOverwatch",
-									'Effect', "priority",
-									'Period', 0,
-								}),
-							},
-							'Aiming', "Remaining AP",
-							'AttackTargeting', set( "Groin" ),
-						}),
-						PlaceObj('AIConeAttack', {
-							'BiasId', "DefensiveOverwatch",
-							'Weight', 10,
-							'team_score', 0,
-							'min_score', 100,
-							'action_id', "Overwatch",
-						}),
-					},
-					'TakeCoverChance', 0,
-				}),
-			},
-			OptLocPolicies = {
-				PlaceObj('AIPolicyWeaponRange', {
-					'RangeMin', 25,
-					'RangeMax', 100,
-				}),
-				PlaceObj('AIPolicyLosToEnemy', nil),
-			},
-			OptLocSearchRadius = 80,
-			PrefStance = "Crouch",
-			group = "Lieutenants",
-			id = "TurretBoss_copy",
-		}),
-		PlaceObj('ModItemAIArchetype', {
-			Behaviors = {
-				PlaceObj('ApproachInteractableAI', {
-					'Comment', "approach/man the selected emplacement",
-					'Score', function (self, unit, proto_context, debug_data)
-						local emplacement = g_Combat and g_Combat:GetEmplacementAssignment(unit)
-						if not emplacement or emplacement.manned_by then
-							return 0
-						end
-						return self.Weight
-					end,
-					'OptLocWeight', 1000,
-					'TakeCoverChance', 0,
-				}),
-				PlaceObj('HoldPositionAI', {
-					'Comment', "when manning emplacement",
-					'Score', function (self, unit, proto_context, debug_data)
-						local emplacement = g_Combat and g_Combat:GetEmplacementAssignment(unit)
-						if not emplacement or emplacement.manned_by ~= unit then
-							return 0
-						end
-						return self.Weight
-					end,
-					'TakeCoverChance', 0,
-				}),
-			},
-			OptLocSearchRadius = 80,
-			group = "System",
-			id = "EmplacementGunner_copy",
-		}),
-		}),
 }

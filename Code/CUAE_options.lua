@@ -68,6 +68,11 @@ function RATOAI_AddExclusionCUAE()
         Militia = {"M14SAW_AUTO", 'Type56D_1', 'Type56D_1', 'Type56C_1', 'Papovka2SKS_1'}
     }
 
+    local non_nazi_old_war = {
+        'Mosin_1', 'Delisle_1', 'VigM2_1', 'StenMK2_1', 'P08_1', 'M1Garand_2', 'HiPower',
+        'Winchester1894', 'Auto5', 'DoubleBarrelShotgun', "ColtPeacemaker"
+    }
+
     local function add_items(destination, ...)
         for _, list in ipairs({...}) do
             for _, item in ipairs(list) do
@@ -81,8 +86,8 @@ function RATOAI_AddExclusionCUAE()
     add_items(excl_table.Rebels, german, german_common, western)
     add_items(excl_table.Thugs, german, end_game, eastern_special, western)
     add_items(excl_table.Legion, german, end_game, eastern_special)
-    add_items(excl_table.SuperSoldiers, old_war, civilian, eastern_special, eastern_common,
-              eastern_new, israeli)
+    add_items(excl_table.SuperSoldiers, non_nazi_old_war, civilian, eastern_special, eastern_common,
+              eastern_new, western, israeli)
     add_items(excl_table.Militia, german, end_game, eastern_special)
 
     CUAEAddExclusionTable(excl_table)

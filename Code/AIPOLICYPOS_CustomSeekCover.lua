@@ -29,7 +29,7 @@ DefineClass.AIPolicyCustomSeekCover = {
         }, {
             id = "ExposedAtCloseRange_Score",
             editor = "number",
-            default = -30,
+            default = -50,
             read_only = false,
             no_edit = false
         }
@@ -40,7 +40,9 @@ DefineClass.AIPolicyCustomSeekCover = {
 local distance_impact = 1.00
 local max_range = 30
 local min_dist = 5 * const.SlabSizeX
-local close_exposed_range = 6 * const.SlabSizeX
+local pb_range = const.Weapons.PointBlankRange * const.SlabSizeX
+local close_range = rat_close_range()
+local close_range_mul = 40
 
 local extra_score_arg_mul = 220
 -----
@@ -123,24 +125,23 @@ function AIPolicyCustomSeekCover:GetCoverScore(context, cover_score, dest, grid_
         -- print(enemy.session_id, dist / const.SlabSizeX, cover_score1, cover_score, ratio)
     end
 
-    new_pos = new_pos or RATOAI_UnpackPos(dest)
-    new_pos = IsValidZ(new_pos) and new_pos or new_pos:SetTerrainZ()
-
     if self.ExposedAtCloseRange_Score ~= 0 and cover_score <= 0 and context.enemy_grid_voxel[enemy] and
         grid_voxel then
 
         local x1, y1, z1 = point_unpack(context.enemy_grid_voxel[enemy])
         local x2, y2, z2 = point_unpack(grid_voxel)
-        if IsCloser(x1, y1, z1, x2, y2, z2, close_exposed_range + 1) then
+        if IsCloser(x1, y1, z1, x2, y2, z2, pb_range + 1) then
             cover_score = self.ExposedAtCloseRange_Score
+        elseif IsCloser(x1, y1, z1, x2, y2, z2, close_range + 1) then
+            cover_score = MulDivRound(self.ExposedAtCloseRange_Score, close_range_mul, 100)
         end
 
         -- print(enemy.session_id, cover_score)
     end
 
-    if new_pos then
-        DbgAddText(enemy.session_id .. " " .. cover_score, new_pos)
-    end
+    -- if new_pos then
+    --     DbgAddText(enemy.session_id .. " " .. cover_score, new_pos)
+    -- end
 
     return cover_score
 end

@@ -1,10 +1,5 @@
-local debug = false
-last_aim_calc_context = {}
-
 ---TODO: Consider leaving this function as "pre-planning" and moving the more complex logic to when the positions are defined?
-
 function AICalcAttacksAndAim(context, ap)
-    last_aim_calc_context = context
 
     ------- Fix for min aim
     local unit = context.unit

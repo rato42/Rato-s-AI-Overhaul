@@ -45,7 +45,7 @@ DefineClass.AIPolicyGrenadeRange = {
             editor = "set",
             items = {"none", "fire", "smoke", "teargas", "toxicgas"},
             default = set("none")
-        },
+        }, {id = "SaveAP", editor = "bool", default = false},
         {id = "optimal_location", editor = "bool", default = true, read_only = true, no_edit = true},
         {id = "end_of_turn", editor = "bool", default = true, read_only = true, no_edit = true}
     }
@@ -76,7 +76,7 @@ function AIPolicyGrenadeRange:EvalDest(context, dest, grid_voxel)
     local weight = 0
     for _, enemy in ipairs(context.enemies) do
         if self:RangeCheckGrenade(context, grid_voxel, enemy, enemy_grid_voxel[enemy], range_type,
-                                  range_min, range_max) then
+                                  range_min, range_max, dest) then
             if enemy:IsIncapacitated() then
                 weight = self.DownedWeightModifier
             else
@@ -88,20 +88,24 @@ function AIPolicyGrenadeRange:EvalDest(context, dest, grid_voxel)
 end
 
 function AIPolicyGrenadeRange:RangeCheckGrenade(context, ppt1, target, ppt2, range_type, range_min,
-                                                range_max)
+                                                range_max, dest)
 
-    if range_type ~= "Absolute" then
-        -- weapon range based
-        assert(range_type == "Weapon")
+    local base_range, cost_check = self:GetGrenadeMaxRangeAndAPcost(context)
 
-        local base_range = self:GetGrenadeMaxRange(context)
-        if not base_range then
+    if not base_range then
+        return false
+    end
+
+    if self.SaveAP and cost_check and cost_check >= 0 then
+        local ap = context.dest_ap[dest]
+        if ap < cost_check then
             return false
         end
-
-        range_min = range_min and MulDivRound(range_min, base_range, 100)
-        range_max = range_max and MulDivRound(range_max, base_range, 100)
     end
+
+    range_min = range_min and MulDivRound(range_min, base_range, 100)
+    range_max = range_max and MulDivRound(range_max, base_range, 100)
+
     local x1, y1, z1 = point_unpack(ppt1)
     local x2, y2, z2 = point_unpack(ppt2)
     if (range_min or 0) > 0 and IsCloser(x1, y1, z1, x2, y2, z2, range_min) then
@@ -113,7 +117,7 @@ function AIPolicyGrenadeRange:RangeCheckGrenade(context, ppt1, target, ppt2, ran
     return true
 end
 
-function AIPolicyGrenadeRange:GetGrenadeMaxRange(context)
+function AIPolicyGrenadeRange:GetGrenadeMaxRangeAndAPcost(context)
 
     local function set_to_table(sett)
         local ttable = {}
@@ -147,19 +151,19 @@ function AIPolicyGrenadeRange:GetGrenadeMaxRange(context)
 
             if any_value_in_table(self_aoe_type, aoetype) and
                 any_value_in_table(self_trigger_type, triggerType) then
-                return RATOAI_GetGrenadeActionMaxRange(context, sig)
+                return RATOAI_GetGrenadeActionMaxRangeAndApCost(context, sig, self.SaveAP)
             end
         end
     end
     return false
 end
 
-function RATOAI_GetGrenadeActionMaxRange(context, signature)
-    local max_range
+function RATOAI_GetGrenadeActionMaxRangeAndApCost(context, signature, check_ap)
+    local max_range, cost
     local actions = {"ThrowGrenadeA", "ThrowGrenadeB", "ThrowGrenadeC", "ThrowGrenadeD"}
     for _, id in ipairs(actions) do
         local caction = CombatActions[id]
-        -- local cost = caction and caction:GetAPCost(context.unit) or -1
+        local actcost = check_ap and (caction and caction:GetAPCost(context.unit) or -1)
         local weapon = caction and caction:GetAttackWeapons(context.unit)
         if weapon then
             local aoetype = weapon.aoeType or "none"
@@ -169,6 +173,7 @@ function RATOAI_GetGrenadeActionMaxRange(context, signature)
             if weapon and IsKindOf(weapon, "Grenade") and signature.AllowedAoeTypes[aoetype] and
                 signature.AllowedTriggerTypes[triggerType] then
                 max_range = caction:GetMaxAimRange(context.unit, weapon)
+                cost = actcost
                 break
             end
         end
@@ -176,25 +181,4 @@ function RATOAI_GetGrenadeActionMaxRange(context, signature)
 
     return max_range
 end
--- for i, action in ipairs(sigs) do
--- 	if action.class == "AIActionMGSetup" then
--- 		context.action_states[action] = {}
--- 		action:PrecalcAction(context, context.action_states[action])
--- 		if action:IsAvailable(context, context.action_states[action]) then
--- end
 
-function return_available_grenadeactions(context)
-    local archetype = context and context.archetype
-    local available = 0
-    for i, sig in ipairs(archetype.SignatureActions) do
-        if sig.class == "AIActionThrowGrenade" then
-            context.action_states[sig] = {}
-            sig:PrecalcAction(context, context.action_states[sig])
-            if sig:IsAvailable(context, context.action_states[sig]) then
-                available = available + 1
-            end
-        end
-    end
-
-    return available
-end
