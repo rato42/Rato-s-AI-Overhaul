@@ -1,4 +1,5 @@
-local extra_max_attacks = 3
+local extra_max_attacks_arg = 2
+
 function AICreateContext(unit, context)
     local gx, gy, gz = unit:GetGridCoords()
     local weapon = unit:GetActiveWeapons()
@@ -6,6 +7,8 @@ function AICreateContext(unit, context)
     local enemies = table.icopy(GetEnemies(unit))
 
     ---- 
+    local weapon_can_unbolt = rat_canBolt(weapon) and IsKindOf(weapon, "SniperRifle")
+    local extra_max_attacks = weapon_can_unbolt and 0 or extra_max_attacks_arg
     if IsKindOf(weapon, "Firearm") and not IsKindOf(weapon, "HeavyWeapon") and
         not unit:HasStatusEffect("shooting_stance") then
 
@@ -21,8 +24,9 @@ function AICreateContext(unit, context)
         if not has_stance_ap and table.find(weapon.AvailableAttacks, "SingleShot") then
             default_attack = CombatActions["SingleShot"]
         end
-
     end
+
+    local max_attacks = unit.MaxAttacks + extra_max_attacks
     ---- 
 
     for _, groupname in ipairs(unit.Groups) do
@@ -80,8 +84,7 @@ function AICreateContext(unit, context)
     context.dest_target = {} -- dest -> picked target (if any)
     context.dest_target_score = {} -- dest -> estimated damage
     ------------------
-    ---- TODO: change the value to a constant
-    context.max_attacks = unit.MaxAttacks + extra_max_attacks
+    context.max_attacks = max_attacks
     context.currentpos_target_cover_score = {}
     context.dest_target_recoil_cth = {} -- dest -> recoil cth degradation
     context.dest_target_cover_score = {} -- dest -> cover -- CustomFlanking

@@ -33,7 +33,7 @@ DefineClass.AIPolicyCustomFlanking = {
     }
 }
 
-local debug = true
+local debug = false
 local draw_debug = false
 
 local function IsInCover(unit, enemy, cover_data, los_data)

@@ -1500,14 +1500,12 @@ return {
 		SignatureActions = {
 			PlaceObj('AIActionPinDown', {
 				'BiasId', "PinDownAttack",
-				'Weight', 200,
 				'CustomScoring', function (self, context)
 					return Pindown_CustomScoring(self, context)
 				end,
 			}),
 			PlaceObj('AIActionPinDown', {
 				'BiasId', "PinDownAttack",
-				'Weight', 200,
 				'CustomScoring', function (self, context)
 					return Pindown_CustomScoring(self, context)
 				end,
@@ -1538,6 +1536,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "GroinShot",
+				'Weight', 200,
 				'CustomScoring', function (self, context)
 					return SingleShotTargeted_CustomScoring(self, context)
 				end,
@@ -1546,6 +1545,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "Headshot",
+				'Weight', 200,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "Headshot",
@@ -1561,6 +1561,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "ArmShot",
+				'Weight', 200,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "ArmShot",
@@ -1576,6 +1577,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "LegShot",
+				'Weight', 200,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "LegShot",
