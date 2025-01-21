@@ -41,7 +41,7 @@ local distance_impact = 1.00
 local max_range = 30
 local min_dist = 5 * const.SlabSizeX
 local pb_range = const.Weapons.PointBlankRange * const.SlabSizeX
-local close_range = rat_close_range()
+local close_range = ((const.Weapons.PointBlankRange * 2) + (1)) * const.SlabSizeX
 local close_range_mul = 40
 
 local extra_score_arg_mul = 220
