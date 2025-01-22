@@ -202,6 +202,11 @@ return {
 		'DisplayName', "Disable grenade loot re-distribution",
 		'Help', "Disable grenade loot re-distribution, which can cause desync in coop playthroughs.",
 	}),
+	PlaceObj('ModItemOptionToggle', {
+		'name', "BoostStats",
+		'DisplayName', "Hard Mode (Boost Stats)",
+		'Help', "If enabled, enemy unit stats will be improved based on their roles. For extra challenge.",
+	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
 		BaseAttackWeight = 150,

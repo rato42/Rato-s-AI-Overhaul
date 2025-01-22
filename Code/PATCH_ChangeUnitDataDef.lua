@@ -18,7 +18,7 @@ local function GetRoleArgs_BoostStats(class)
 
     local map = {
         Marksman = {Health = 115, Marksmanship = 130, Dexterity = 130, Wisdom = 130},
-        Demolitions = {Explosives = 125, Dexterity = 120, Health = 125},
+        Demolitions = {Health = 125, Explosives = 125, Dexterity = 120},
         Soldier = {
             Health = 135,
             Marksmanship = 125,
@@ -34,12 +34,12 @@ local function GetRoleArgs_BoostStats(class)
             Leadership = 130
         },
         Recon = {Health = 120, Marksmanship = 120, Dexterity = 120, Agility = 125},
-        Stormer = {Strength = 120, Dexterity = 120, Agility = 120, Health = 135},
-        Artillery = {Explosives = 130, Health = 110},
-        Rocketeer = {Explosives = 130, Strength = 130, Health = 115},
-        Beast = {Strength = 120, Agility = 130, Dexterity = 120, Health = 110},
-        Heavy = {Strength = 135, Dexterity = 120, Marksmanship = 125, Health = 130},
-        Medic = {Medical = 130, Dexterity = 120, Agility = 120, Health = 120}
+        Stormer = {Health = 135, Strength = 120, Dexterity = 120, Agility = 120},
+        Artillery = {Health = 110, Explosives = 130},
+        Rocketeer = {Health = 115, Explosives = 130, Strength = 130},
+        Beast = {Health = 110, Strength = 120, Agility = 130, Dexterity = 120},
+        Heavy = {Health = 130, Strength = 135, Dexterity = 120, Marksmanship = 125},
+        Medic = {Health = 120, Medical = 130, Dexterity = 120, Agility = 120}
     }
 
     return map[role] or false
@@ -58,9 +58,50 @@ local function BoostStats(class)
 
     local test
     for prop, mul in pairs(args) do
-        -- print("--Boosting", prop, "=", class[prop] or 60)
+        -- if prop == "Health" then
+        --     local max_health = class.Health
+        --     if max_health then
+        --         if max_health <= 30 then
+        --             class.Health = Min(100, MulDivRound(class[prop] or 60, 165, 100))
+        --         elseif max_health <= 40 then
+        --             class.Health = Min(100, MulDivRound(class[prop] or 60, 125, 100))
+        --         elseif max_health <= 80 then
+        --             class.Health = 92
+        --         elseif max_health <= 85 then
+        --             class.Health = 97
+        --         else
+        --             class.Health = 100
+        --         end
+        --     end
+        -- else
         class[prop] = Min(100, MulDivRound(class[prop] or 60, mul, 100))
-        -- print("--------to", prop, "=", class[prop])
+        -- end
+
+    end
+
+    -- local max_health = class.MaxHitPoints
+    -- if not max_health then
+    --     return
+    -- end
+
+    -- if max_health <= 50 then
+    --     class.MaxHitPoints = 62
+    -- elseif max_health <= 60 then
+    --     class.MaxHitPoints = 75
+    -- elseif max_health <= 80 then
+    --     class.MaxHitPoints = 92
+    -- elseif max_health <= 85 then
+    --     class.MaxHitPoints = 97
+    -- else
+    --     class.MaxHitPoints = 100
+    -- end
+end
+
+------------TODO: change
+function OnMsg.UnitEnterCombat(unit)
+    if R_IsAI(unit) and CurrentModOptions.BoostStats and not unit.RATOAI_recalcedHP then
+        RecalcMaxHitPoints(unit)
+        unit.RATOAI_recalcedHP = true
     end
 end
 
@@ -75,7 +116,7 @@ function RATOAI_ChangeUnitDataDef(class, props)
                 class[k] = v
             end
         elseif k == "boost_stats" then
-            -- BoostStats(class)
+            BoostStats(class)
         else
             class[k] = v
         end

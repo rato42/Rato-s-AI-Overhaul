@@ -22,7 +22,7 @@ return PlaceObj('ModDef', {
 	'author', "rato",
 	'version_major', 1,
 	'version_minor', 3,
-	'version', 2784,
+	'version', 2785,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -73,12 +73,13 @@ return PlaceObj('ModDef', {
 	'default_options', {
 		AddFlares = true,
 		AddHWStoGunners = true,
+		BoostStats = false,
 		CUAELoreProgression = true,
 		DontChangeEquip = false,
 		ImproveExplosiveStat = true,
 	},
 	'has_data', true,
-	'saved', 1737530265,
+	'saved', 1737530348,
 	'code_hash', -7661722721809542268,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
