@@ -175,12 +175,15 @@ function RATOAI_ChangeMarksmanToHandGun(unit)
 
     local function gethandgun_id(unit)
         local level = unit:GetLevel() or 1
-        local map = {[8] = 'DesertEagle', [4] = 'Glock17', [0] = "Bereta92"}
+        local handguns = {
+            {gun = 'DesertEagle', level = 8}, {gun = 'Glock17', level = 4},
+            {gun = "Bereta92", level = 0}
+        }
 
-        local gun = map[0]
-        for lvl, g in pairs(map) do
-            if level >= lvl then
-                gun = g
+        local gun = handguns[#handguns].gun
+        for _, data in ipairs(handguns) do
+            if level >= data.level then
+                gun = gun.gun
                 break
             end
         end

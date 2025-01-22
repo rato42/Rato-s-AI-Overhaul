@@ -58,7 +58,6 @@ local function BoostStats(class)
 
     local test
     for prop, mul in pairs(args) do
-        -- print("-------", class.class)
         -- print("--Boosting", prop, "=", class[prop] or 60)
         class[prop] = Min(100, MulDivRound(class[prop] or 60, mul, 100))
         -- print("--------to", prop, "=", class[prop])
@@ -76,7 +75,7 @@ function RATOAI_ChangeUnitDataDef(class, props)
                 class[k] = v
             end
         elseif k == "boost_stats" then
-            BoostStats(class)
+            -- BoostStats(class)
         else
             class[k] = v
         end

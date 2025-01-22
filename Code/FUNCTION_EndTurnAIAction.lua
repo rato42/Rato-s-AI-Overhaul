@@ -16,7 +16,7 @@ function RATOAI_EndTurnAIAction(unit)
         return
     end
 
-    if unit:HasStatusEffect("Unaware") then
+    if unit:HasStatusEffect("Unaware") or unit:IsDead() or unit:IsDowned() then
         return
     end
 
