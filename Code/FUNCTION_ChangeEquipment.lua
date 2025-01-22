@@ -72,6 +72,8 @@ function RATOAI_UpdateUnitEquipedGrenades(unit)
         RATOAI_BuildGrenadeTable()
     end
 
+    local RATOAI_GrenadeTable = RATOAI_GrenadeTable
+
     local function RATOAI_GetReplacementIED(unit, explo_id)
         local base_replacement = get_replacement_ied(unit, {class = explo_id})
 
@@ -94,8 +96,9 @@ function RATOAI_UpdateUnitEquipedGrenades(unit)
 
     local grenade_data = GetGrenadeRoleData(unit)
     local desired_grenades_num = {}
+
     for type, data in pairs(grenade_data) do
-        local amount = InteractionRandRange(data[1], data[2])
+        local amount = InteractionRandRange(data[1], data[2], "RATOAI_grenade_amount")
         if amount > 0 then
             desired_grenades_num[type] = amount
         end
@@ -106,7 +109,7 @@ function RATOAI_UpdateUnitEquipedGrenades(unit)
     for _, slot in ipairs(slots) do
         unit:ForEachItemInSlot(slot, function(item)
             if IsKindOf(item, "MishapProperties") and not IsKindOf(item, "FlareStick") then
-                for type, grenades in pairs(RATOAI_GrenadeTable) do
+                for type, grenades in sorted_pairs(RATOAI_GrenadeTable) do
                     if table.find(grenades, item.class) then
                         local desired_num = desired_grenades_num[type]
                         if desired_num then
@@ -129,9 +132,10 @@ function RATOAI_UpdateUnitEquipedGrenades(unit)
         end)
     end
 
-    for type, num in pairs(desired_grenades_num) do
+    for type, num in sorted_pairs(desired_grenades_num) do
         local possible_types = RATOAI_GrenadeTable[type]
-        local explo_id = possible_types[InteractionRandRange(1, #possible_types)]
+        local explo_id = possible_types[InteractionRandRange(1, #possible_types,
+                                                             "RATOAI_possible_types")]
 
         if IsMod_loaded("RATONADE") then
             local affiliation = unit.Affiliation or ""
@@ -160,7 +164,7 @@ function RATOAI_ChangeMarksmanToHandGun(unit)
     if not R_IsAI(unit) then
         return
     end
-    local role = unit.role or ''
+    local role = unit.custom_role or unit.role or ''
     if not (role == "Marksman") then
         return
     end
