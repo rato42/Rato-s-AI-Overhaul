@@ -98,12 +98,18 @@ local function BoostStats(class)
 end
 
 ------------TODO: change
-function OnMsg.UnitEnterCombat(unit)
-    if R_IsAI(unit) and CurrentModOptions.BoostStats and not unit.RATOAI_recalcedHP then
-        RecalcMaxHitPoints(unit)
-        unit.RATOAI_recalcedHP = true
-    end
-end
+-- function OnMsg.UnitEnterCombat(unit)
+--     if R_IsAI(unit) and CurrentModOptions.BoostStats and not unit.RATOAI_recalcedHP then
+--         RecalcMaxHitPoints(unit)
+--         unit.RATOAI_recalcedHP = true
+--     end
+-- end
+
+-- PlaceObj('ModItemOptionToggle', {
+-- 	'name', "BoostStats",
+-- 	'DisplayName', "Hard Mode (Boost Stats)",
+-- 	'Help', "If enabled, enemy unit stats will be improved based on their roles. For extra challenge.",
+-- }),
 
 function RATOAI_ChangeUnitDataDef(class, props)
     for k, v in pairs(props) do
@@ -116,7 +122,7 @@ function RATOAI_ChangeUnitDataDef(class, props)
                 class[k] = v
             end
         elseif k == "boost_stats" then
-            BoostStats(class)
+            -- BoostStats(class)
         else
             class[k] = v
         end
