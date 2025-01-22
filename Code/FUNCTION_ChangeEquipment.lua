@@ -26,7 +26,7 @@ function GetGrenadeRoleData(unit)
         return false
     end
 
-    local role = unit.role or ''
+    local role = unit.custom_role or unit.role or ''
 
     -- @ explo
     -- @ timed
@@ -63,6 +63,10 @@ end
 local grenade_immunity_list = {"ToxicGasGrenade"} ---- Will not be removed
 
 function RATOAI_UpdateUnitEquipedGrenades(unit)
+
+    if CurrentModOptions.DontChangeEquip then
+        return
+    end
 
     if not R_IsAI(unit) then
         return
@@ -207,7 +211,7 @@ function RATOAI_AddFlare(unit, check)
         return
     end
     local flare_carriers = {'Soldier', 'Recon', 'Stormer', 'Demolitions'}
-    local role = unit.role or ''
+    local role = unit.custom_role or unit.role or ''
 
     if not table.find(flare_carriers, role) then
         return

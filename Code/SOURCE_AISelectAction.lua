@@ -56,14 +56,14 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
 
     if weight > 0 then
         local roll = InteractionRand(weight, "AISignatureAction", context.unit)
-        ic(weight)
+        -- ic(weight)
         ----
-        if #available > 0 then
-            ic(roll)
-        end
+        -- if #available > 0 then
+        --     ic(roll)
+        -- end
         for _, action in ipairs(available) do
             local weig = available[action]
-            ic(action.action_id, weig)
+            -- ic(action.action_id, weig)
         end
         -----
 
