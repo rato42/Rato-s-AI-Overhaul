@@ -9,7 +9,7 @@ DefineClass.AIPolicyCustomSeekCover = {
             id = "visibility_mode",
             name = "Visibility Mode",
             editor = "choice",
-            default = "self",
+            default = "team",
             items = function(self)
                 return {"self", "team", "all"}
             end
@@ -42,7 +42,7 @@ local max_range = 30
 local min_dist = 5 * const.SlabSizeX
 local pb_range = const.Weapons.PointBlankRange * const.SlabSizeX
 local close_range = ((const.Weapons.PointBlankRange * 2) + (1)) * const.SlabSizeX
-local close_range_mul = 40
+local close_range_mul = 75
 
 local extra_score_arg_mul = 220
 -----
@@ -107,7 +107,7 @@ function AIPolicyCustomSeekCover:GetCoverScore(context, cover_score, dest, grid_
         return cover_score
     end
 
-    local new_pos
+    local new_pos, dist
     if self.ScalePerDistance and cover_score > 0 then
         new_pos = RATOAI_UnpackPos(dest)
         new_pos = IsValidZ(new_pos) and new_pos or new_pos:SetTerrainZ()
