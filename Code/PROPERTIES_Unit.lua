@@ -18,13 +18,6 @@ function RATOAI_unitprops()
         no_edit = true
     }
 
-    UnitProperties.properties[#UnitProperties.properties + 1] = {
-        id = "RATOAI_recalcedHP",
-        editor = "text",
-        default = false,
-        no_edit = true
-    }
-
 end
 
 RATOAI_unitprops()

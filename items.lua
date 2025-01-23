@@ -202,6 +202,11 @@ return {
 		'DisplayName', "Disable grenade loot re-distribution",
 		'Help', "Disable grenade loot re-distribution, which can cause desync in coop playthroughs.",
 	}),
+	PlaceObj('ModItemOptionToggle', {
+		'name', "BoostStats",
+		'DisplayName', "General Stat Boost",
+		'Help', "If enabled, enemy unit stats will be improved based on their roles. For extra challenge.",
+	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
 		BaseAttackWeight = 150,
@@ -816,7 +821,7 @@ return {
 				'SignatureActions', {
 					PlaceObj('AIActionMGSetup', {
 						'BiasId', "MGSetup",
-						'Weight', 500,
+						'Weight', 300,
 						'Priority', true,
 						'CustomScoring', function (self, context)
 							local unit = context.unit
@@ -834,9 +839,9 @@ return {
 					PlaceObj('AIActionMGBurstFire', {
 						'Weight', 200,
 						'CustomScoring', function (self, context)
-							                return self.Weight, false, self.Priority
+							return AutoFire_CustomScoring(self, context)
 						end,
-						'Aiming', "Maximum",
+						'Aiming', "Remaining AP",
 						'AttackTargeting', set( "Torso" ),
 					}),
 				},
@@ -1364,12 +1369,6 @@ return {
 		OptLocSearchRadius = 80,
 		SignatureActions = {
 			PlaceObj('AIPrepareWeapon', nil),
-			PlaceObj('AIActionThrowFlare', {
-				'team_score', -1,
-				'self_score_mod', -1,
-				'min_score', 100,
-				'TargetLastAttackPos', true,
-			}),
 		},
 		group = "System",
 		id = "Scout_LastLocation",

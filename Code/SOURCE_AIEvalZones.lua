@@ -18,24 +18,8 @@ function AIEvalZones(context, zones, min_score, enemy_score, team_score, self_sc
 
                     uscore = enemy_score or 0
                     -----------------------------------
-                    --[[if enemy_cover_score and enemy_cover_score ~= 0 then
-                        local attacker = context.unit
-                        local cover, any, coverage =
-                            unit:GetCoverPercentage(attacker:GetPos(), unit:GetPos())
-
-                        local cover_effect = InterpolateCoverEffect(coverage, 100, 0)
-                        -- coverage = coverage >= 80 and 100 or coverage < 40 and 0 or coverage --- values from InterpolateCoverEffect
-                        local to_add = 0
-                        if cover_effect > 0 then
-                            to_add = MulDivRound(enemy_cover_score, cover_effect, 100)
-
-                        end
-                        uscore = uscore + to_add
-                        -- ic(unit.session_id, cover, any, coverage, uscore, cover_effect, to_add)
-                    end]]
 
                     if enemy_cover_score and enemy_cover_score ~= 0 then
-                        ----GetCoversAt(unit:GetPos())
                         local cover_high, cover_low = GetCoverTypes(unit)
                         if cover_low or cover_high then
                             uscore = uscore + enemy_cover_score

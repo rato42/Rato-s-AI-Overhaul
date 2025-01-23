@@ -302,7 +302,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         ------------------- Recoil addition
                         if action.id == "BurstFire" or action.id == "MGBurstFire" or action.id ==
                             "BuckshotBurst" then
-                            mod = Max(mod >= 5 and 5 or 0, mod + recoil_cth) ----------TODO: #3 Weight HERE!
+                            mod = Max(mod >= 5 and 5 or 0, mod + (recoil_cth * 0.6)) ----------TODO: #3 Weight HERE!
                         end
                         -------------------
 

@@ -33,6 +33,15 @@ local function GetRoleArgs_BoostStats(class)
             Agility = 115,
             Leadership = 130
         },
+        ArmyCommander = {
+            Health = 135,
+            Marksmanship = 125,
+            Dexterity = 125,
+            Agility = 115,
+            Leadership = 130
+        },
+        HyenaHandler = {Health = 135, Marksmanship = 125, Dexterity = 120, Agility = 110},
+        Prisioner = {Health = 120, Marksmanship = 120, Dexterity = 120, Agility = 125},
         Recon = {Health = 120, Marksmanship = 120, Dexterity = 120, Agility = 125},
         Stormer = {Health = 135, Strength = 120, Dexterity = 120, Agility = 120},
         Artillery = {Health = 110, Explosives = 130},
@@ -42,7 +51,7 @@ local function GetRoleArgs_BoostStats(class)
         Medic = {Health = 120, Medical = 130, Dexterity = 120, Agility = 120}
     }
 
-    return map[role] or false
+    return map[role] or map["Soldier"]
 end
 
 local function BoostStats(class)
@@ -98,18 +107,12 @@ local function BoostStats(class)
 end
 
 ------------TODO: change
--- function OnMsg.UnitEnterCombat(unit)
---     if R_IsAI(unit) and CurrentModOptions.BoostStats and not unit.RATOAI_recalcedHP then
---         RecalcMaxHitPoints(unit)
---         unit.RATOAI_recalcedHP = true
---     end
--- end
-
--- PlaceObj('ModItemOptionToggle', {
--- 	'name', "BoostStats",
--- 	'DisplayName', "Hard Mode (Boost Stats)",
--- 	'Help', "If enabled, enemy unit stats will be improved based on their roles. For extra challenge.",
--- }),
+function OnMsg.UnitEnterCombat(unit)
+    if R_IsAI(unit) then
+        RecalcMaxHitPoints(unit)
+        -- unit.RATOAI_recalcedHP = true
+    end
+end
 
 function RATOAI_ChangeUnitDataDef(class, props)
     for k, v in pairs(props) do
@@ -122,7 +125,7 @@ function RATOAI_ChangeUnitDataDef(class, props)
                 class[k] = v
             end
         elseif k == "boost_stats" then
-            -- BoostStats(class)
+            BoostStats(class)
         else
             class[k] = v
         end
