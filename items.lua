@@ -219,15 +219,14 @@ return {
 			PlaceObj('StandardAI', {
 				'BiasId', "Standard",
 				'EndTurnPolicies', {
-					PlaceObj('AIPolicyDealDamage', {
-						'Weight', 50,
-					}),
+					PlaceObj('AIPolicyDealDamage', nil),
 					PlaceObj('AIPolicyCustomFlanking', {
 						'RequiredKeywords', {
 							"Soldier",
 						},
 						'Weight', 200,
 						'ReserveAttackAP', "Stance",
+						'visibility_mode', "team",
 						'OnlyTarget', true,
 					}),
 					PlaceObj('AIPolicyTryNotToBeFlanked', nil),
@@ -259,7 +258,7 @@ return {
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SoldierFlanking",
-						'Value', -10,
+						'Value', -20,
 						'Period', 0,
 						'ApplyTo', "Team",
 					}),
@@ -300,7 +299,7 @@ return {
 					PlaceObj('AIPolicyCustomSeekCover', {
 						'Weight', 400,
 						'Required', true,
-						'ExposedAtCloseRange_Score', -30,
+						'ExposedAtCloseRange_Score', -60,
 					}),
 				},
 				'TakeCoverChance', 100,
@@ -1430,7 +1429,7 @@ return {
 				},
 				'min_score', 100,
 				'enemy_cover_mod', 50,
-				'MinDist', 6000,
+				'MinDist', 4000,
 				'AllowedTriggerTypes', set( "Contact" ),
 			}),
 			PlaceObj('AIActionThrowGrenade', {
@@ -1445,12 +1444,12 @@ return {
 				},
 				'min_score', 100,
 				'enemy_cover_mod', 50,
-				'MinDist', 6000,
+				'MinDist', 4000,
 				'AllowedTriggerTypes', set( "Proximity", "Proximity-Timed", "Timed" ),
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AOEGrenadeThrow",
-				'MinDist', 6000,
+				'MinDist', 4000,
 				'AllowedAoeTypes', set( "fire", "teargas", "toxicgas" ),
 			}),
 			PlaceObj('AIActionThrowGrenade', {

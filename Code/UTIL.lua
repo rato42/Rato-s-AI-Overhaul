@@ -15,6 +15,15 @@ function R_IsAI(unit)
     return true
 end
 
+function IsMod_loaded(mod_id) --- made by Toni
+    local mod_check = table.find(ModsLoaded, 'id', mod_id) or nil -- Replace "Mod_Id" with exact case sensitive modID you're testing for.
+
+    if mod_check then
+        return true
+    end
+    return false
+end
+
 function RATOAI_UnpackPos(pos)
     if not pos then
         return
