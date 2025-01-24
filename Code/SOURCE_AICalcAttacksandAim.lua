@@ -141,7 +141,7 @@ function AICalcAttacksAndAim(context, ap)
         end
     end
 
-    ic(#aims, aims)
+    -- ic(#aims, aims)
     return #aims, aims
 end
 
