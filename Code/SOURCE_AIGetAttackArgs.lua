@@ -4,6 +4,9 @@ function AIGetAttackArgs(context, action, target_spot_group, aim_type, override_
     local args = {target = target, target_spot_group = target_spot_group or "Torso"}
 
     local dest_ap
+    ----
+    local dest_pos
+    ---
     if context.ai_destination then
         local u_x, u_y, u_z = stance_pos_unpack(upos)
         local dest_x, dest_y, dest_z = stance_pos_unpack(context.ai_destination)
@@ -11,9 +14,23 @@ function AIGetAttackArgs(context, action, target_spot_group, aim_type, override_
         if point(u_x, u_y, u_z) ~= point(dest_x, dest_y, dest_z) then
             dest_ap = context.dest_ap[context.ai_destination]
         end
+        ---
+        dest_pos = point(dest_x, dest_y, dest_z)
+        ---
     end
 
     local unit_ap = dest_ap or context.unit:GetUIActionPoints()
+    ----
+    local unit_pos = dest_pos or context.unit:GetPos()
+
+    ------------------
+    if unit_pos and target then
+        local dist = unit_pos:Dist(target)
+        if dist <= const.Weapons.PointBlankRange * const.SlabSizeX then
+            aim_type = aim_type ~= "None" and "Remaining AP" or aim_type
+        end
+    end
+    ------------------
 
     if action.id == "Overwatch" then
         local attacks, aim = context.unit:GetOverwatchAttacksAndAim(action, args, unit_ap)

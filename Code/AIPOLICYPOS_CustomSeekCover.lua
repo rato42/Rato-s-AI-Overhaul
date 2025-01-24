@@ -29,7 +29,7 @@ DefineClass.AIPolicyCustomSeekCover = {
         }, {
             id = "ExposedAtCloseRange_Score",
             editor = "number",
-            default = -50,
+            default = -30,
             read_only = false,
             no_edit = false
         }

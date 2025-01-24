@@ -125,6 +125,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
     destinations = destinations or context.destinations
     NetUpdateHash("AIPrecalcDamageScore", unit, hashParamTable(destinations),
                   hashParamTable(targets), preferred_target)
+
     for j, upos in ipairs(destinations) do
         local ux, uy, uz, ustance_idx = stance_pos_unpack(upos)
         local ustance = StancesList[ustance_idx]
@@ -180,7 +181,9 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                                             weapon, nil,
                                             weapon:GetAutofireShots(context.default_attack), nil,
                                             nil, nil, nil, nil, attacker_pos)
+
                 end
+
                 recoil_score[target] = recoil_cth
                 -------------
 
@@ -218,6 +221,13 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 
                     target_los[target] = targets_attack_data and targets_attack_data[k] and
                                              targets_attack_data[k].los
+
+                    local use_meleecth, melee_range_cth =
+                        hit_modifiers.RangedMeleePenal:CalcValue(unit, target, nil, action, weapon,
+                                                                 nil, nil, nil, nil, attacker_pos)
+                    if use_meleecth then
+                        hit_mod = hit_mod + melee_range_cth
+                    end
 
                     -- ic(target.session_id)
                     -- ic(cover_value)
@@ -300,10 +310,10 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         ------------
 
                         ------------------- Recoil addition
-                        if action.id == "BurstFire" or action.id == "MGBurstFire" or action.id ==
-                            "BuckshotBurst" then
-                            mod = Max(mod >= 5 and 5 or 0, mod + (recoil_cth * 0.6)) ----------TODO: #3 Weight HERE!
-                        end
+                        -- if action.id == "BurstFire" or action.id == "MGBurstFire" or action.id ==
+                        --     "BuckshotBurst" then
+                        --     mod = Max(mod >= 5 and 5 or 0, mod + (recoil_cth * 0.6)) ----------TODO: #3 Weight HERE!
+                        -- end
                         -------------------
 
                         -- modify score by archetype-specific weight and (optional) targeting policies

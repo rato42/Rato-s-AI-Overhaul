@@ -1,5 +1,9 @@
+--- discontinued
+--[[
 function get_ShouldUseGetCloserPositioningBehavior(unit, context, percentage_override,
                                                    absolute_override)
+    ------------
+
     local weapon = context.weapon or unit:GetActiveWeapons()
 
     if not weapon or not IsKindOf(weapon, "Firearm") then
@@ -29,4 +33,4 @@ function get_ShouldUseGetCloserPositioningBehavior(unit, context, percentage_ove
     end
 
     return true
-end
+end]] 

@@ -93,9 +93,9 @@ function AICalcAttacksAndAim(context, ap)
     local aims = {}
 
     if not has_stance_ap then
-        if should_max_aim then
-            return 0, min_aim
-        end
+        -- if should_max_aim then
+        --     return 0, min_aim
+        -- end
         local num_atks = (ap / cost)
         local aims = {}
         for i = 1, num_atks do
