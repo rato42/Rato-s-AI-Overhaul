@@ -186,22 +186,48 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 
                 recoil_score[target] = recoil_cth
                 -------------
+                -- local burst_actions = {"BurstFire", "AutoFire", "MGBurstFire", "BuckshotBurst"}
 
                 if dist <= (max_check_range or dist) and
                     (is_melee or targets_attack_data[k] and not targets_attack_data[k].stuck) then
                     local mod = pos_mod
                     local attacks, aims = AICalcAttacksAndAim(context, ap)
                     local args = AIGetAttackArgs(context, action, "Torso", "None")
-                    args.step_pos = lof_params.step_pos
+                    args.step_pos = context.attacker_pos
+                    args.prediction = true
 
+                    context.cth_attacks_at[upos] = {}
+                    context.aims_at[upos] = {}
                     for i = 1, attacks do
                         args.aim = aims[i]
                         local attack_mod, attack_base =
                             unit:CalcChanceToHit(target, action, args, "chance_only")
+                        table.insert(context.cth_attacks_at[upos], attack_mod)
+                        table.insert(context.aims_at[upos], aims[i])
                         mod = mod + attack_mod
+                        ----TODO: #55 check if recoil here is a good idea
+                        -- if i > 1 and aims[i] < 3 then
+                        --     local recoil_penalty =
+                        --         aims[i] == 2 and recoil_cth * 0.33 or aims[i] == 1 and recoil_cth *
+                        --             0.66 or recoil_cth
+                        --     mod = mod + (recoil_penalty * (i - 1))
+                        -- end
                     end
 
-                    ---
+                    ---------------- For Custom Flanking Policy
+                    local use_cover, cover_value, _, _, type_cover =
+                        hit_modifiers.RangeAttackTargetStanceCover:CalcValue(unit, target, nil,
+                                                                             action, weapon, nil,
+                                                                             nil, nil, nil,
+                                                                             attacker_pos)
+                    if use_cover and type_cover == "Cover" then
+                        target_covers[target] = cover_value
+                    end
+
+                    target_los[target] = targets_attack_data and targets_attack_data[k] and
+                                             targets_attack_data[k].los
+
+                    ------------------
                     ---
                     ---
                     ------------------------------------------------- Vanilla postprocessing

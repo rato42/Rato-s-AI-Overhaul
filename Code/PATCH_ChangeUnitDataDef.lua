@@ -17,38 +17,174 @@ local function GetRoleArgs_BoostStats(class)
     end
 
     local map = {
-        Marksman = {Health = 115, Marksmanship = 130, Dexterity = 130, Wisdom = 130},
-        Demolitions = {Health = 125, Explosives = 125, Dexterity = 120},
-        Soldier = {
-            Health = 135,
-            Marksmanship = 125,
-            Dexterity = 120,
-            Agility = 110,
-            Explosives = 110
-        },
         Commander = {
-            Health = 135,
-            Marksmanship = 125,
-            Dexterity = 125,
-            Agility = 115,
-            Leadership = 130
+            Health = 15,
+            Marksmanship = 15,
+            Dexterity = 10,
+            Strength = 15,
+            Agility = 8,
+            Explosives = 8,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 20,
+            Mechanical = 0
+        },
+        Stormer = {
+            Health = 15,
+            Marksmanship = 8,
+            Dexterity = 10,
+            Strength = 15,
+            Agility = 15,
+            Explosives = 8,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 0,
+            Mechanical = 0
+        },
+        Marksman = {
+            Health = 15,
+            Marksmanship = 15,
+            Dexterity = 15,
+            Strength = 5,
+            Agility = 10,
+            Explosives = 0,
+            Wisdom = 15,
+            Medical = 0,
+            Leadership = 0,
+            Mechanical = 0
+        },
+        Heavy = {
+            Health = 15,
+            Marksmanship = 15,
+            Dexterity = 10,
+            Strength = 10,
+            Agility = 15,
+            Explosives = 0,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 0,
+            Mechanical = 0
+        },
+        Soldier = {
+            Health = 15,
+            Marksmanship = 15,
+            Dexterity = 10,
+            Strength = 15,
+            Agility = 8,
+            Explosives = 8,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 0,
+            Mechanical = 0
+        },
+        Recon = {
+            Health = 15,
+            Marksmanship = 15,
+            Dexterity = 10,
+            Strength = 8,
+            Agility = 15,
+            Explosives = 8,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 0,
+            Mechanical = 0
+        },
+        Beast = {
+            Health = 15,
+            Marksmanship = 0,
+            Dexterity = 15,
+            Strength = 15,
+            Agility = 10,
+            Explosives = 0,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 0,
+            Mechanical = 0
+        },
+        Medic = {
+            Health = 15,
+            Marksmanship = 10,
+            Dexterity = 10,
+            Strength = 0,
+            Agility = 15,
+            Explosives = 0,
+            Wisdom = 0,
+            Medical = 15,
+            Leadership = 0,
+            Mechanical = 0
+        },
+        Artillery = {
+            Health = 15,
+            Marksmanship = 15,
+            Dexterity = 8,
+            Strength = 8,
+            Agility = 10,
+            Explosives = 15,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 0,
+            Mechanical = 0
+        },
+        Demolitions = {
+            Health = 15,
+            Marksmanship = 8,
+            Dexterity = 10,
+            Strength = 8,
+            Agility = 15,
+            Explosives = 15,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 0,
+            Mechanical = 0
         },
         ArmyCommander = {
-            Health = 135,
-            Marksmanship = 125,
-            Dexterity = 125,
-            Agility = 115,
-            Leadership = 130
+            Health = 15,
+            Marksmanship = 15,
+            Dexterity = 10,
+            Strength = 15,
+            Agility = 8,
+            Explosives = 8,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 20,
+            Mechanical = 0
         },
-        HyenaHandler = {Health = 135, Marksmanship = 125, Dexterity = 120, Agility = 110},
-        Prisioner = {Health = 120, Marksmanship = 120, Dexterity = 120, Agility = 125},
-        Recon = {Health = 120, Marksmanship = 120, Dexterity = 120, Agility = 125},
-        Stormer = {Health = 135, Strength = 120, Dexterity = 120, Agility = 120},
-        Artillery = {Health = 110, Explosives = 130},
-        Rocketeer = {Health = 115, Explosives = 130, Strength = 130},
-        Beast = {Health = 110, Strength = 120, Agility = 130, Dexterity = 120},
-        Heavy = {Health = 130, Strength = 135, Dexterity = 120, Marksmanship = 125},
-        Medic = {Health = 120, Medical = 130, Dexterity = 120, Agility = 120}
+        Prisioner = {
+            Health = 15,
+            Marksmanship = 10,
+            Dexterity = 15,
+            Strength = 8,
+            Agility = 15,
+            Explosives = 8,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 0,
+            Mechanical = 0
+        },
+        HyenaHandler = {
+            Health = 15,
+            Marksmanship = 10,
+            Dexterity = 15,
+            Strength = 8,
+            Agility = 15,
+            Explosives = 8,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 0,
+            Mechanical = 0
+        },
+        Rocketeer = {
+            Health = 15,
+            Marksmanship = 8,
+            Dexterity = 8,
+            Strength = 15,
+            Agility = 10,
+            Explosives = 15,
+            Wisdom = 0,
+            Medical = 0,
+            Leadership = 0,
+            Mechanical = 0
+        }
     }
 
     return map[role] or map["Soldier"]
@@ -67,52 +203,23 @@ local function BoostStats(class)
 
     local test
     for prop, mul in pairs(args) do
-        -- if prop == "Health" then
-        --     local max_health = class.Health
-        --     if max_health then
-        --         if max_health <= 30 then
-        --             class.Health = Min(100, MulDivRound(class[prop] or 60, 165, 100))
-        --         elseif max_health <= 40 then
-        --             class.Health = Min(100, MulDivRound(class[prop] or 60, 125, 100))
-        --         elseif max_health <= 80 then
-        --             class.Health = 92
-        --         elseif max_health <= 85 then
-        --             class.Health = 97
-        --         else
-        --             class.Health = 100
-        --         end
-        --     end
-        -- else
-        class[prop] = Min(100, MulDivRound(class[prop] or 60, mul, 100))
-        -- end
-
+        if mul ~= 0 then
+            class[prop] = Min(100, MulDivRound(class[prop] or 60, 100 + mul, 100))
+        end
     end
-
-    -- local max_health = class.MaxHitPoints
-    -- if not max_health then
-    --     return
-    -- end
-
-    -- if max_health <= 50 then
-    --     class.MaxHitPoints = 62
-    -- elseif max_health <= 60 then
-    --     class.MaxHitPoints = 75
-    -- elseif max_health <= 80 then
-    --     class.MaxHitPoints = 92
-    -- elseif max_health <= 85 then
-    --     class.MaxHitPoints = 97
-    -- else
-    --     class.MaxHitPoints = 100
-    -- end
 end
 
-------------TODO: change
-function OnMsg.UnitEnterCombat(unit)
+function OnMsg.UnitCreated(unit)
     if R_IsAI(unit) then
         RecalcMaxHitPoints(unit)
-        -- unit.RATOAI_recalcedHP = true
     end
 end
+
+-- function OnMsg.UnitEnterCombat(unit)
+--     if R_IsAI(unit) then
+--         RecalcMaxHitPoints(unit)
+--     end
+-- end
 
 function RATOAI_ChangeUnitDataDef(class, props)
     for k, v in pairs(props) do
