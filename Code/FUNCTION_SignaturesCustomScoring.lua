@@ -32,7 +32,7 @@ local function GetDestArgs(self, context)
 end
 
 function AutoFire_CustomScoring(self, context)
-
+    local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
     local weight, disable, priority = self.Weight, false, self.Priority
 
     local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
@@ -52,7 +52,7 @@ function AutoFire_CustomScoring(self, context)
 end
 
 function MobileAttack_CustomScoring(self, context)
-
+    local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
     local weight, disable, priority = self.Weight, false, self.Priority
 
     local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
@@ -87,7 +87,7 @@ function MobileAttack_CustomScoring(self, context)
 end
 
 function SingleShotTargeted_CustomScoring(self, context)
-
+    local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
     local weight, disable, priority = self.Weight, false, self.Priority
 
     local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
@@ -138,6 +138,7 @@ function SingleShotTargeted_CustomScoring(self, context)
 end
 
 function Overwatch_CustomScoring(self, context)
+    local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
     local weight, disable, priority = self.Weight, false, self.Priority
 
     local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
@@ -232,6 +233,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function Pindown_CustomScoring(self, context)
+    local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
     local weight, disable, priority = self.Weight, false, self.Priority
     if true then
         return weight, disable, priority

@@ -42,7 +42,9 @@ local max_range = 30
 local min_dist = 5 * const.SlabSizeX
 local pb_range = const.Weapons.PointBlankRange * const.SlabSizeX
 local close_range = ((const.Weapons.PointBlankRange * 2) + (1)) * const.SlabSizeX
-local close_range_mul = 75
+local medium_range = 2 * pb_range + close_range
+local close_range_mul = 50
+local medium_range_mul = 15
 
 local extra_score_arg_mul = 220
 -----
@@ -54,7 +56,8 @@ end
 function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
     local score = 0
 
-    -- local ux, uy, uz, ustance_idx = stance_pos_unpack(dest)
+    local ux, uy, uz, ustance_idx = stance_pos_unpack(dest)
+    local new_point = point(ux, uy, uz)
     if not dest then
         return score
     end
@@ -65,6 +68,8 @@ function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
     local table_num = 0 -- #tbl
     local extra_mul = self.ScalePerDistance and extra_score_arg_mul or 100
     ----
+
+    local debugforpos = {}
 
     for _, enemy in ipairs(tbl) do
         local visible = true
@@ -80,9 +85,16 @@ function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
             local cover_score = self:GetCoverScore(context, self.CoverScores[cover] or 0, dest,
                                                    grid_voxel, enemy)
 
+            table.insert(debugforpos, {enemy.session_id, cover_score})
             score = score + cover_score
         end
     end
+
+    local dbg_txt = ""
+    for _, v in ipairs(debugforpos) do
+        dbg_txt = dbg_txt .. v[1] .. " = " .. v[2] .. " \n"
+    end
+    context.unit.ai_context.dest_custom_seek_cover_debug[dest] = dbg_txt
 
     ------------- If possible, need to check direction
     if self.ForceCheckLastEnemyPos or table_num < 1 then
@@ -134,9 +146,9 @@ function AIPolicyCustomSeekCover:GetCoverScore(context, cover_score, dest, grid_
             cover_score = self.ExposedAtCloseRange_Score
         elseif IsCloser(x1, y1, z1, x2, y2, z2, close_range + 1) then
             cover_score = MulDivRound(self.ExposedAtCloseRange_Score, close_range_mul, 100)
+        elseif IsCloser(x1, y1, z1, x2, y2, z2, medium_range + 1) then
+            cover_score = MulDivRound(self.ExposedAtCloseRange_Score, medium_range_mul, 100)
         end
-
-        -- print(enemy.session_id, cover_score)
     end
 
     -- if new_pos then

@@ -201,9 +201,10 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                                                        target_covers, target_los, attacker_pos)
                     else
                         mod, target_covers, target_los =
-                            RATOAI_ScoreAttacksDetailed(mod, target, upos, k, ap, context, action,
-                                                        weapon, targets_attack_data, target_covers,
-                                                        target_los, attacker_pos)
+                            RATOAI_ScoreAttacksDetailed(mod, target, upos, tpos, uz, k, ap, context,
+                                                        action, weapon, targets_attack_data,
+                                                        target_covers, target_los, attacker_pos,
+                                                        recoil_cth)
                     end
 
                     -- modify score by archetype-specific weight and (optional) targeting policies

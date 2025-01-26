@@ -18,7 +18,7 @@ function AIPolicyTryNotToBeFlanked:EvalDest(context, dest, grid_voxel)
     pos_table[unit] = new_pos
     local new_surrounded = unit:RATOAI_IsSurrounded(pos_table)
 
-    return not new_surrounded and self.Weight or 0
+    return not new_surrounded and 100 or 0
 end
 
 function Unit:RATOAI_IsSurrounded(unitReplace)

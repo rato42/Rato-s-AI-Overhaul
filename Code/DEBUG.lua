@@ -65,6 +65,13 @@ function IModeAIDebug:GetVoxelRolloverText()
         text = text .. "  " .. self.ai_context.dest_flanking_pol_debug[dest] .. "\n"
 
     end
+
+    if dest and self.ai_context.dest_custom_seek_cover_debug[dest] then
+
+        text = text .. "\n\nCustom Seek Cover Policy Debug:\n"
+        text = text .. "  " .. self.ai_context.dest_custom_seek_cover_debug[dest] .. "\n"
+
+    end
     -----------------------------------------
 
     text = text .. "\nVoxel score: " .. (opt_scores.final_score or "N/A")

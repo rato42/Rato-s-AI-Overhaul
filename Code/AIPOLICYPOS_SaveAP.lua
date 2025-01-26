@@ -48,5 +48,5 @@ function AIPolicySaveAP:EvalDest(context, dest, grid_voxel)
         check_ap = check_ap + (GetWeapon_StanceAP(unit, weapon) + Get_AimCost(unit)) or 0
     end
 
-    return ap < check_ap and 0 or self.Weight
+    return ap < check_ap and 0 or 100
 end

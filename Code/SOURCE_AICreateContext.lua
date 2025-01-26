@@ -90,6 +90,7 @@ function AICreateContext(unit, context)
     context.dest_target_cover_score = {} -- dest -> cover -- CustomFlanking
     context.dest_target_los = {} -- dest -> los -- CustomFlanking
     context.dest_flanking_pol_debug = {} ------------- DEBUGGER
+    context.dest_custom_seek_cover_debug = {}
     context.cth_attacks_at = {}
     context.aims_at = {}
     -----------------

@@ -17,6 +17,6 @@ function AIPolicyMGSetupAP:EvalDest(context, dest, grid_voxel)
     local setup_cost = CombatActions.MGSetup:GetAPCost(unit, false)
     local ap = context.dest_ap[dest] or 0
 
-    return ap >= setup_cost and self.Weight or 0
+    return ap >= setup_cost and 100 or 0
 end
 
