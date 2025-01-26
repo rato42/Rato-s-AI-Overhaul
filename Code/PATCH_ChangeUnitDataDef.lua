@@ -18,172 +18,160 @@ local function GetRoleArgs_BoostStats(class)
 
     local map = {
         Commander = {
-            Health = 15,
-            Marksmanship = 15,
-            Dexterity = 10,
-            Strength = 15,
-            Agility = 8,
-            Explosives = 8,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 20,
-            Mechanical = 0
+            Health = {mul = 3, flat = 0},
+            Marksmanship = {mul = 0, flat = 10},
+            Dexterity = {mul = 10, flat = 8},
+            Strength = {mul = 10, flat = 5},
+            Agility = {mul = 5, flat = 0},
+            Explosives = {mul = 8, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 10, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         Stormer = {
-            Health = 15,
-            Marksmanship = 8,
-            Dexterity = 10,
-            Strength = 15,
-            Agility = 15,
-            Explosives = 8,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 0,
-            Mechanical = 0
+            Health = {mul = 8, flat = 0},
+            Marksmanship = {mul = 0, flat = 16},
+            Dexterity = {mul = 0, flat = 5},
+            Strength = {mul = 5, flat = 0},
+            Agility = {mul = 0, flat = 0},
+            Explosives = {mul = 8, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         Marksman = {
-            Health = 15,
-            Marksmanship = 15,
-            Dexterity = 15,
-            Strength = 5,
-            Agility = 10,
-            Explosives = 0,
-            Wisdom = 15,
-            Medical = 0,
-            Leadership = 0,
-            Mechanical = 0
+            Health = {mul = 0, flat = 20},
+            Marksmanship = {mul = 5, flat = 0},
+            Dexterity = {mul = 5, flat = 0},
+            Strength = {mul = 5, flat = 6},
+            Agility = {mul = 0, flat = 0},
+            Explosives = {mul = 0, flat = 10},
+            Wisdom = {mul = 10, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         Heavy = {
-            Health = 15,
-            Marksmanship = 15,
-            Dexterity = 10,
-            Strength = 10,
-            Agility = 15,
-            Explosives = 0,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 0,
-            Mechanical = 0
+            Health = {mul = 15, flat = 0},
+            Marksmanship = {mul = 8, flat = 0},
+            Dexterity = {mul = 10, flat = 0},
+            Strength = {mul = 10, flat = 0},
+            Agility = {mul = 0, flat = 5},
+            Explosives = {mul = 0, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         Soldier = {
-            Health = 15,
-            Marksmanship = 15,
-            Dexterity = 10,
-            Strength = 15,
-            Agility = 8,
-            Explosives = 8,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 0,
-            Mechanical = 0
+            Health = {mul = 8, flat = 5},
+            Marksmanship = {mul = 0, flat = 0},
+            Dexterity = {mul = 5, flat = 5},
+            Strength = {mul = 8, flat = 5},
+            Agility = {mul = 0, flat = 8},
+            Explosives = {mul = 8, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         Recon = {
-            Health = 15,
-            Marksmanship = 15,
-            Dexterity = 10,
-            Strength = 8,
-            Agility = 15,
-            Explosives = 8,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 0,
-            Mechanical = 0
+            Health = {mul = 0, flat = 18},
+            Marksmanship = {mul = 10, flat = 0},
+            Dexterity = {mul = 5, flat = 0},
+            Strength = {mul = 8, flat = 0},
+            Agility = {mul = 0, flat = 5},
+            Explosives = {mul = 8, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         Beast = {
-            Health = 15,
-            Marksmanship = 0,
-            Dexterity = 15,
-            Strength = 15,
-            Agility = 10,
-            Explosives = 0,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 0,
-            Mechanical = 0
+            Health = {mul = 0, flat = 5},
+            Marksmanship = {mul = 0, flat = 0},
+            Dexterity = {mul = 10, flat = 0},
+            Strength = {mul = 5, flat = 0},
+            Agility = {mul = 10, flat = 0},
+            Explosives = {mul = 0, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         Medic = {
-            Health = 15,
-            Marksmanship = 10,
-            Dexterity = 10,
-            Strength = 0,
-            Agility = 15,
-            Explosives = 0,
-            Wisdom = 0,
-            Medical = 15,
-            Leadership = 0,
-            Mechanical = 0
+            Health = {mul = 15, flat = 20},
+            Marksmanship = {mul = 10, flat = 10},
+            Dexterity = {mul = 10, flat = 10},
+            Strength = {mul = 0, flat = 0},
+            Agility = {mul = 4, flat = 0},
+            Explosives = {mul = 0, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 10, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         Artillery = {
-            Health = 15,
-            Marksmanship = 15,
-            Dexterity = 8,
-            Strength = 8,
-            Agility = 10,
-            Explosives = 15,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 0,
-            Mechanical = 0
+            Health = {mul = 15, flat = 10},
+            Marksmanship = {mul = 15, flat = 0},
+            Dexterity = {mul = 8, flat = 30},
+            Strength = {mul = 8, flat = 0},
+            Agility = {mul = 10, flat = 0},
+            Explosives = {mul = 15, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         Demolitions = {
-            Health = 15,
-            Marksmanship = 8,
-            Dexterity = 10,
-            Strength = 8,
-            Agility = 15,
-            Explosives = 15,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 0,
-            Mechanical = 0
+            Health = {mul = 15, flat = 0},
+            Marksmanship = {mul = 8, flat = 0},
+            Dexterity = {mul = 10, flat = 0},
+            Strength = {mul = 8, flat = 0},
+            Agility = {mul = 15, flat = 0},
+            Explosives = {mul = 15, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         ArmyCommander = {
-            Health = 15,
-            Marksmanship = 15,
-            Dexterity = 10,
-            Strength = 15,
-            Agility = 8,
-            Explosives = 8,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 20,
-            Mechanical = 0
+            Health = {mul = 3, flat = 0},
+            Marksmanship = {mul = 5, flat = 0},
+            Dexterity = {mul = 10, flat = 0},
+            Strength = {mul = 10, flat = 0},
+            Agility = {mul = 5, flat = 0},
+            Explosives = {mul = 8, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 10, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         Prisioner = {
-            Health = 15,
-            Marksmanship = 10,
-            Dexterity = 15,
-            Strength = 8,
-            Agility = 15,
-            Explosives = 8,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 0,
-            Mechanical = 0
+            Health = {mul = 15, flat = 0},
+            Marksmanship = {mul = 10, flat = 0},
+            Dexterity = {mul = 15, flat = 0},
+            Strength = {mul = 8, flat = 0},
+            Agility = {mul = 5, flat = 0},
+            Explosives = {mul = 8, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         },
         HyenaHandler = {
-            Health = 15,
-            Marksmanship = 10,
-            Dexterity = 15,
-            Strength = 8,
-            Agility = 15,
-            Explosives = 8,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 0,
-            Mechanical = 0
-        },
-        Rocketeer = {
-            Health = 15,
-            Marksmanship = 8,
-            Dexterity = 8,
-            Strength = 15,
-            Agility = 10,
-            Explosives = 15,
-            Wisdom = 0,
-            Medical = 0,
-            Leadership = 0,
-            Mechanical = 0
+            Health = {mul = 15, flat = 0},
+            Marksmanship = {mul = 10, flat = 0},
+            Dexterity = {mul = 15, flat = 0},
+            Strength = {mul = 8, flat = 10},
+            Agility = {mul = 0, flat = 0},
+            Explosives = {mul = 8, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
         }
     }
 
@@ -201,10 +189,12 @@ local function BoostStats(class)
         return
     end
 
-    local test
-    for prop, mul in pairs(args) do
-        if mul ~= 0 then
-            class[prop] = Min(100, MulDivRound(class[prop] or 60, 100 + mul, 100))
+    for prop, data in pairs(args) do
+        if data.mul ~= 0 then
+            class[prop] = Min(100, MulDivRound(class[prop] or 60, 100 + data.mul, 100))
+        end
+        if data.flat ~= 0 then
+            class[prop] = Min(100, (class[prop] or 60) + data.flat)
         end
     end
 end
@@ -214,12 +204,6 @@ function OnMsg.UnitCreated(unit)
         RecalcMaxHitPoints(unit)
     end
 end
-
--- function OnMsg.UnitEnterCombat(unit)
---     if R_IsAI(unit) then
---         RecalcMaxHitPoints(unit)
---     end
--- end
 
 function RATOAI_ChangeUnitDataDef(class, props)
     for k, v in pairs(props) do

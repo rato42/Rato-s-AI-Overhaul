@@ -8,10 +8,11 @@ function Get_HeavyGunnerShouldUsePositioningBehavior(behavior, unit, proto_conte
         return false
     end
 
-    local enemy, dist = unit:GetClosestEnemy()
-    if enemy and (not enemy:IsDowned()) and dist <= const.Weapons.PointBlankRange * const.SlabSizeX then
-        return false
-    end
+    -- local enemy, dist = unit:GetClosestEnemy()
+    -- if enemy and (not enemy:IsDowned()) and dist and
+    --     (dist <= const.Weapons.PointBlankRange * const.SlabSizeX) then
+    --     return false
+    -- end
 
     local sigs = behavior.SignatureActions
     for i, action in ipairs(sigs) do

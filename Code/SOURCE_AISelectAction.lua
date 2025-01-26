@@ -2,7 +2,6 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
     local available = {}
     local weight = base_weight or 0
     --------- base_weight is from the default attack
-    ---- Stored here
     ---context.choose_actions = {{action = false, weight = weight, priority = false}}
 
     context.action_states = context.action_states or {}
@@ -56,25 +55,14 @@ function AISelectAction(context, actions, base_weight, dbg_available_actions)
 
     if weight > 0 then
         local roll = InteractionRand(weight, "AISignatureAction", context.unit)
-        -- ic(weight)
-        ----
-        -- if #available > 0 then
-        --     ic(roll)
-        -- end
-        for _, action in ipairs(available) do
-            local weig = available[action]
-            -- ic(action.action_id, weig)
-        end
-        -----
 
         for _, action in ipairs(available) do
             local w = available[action]
-            -- ic(action.action_id, w)
-            -- if roll <= weight then
+
             if roll <= w then
                 return action
             end
-            -- roll = roll - weight
+
             roll = roll - w
         end
     end

@@ -109,18 +109,20 @@ function AICalcAttacksAndAim(context, ap)
     if should_max_aim then
         local first_atk_cost = stance_cost + rotation_cost + cost
         local to_reach_max_aim = max_aim - min_aim
-        local remaining_ap_after_first_atk = ap - first_atk_cost
+        if to_reach_max_aim > 0 then
+            local remaining_ap_after_first_atk = ap - first_atk_cost
 
-        local aim = min_aim
-        while remaining_ap > aim_cost do
-            if aim == max_aim then
-                break
+            local aim = min_aim
+            while remaining_ap > aim_cost do
+                if aim >= max_aim then
+                    break
+                end
+                aim = aim + 1
+                remaining_ap_after_first_atk = remaining_ap_after_first_atk - aim_cost
             end
-            aim = aim + 1
-            remaining_ap_after_first_atk = remaining_ap_after_first_atk - aim_cost
+            aims[1] = aim
+            remaining_ap = remaining_ap_after_first_atk
         end
-        aims[1] = aim
-        remaining_ap = remaining_ap_after_first_atk
     end
 
     local index = (#aims or 0) + 1

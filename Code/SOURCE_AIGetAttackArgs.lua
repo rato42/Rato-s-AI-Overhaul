@@ -57,7 +57,6 @@ function AIGetAttackArgs(context, action, target_spot_group, aim_type, override_
     end
 
     local cost = action:GetAPCost(context.unit, args)
-    -- print("action_id", action.id, "cost", cost)
     local has_ap = cost >= 0 and (unit_ap >= cost)
 
     return args, has_ap, target

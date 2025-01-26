@@ -129,6 +129,10 @@ return {
 		'CodeFileName', "Code/FUNCTION_CanDegradeToSingleShot.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "FUNCTION_ScoreAttacksDetailed",
+		'CodeFileName', "Code/FUNCTION_ScoreAttacksDetailed.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "PROPERTIES_Unit",
 		'CodeFileName', "Code/PROPERTIES_Unit.lua",
 	}),
@@ -216,6 +220,11 @@ return {
 		'DisplayName', "Disable grenade loot re-distribution",
 		'Help', "Disable grenade loot re-distribution, which can cause desync in coop playthroughs.",
 	}),
+	PlaceObj('ModItemOptionToggle', {
+		'name', "UseSimpleAttacksScoring",
+		'DisplayName', "Use Simple Attacks Scoring",
+		'Help', "If you enable this function, the AI will use a simpler function to calculate its probable damage in a position against its targets. Enable it if facing major performance issues.",
+	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
 		BaseMovementWeight = 10,
@@ -282,7 +291,6 @@ return {
 						'Required', true,
 					}),
 					PlaceObj('AIPolicyWeaponRange', {
-						'Weight', 50,
 						'RangeMin', 30,
 						'RangeMax', 50,
 					}),
@@ -916,6 +924,28 @@ return {
 			PlaceObj('PositioningAI', {
 				'BiasId', "Flanking",
 				'Weight', 40,
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "ExplosiveGrenadeThrow",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "SmokeGrenade",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "FlareThrow",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "AOEGrenadeThrow",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+				},
 				'Comment', "Flanking",
 				'Fallback', false,
 				'OptLocWeight', 20,
@@ -966,7 +996,7 @@ return {
 			PlaceObj('AIPolicyTryNotToBeFlanked', nil),
 			PlaceObj('AIPolicyCustomSeekCover', {
 				'Weight', 180,
-				'ExposedAtCloseRange_Score', -15,
+				'ExposedAtCloseRange_Score', -20,
 			}),
 		},
 		OptLocSearchRadius = 80,
@@ -1137,7 +1167,7 @@ return {
 			}),
 			PlaceObj('AIPolicyCustomSeekCover', {
 				'Weight', 150,
-				'ExposedAtCloseRange_Score', -15,
+				'ExposedAtCloseRange_Score', -20,
 			}),
 		},
 		OptLocSearchRadius = 100,
@@ -1387,7 +1417,6 @@ return {
 				'Weight', 50,
 			}),
 			PlaceObj('AIPolicyCustomSeekCover', {
-				'Weight', 50,
 				'ExposedAtCloseRange_Score', -8,
 			}),
 		},
@@ -2121,206 +2150,5 @@ return {
 		comment = "not changed",
 		group = "Lieutenants",
 		id = "TheMajor",
-	}),
-	PlaceObj('ModItemAIArchetype', {
-		BaseAttackTargeting = set( "Torso" ),
-		Behaviors = {
-			PlaceObj('PositioningAI', {
-				'BiasId', "",
-				'Comment', "Get Closer",
-				'Fallback', false,
-				'Score', function (self, unit, proto_context, debug_data)
-					unit.ai_context = unit.ai_context or AICreateContext(unit, proto_context)
-					---
-					if not get_ShouldUseGetCloserPositioningBehavior(unit, unit.ai_context,nil, 22) then
-						return 0
-					end
-					---
-					
-					local dest, score = AIScoreReachableVoxels(unit.ai_context, self.EndTurnPolicies, 0)
-					return MulDivRound(score, self.Weight, 100)
-				end,
-				'OptLocWeight', 20,
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicyTryNotToBeFlanked', {
-						'Weight', 50,
-					}),
-					PlaceObj('AIPolicyWeaponRange', {
-						'Weight', 150,
-						'RangeBase', "Absolute",
-						'RangeMin', 22,
-						'RangeMax', 26,
-					}),
-					PlaceObj('AIPolicyLastEnemyPos', {
-						'Weight', 300,
-						'Required', true,
-					}),
-					PlaceObj('AIPolicyLosToEnemy', {
-						'Weight', 150,
-						'Invert', true,
-					}),
-					PlaceObj('AIPolicySaveAP', {
-						'Required', true,
-					}),
-					PlaceObj('AIPolicyCustomSeekCover', {
-						'Weight', 300,
-					}),
-				},
-				'TakeCoverChance', 0,
-			}),
-		},
-		Comment = "Keywords: Flank, Explosives",
-		OptLocPolicies = {
-			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 300,
-				'RangeBase', "Absolute",
-				'RangeMin', 12,
-				'RangeMax', 18,
-			}),
-			PlaceObj('AIPolicyLosToEnemy', nil),
-			PlaceObj('AIPolicyIndoorsOutdoors', {
-				'Indoors', false,
-			}),
-		},
-		OptLocSearchRadius = 100,
-		TargetScoreRandomization = 10,
-		group = "RatoAI",
-		id = "backup_Getcloser",
-	}),
-	PlaceObj('ModItemUnitDataCompositeDef', {
-		'Group', "Adonis",
-		'Id', "AdonisSquadLeader_Elite_copy",
-		'object_class', "UnitData",
-		'Health', 80,
-		'Agility', 90,
-		'Dexterity', 75,
-		'Strength', 85,
-		'Wisdom', 80,
-		'Leadership', 20,
-		'Marksmanship', 95,
-		'Mechanical', 52,
-		'Explosives', 48,
-		'Medical', 50,
-		'Portrait', "UI/EnemiesPortraits/AdonisOfficer",
-		'Name', T(278497471072, --[[ModItemUnitDataCompositeDef AdonisSquadLeader_Elite_copy Name]] "Leader Elite"),
-		'Randomization', true,
-		'elite', true,
-		'eliteCategory', "Foreigners",
-		'Affiliation', "Adonis",
-		'StartingLevel', 7,
-		'neutral_retaliate', true,
-		'AIKeywords', {
-			"Control",
-			"Explosives",
-		},
-		'role', "Commander",
-		'AlwaysUseOpeningAttack', true,
-		'OpeningAttackType', "Overwatch",
-		'MaxAttacks', 2,
-		'MaxHitPoints', 80,
-		'StartingPerks', {
-			"OpportunisticKiller",
-			"AutoWeapons",
-		},
-		'AppearancesList', {
-			PlaceObj('AppearanceWeight', {
-				'Preset', "Adonis_Officer",
-			}),
-		},
-		'Equipment', {
-			"AdonisSquadLeader",
-		},
-		'AdditionalGroups', {
-			PlaceObj('AdditionalGroup', {
-				'Weight', 50,
-				'Exclusive', true,
-				'Name', "AdonisMale_1",
-			}),
-			PlaceObj('AdditionalGroup', {
-				'Weight', 50,
-				'Exclusive', true,
-				'Name', "AdonisMale_2",
-			}),
-		},
-		'Tier', "Elite",
-		'pollyvoice', "Joey",
-		'gender', "Male",
-		'VoiceResponseId', "AdonisAssault",
-	}),
-	PlaceObj('ModItemUnitDataCompositeDef', {
-		'Group', "Adonis",
-		'Id', "AdonisSniper_Elite_copy",
-		'object_class', "UnitData",
-		'Health', 71,
-		'Agility', 90,
-		'Dexterity', 100,
-		'Strength', 85,
-		'Wisdom', 80,
-		'Leadership', 20,
-		'Marksmanship', 80,
-		'Mechanical', 50,
-		'Explosives', 42,
-		'Medical', 53,
-		'Portrait', "UI/EnemiesPortraits/AdonisSniper",
-		'Name', T(987781577482, --[[ModItemUnitDataCompositeDef AdonisSniper_Elite_copy Name]] "Elite Marksman"),
-		'Randomization', true,
-		'elite', true,
-		'eliteCategory', "Foreigners",
-		'Affiliation', "Adonis",
-		'StartingLevel', 5,
-		'neutral_retaliate', true,
-		'AIKeywords', {
-			"Sniper",
-		},
-		'role', "Marksman",
-		'AlwaysUseOpeningAttack', true,
-		'OpeningAttackType', "PinDown",
-		'MaxAttacks', 1,
-		'PickCustomArchetype', function (self, proto_context)
-			local enemy, dist = GetNearestEnemy(self)
-			local archetype = self.archetype
-			local weapon_class = "Firearm"
-			
-			if enemy and dist < 5*const.SlabSizeX then
-				archetype = "Skirmisher"
-				weapon_class = "Revolver"
-				PlayVoiceResponse(self, "AIArchetypeScared")
-			end
-			
-			if not self:GetActiveWeapons(weapon_class) then
-				AIPlayCombatAction("ChangeWeapon", self, 0)
-			end
-			
-			return archetype
-		end,
-		'MaxHitPoints', 50,
-		'StartingPerks', {
-			"Deadeye",
-			"Shatterhand",
-		},
-		'AppearancesList', {
-			PlaceObj('AppearanceWeight', {
-				'Preset', "Adonis_Marksman",
-			}),
-		},
-		'Equipment', {
-			"AdonisSniper",
-		},
-		'AdditionalGroups', {
-			PlaceObj('AdditionalGroup', {
-				'Weight', 50,
-				'Exclusive', true,
-				'Name', "AdonisMale_1",
-			}),
-			PlaceObj('AdditionalGroup', {
-				'Weight', 50,
-				'Exclusive', true,
-				'Name', "AdonisMale_2",
-			}),
-		},
-		'Tier', "Veteran",
-		'pollyvoice', "Joey",
-		'gender', "Male",
-		'VoiceResponseId', "AdonisAssault",
 	}),
 }

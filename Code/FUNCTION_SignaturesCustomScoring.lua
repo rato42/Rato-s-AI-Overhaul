@@ -128,7 +128,8 @@ function SingleShotTargeted_CustomScoring(self, context)
 
     if target and leg_shot then
         local target_weapon = target:GetActiveWeapons()
-        if IsKindOfClasses(target_weapon, "SubmachineGun", "MeleeWeapon", "Pistol", "Revolver") then
+        if target_weapon and
+            IsKindOfClasses(target_weapon, "SubmachineGun", "MeleeWeapon", "Pistol", "Revolver") then
             weight = MulDivRound(weight, leg_mul, 100)
         end
     end
