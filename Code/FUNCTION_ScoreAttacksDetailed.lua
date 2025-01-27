@@ -156,6 +156,6 @@ function RATOAI_ScoreAttacks_Simple(hit_mod, target, upos, tpos, uz, k, dist, ap
         end
     end
 
-    ic(mod)
+    -- ic(mod)
     return mod, target_covers, target_los
 end

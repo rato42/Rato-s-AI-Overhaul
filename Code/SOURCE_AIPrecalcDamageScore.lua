@@ -207,89 +207,92 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                                                         recoil_cth)
                     end
 
-                    -- modify score by archetype-specific weight and (optional) targeting policies
-                    mod = MulDivRound(mod, archetype.TargetBaseScore, 100)
-                    for _, policy in ipairs(target_policies) do
-                        local peval = policy:EvalTarget(unit, target)
-                        mod = mod + MulDivRound(peval or 0, policy.Weight, 100)
-                    end
-
-                    if IsKindOf(target, "Unit") and (target:IsDowned() or target:IsGettingDowned()) then
-                        mod = MulDivRound(mod, 5, 100)
-                    end
-
-                    local attack_data = targets_attack_data and targets_attack_data[k]
-                    local ally_in_danger = attack_data and (attack_data.best_ally_hits_count or 0) >
-                                               0
-
-                    if action and action.AimType == "cone" then
-                        ally_in_danger = ally_in_danger or
-                                             AIAllyInDanger(context.allies, context.ally_pos,
-                                                            attacker_pos, target,
-                                                            const.AIFriendlyFire_LOFConeNear,
-                                                            const.AIFriendlyFire_LOFConeFar)
-                    else
-                        ally_in_danger = ally_in_danger or
-                                             AIAllyInDanger(context.allies, context.ally_pos,
-                                                            attacker_pos, target,
-                                                            const.AIFriendlyFire_LOFWidth,
-                                                            const.AIFriendlyFire_LOFWidth)
-                    end
-                    if ally_in_danger then
-                        mod = MulDivRound(mod, const.AIFriendlyFire_ScoreMod, 100)
-                    end
-
-                    mod = MulDivRound(mod, target_score_mod[k], 100)
-
-                    -- apply group-based modifiers
-                    if target_modifiers and IsKindOf(target, "Unit") then
-                        local group_mod = 0
-                        for _, groupname in ipairs(target.Groups) do
-                            group_mod = group_mod + (target_modifiers[groupname] or 0)
+                    if mod > const.AIShootAboveCTH then
+                        -- modify score by archetype-specific weight and (optional) targeting policies
+                        mod = MulDivRound(mod, archetype.TargetBaseScore, 100)
+                        for _, policy in ipairs(target_policies) do
+                            local peval = policy:EvalTarget(unit, target)
+                            mod = mod + MulDivRound(peval or 0, policy.Weight, 100)
                         end
-                        if group_mod > 0 then
-                            mod = MulDivRound(mod, group_mod, 100)
-                        end
-                    end
 
-                    --[[table.insert(logdata, {
+                        if IsKindOf(target, "Unit") and
+                            (target:IsDowned() or target:IsGettingDowned()) then
+                            mod = MulDivRound(mod, 5, 100)
+                        end
+
+                        local attack_data = targets_attack_data and targets_attack_data[k]
+                        local ally_in_danger = attack_data and
+                                                   (attack_data.best_ally_hits_count or 0) > 0
+
+                        if action and action.AimType == "cone" then
+                            ally_in_danger = ally_in_danger or
+                                                 AIAllyInDanger(context.allies, context.ally_pos,
+                                                                attacker_pos, target,
+                                                                const.AIFriendlyFire_LOFConeNear,
+                                                                const.AIFriendlyFire_LOFConeFar)
+                        else
+                            ally_in_danger = ally_in_danger or
+                                                 AIAllyInDanger(context.allies, context.ally_pos,
+                                                                attacker_pos, target,
+                                                                const.AIFriendlyFire_LOFWidth,
+                                                                const.AIFriendlyFire_LOFWidth)
+                        end
+                        if ally_in_danger then
+                            mod = MulDivRound(mod, const.AIFriendlyFire_ScoreMod, 100)
+                        end
+
+                        mod = MulDivRound(mod, target_score_mod[k], 100)
+
+                        -- apply group-based modifiers
+                        if target_modifiers and IsKindOf(target, "Unit") then
+                            local group_mod = 0
+                            for _, groupname in ipairs(target.Groups) do
+                                group_mod = group_mod + (target_modifiers[groupname] or 0)
+                            end
+                            if group_mod > 0 then
+                                mod = MulDivRound(mod, group_mod, 100)
+                            end
+                        end
+
+                        --[[table.insert(logdata, {
 							name = IsKindOf(target, "Unit") and _InternalTranslate(target.Name or "") or target.class,
 							score = mod
 						})--]]
 
-                    if mod > 0 and target == preferred_target then
-                        best_target = target
-                        best_score = mod
-                        best_cth = base_mod
-                        potential_targets = {}
-                        break
-                    end
-
-                    ----------------- DEBUG
-                    ------------
-
-                    best_score = Max(best_score, mod)
-                    target_cth[target] = base_mod
-                    target_score[target] = mod
-
-                    local threshold = MulDivRound(best_score or 0, const.AIDecisionThreshold, 100)
-                    if mod >= threshold then
-                        potential_targets[#potential_targets + 1] = target
-                        for i = #potential_targets, 1, -1 do
-                            local target = potential_targets[i]
-                            local score = target_score[target]
-                            if score < threshold then
-                                table.remove(potential_targets, i)
-                            end
+                        if mod > 0 and target == preferred_target then
+                            best_target = target
+                            best_score = mod
+                            best_cth = base_mod
+                            potential_targets = {}
+                            break
                         end
-                        -- best_target, best_score, best_cth = target, mod, base_mod
+
+                        ----------------- DEBUG
+                        ------------
+
+                        best_score = Max(best_score, mod)
+                        target_cth[target] = base_mod
+                        target_score[target] = mod
+
+                        local threshold = MulDivRound(best_score or 0, const.AIDecisionThreshold,
+                                                      100)
+                        if mod >= threshold then
+                            potential_targets[#potential_targets + 1] = target
+                            for i = #potential_targets, 1, -1 do
+                                local target = potential_targets[i]
+                                local score = target_score[target]
+                                if score < threshold then
+                                    table.remove(potential_targets, i)
+                                end
+                            end
+                            -- best_target, best_score, best_cth = target, mod, base_mod
+                        end
+
+                        ----- Clear Context from my additions
+                        context.current_target = nil
+                        context.attacker_pos = nil
+                        -----
                     end
-
-                    ----- Clear Context from my additions
-                    context.current_target = nil
-                    context.attacker_pos = nil
-                    -----
-
                 end
             end
         end

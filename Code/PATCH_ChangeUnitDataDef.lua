@@ -55,7 +55,7 @@ local function GetRoleArgs_BoostStats(class)
         },
         Heavy = {
             Health = {mul = 15, flat = 0},
-            Marksmanship = {mul = 8, flat = 0},
+            Marksmanship = {mul = 0, flat = 15},
             Dexterity = {mul = 10, flat = 0},
             Strength = {mul = 10, flat = 0},
             Agility = {mul = 0, flat = 5},
@@ -200,6 +200,12 @@ local function BoostStats(class)
 end
 
 function OnMsg.UnitCreated(unit)
+    if R_IsAI(unit) then
+        RecalcMaxHitPoints(unit)
+    end
+end
+
+function OnMsg.UnitEnterCombat(unit)
     if R_IsAI(unit) then
         RecalcMaxHitPoints(unit)
     end
