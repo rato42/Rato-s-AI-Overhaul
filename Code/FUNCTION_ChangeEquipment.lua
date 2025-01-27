@@ -18,7 +18,6 @@ end
 
 ------------------------------------
 -----TODO: maybe remove handguns/melee from those guys that dont really use it
-------TODO: Flash specific action. Target overwatchers
 
 function GetGrenadeRoleData(unit)
 
@@ -101,7 +100,7 @@ function RATOAI_UpdateUnitEquipedGrenades(unit)
     local grenade_data = GetGrenadeRoleData(unit)
     local desired_grenades_num = {}
 
-    for type, data in pairs(grenade_data) do
+    for type, data in sorted_pairs(grenade_data) do
         local amount = InteractionRandRange(data[1], data[2], "RATOAI_grenade_amount")
         if amount > 0 then
             desired_grenades_num[type] = amount
@@ -222,7 +221,7 @@ function RATOAI_AddFlare(unit, check)
 
     if GameState.Night or GameState.Underground then
         if R_IsAI(unit) and (not check or not unit.RATOAI_flare_added) then
-            local amount = InteractionRandRange(1, 8) - 4
+            local amount = InteractionRandRange(1, 8, "RATOAI_FlareAmount") - 4
             if amount > 0 then
                 local flare = PlaceInventoryItem("FlareStick")
                 flare.Amount = amount
@@ -243,14 +242,21 @@ end
 RATOAI_GrenadeTable = {}
 
 function RATOAI_BuildGrenadeTable()
-    local exclusion_list = {
-        "Car", "FuelTank", "Moped", "PickupTruck", "PowerGenerator", "PowerGenerator_Military",
-        "SteroidPunchGrenade", "ConcussiveGrenade_Mine", "ShapedCharge", "Super_HE_Grenade"
+    -- local exclusion_list = {
+    --     "Car", "FuelTank", "Moped", "PickupTruck", "PowerGenerator", "PowerGenerator_Military",
+    --     "SteroidPunchGrenade", "ConcussiveGrenade_Mine", "ShapedCharge", "Super_HE_Grenade"
+    -- }
+
+    local inclusion_list = {
+        "TearGasGrenade_IED", "IncendiaryGrenade", "Molotov", "TearGasGrenade", "PipeBomb",
+        "TimedC4", "TimedPETN", "TimedTNT", "ProximityC4", "ProximityPETN", "ProximityTNT",
+        "SmokeGrenade", "SmokeGrenade_IED", "FlareStick", "FragGrenade", "HE_Grenade",
+        "HE_Grenade_1", "NailBomb_IED", "TNTBolt_IED", "ConcussiveGrenade", "ConcussiveGrenade_IED"
     }
 
     local function populate_gren_table(item)
-
-        if table.find(exclusion_list, item.class) then
+        -- table.find(exclusion_list, item.class) or
+        if not table.find(inclusion_list, item.class) then
             return
         end
 
@@ -294,10 +300,37 @@ function RATOAI_BuildGrenadeTable()
     end
 
     RATOAI_GrenadeTable = {}
-    ForEachPreset("InventoryItemCompositeDef", function(p)
-        local item = g_Classes[p.id]
+
+    local function sort_grenade_table_by_length(table_to_sort)
+        for category, items in pairs(table_to_sort) do
+            table.sort(items, function(a, b)
+                if #a == #b then
+                    return a < b -- Fallback to alphabetical order for equal lengths
+                end
+                return #a < #b -- Primary sort: shorter strings first
+            end)
+        end
+    end
+
+    -- ForEachPreset("InventoryItemCompositeDef", function(p)
+    for i, id in ipairs(inclusion_list) do
+        local item = g_Classes[id]
         if item and IsKindOf(item, "MishapProperties") then
             populate_gren_table(item)
         end
-    end)
+    end
+
+    sort_grenade_table_by_length(RATOAI_GrenadeTable)
+end
+
+function print_gren_table()
+    print("{")
+    for type, items in pairs(RATOAI_GrenadeTable) do
+        print(type, " = {")
+        for _, item in ipairs(items) do
+            print(item, ",")
+        end
+        print("},")
+    end
+    print("}")
 end

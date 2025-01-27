@@ -1,4 +1,4 @@
-local extra_max_attacks_arg = 2
+local extra_max_attacks_arg = 4
 
 function AICreateContext(unit, context)
     local gx, gy, gz = unit:GetGridCoords()
@@ -90,6 +90,10 @@ function AICreateContext(unit, context)
     context.dest_target_cover_score = {} -- dest -> cover -- CustomFlanking
     context.dest_target_los = {} -- dest -> los -- CustomFlanking
     context.dest_flanking_pol_debug = {} ------------- DEBUGGER
+    context.dest_custom_seek_cover_debug = {}
+    context.dest_custom_seek_cover_simple_debug = {}
+    context.cth_attacks_at = {}
+    context.aims_at = {}
     -----------------
     context.weapon = weapon
     context.default_attack = default_attack

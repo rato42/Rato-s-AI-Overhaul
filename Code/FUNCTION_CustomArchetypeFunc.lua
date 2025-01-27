@@ -11,13 +11,15 @@ function GetArgsForArchetypeAndWeaponSelection(unit)
             main_w_classes = {"SniperRifle", "AssaultRifle"},
             close_w_classes = {"SubmachineGun", "Revolver", "Pistol"},
             close_archetype = "RATOAI_RetreatingMarksman",
-            vr = "AIArchetypeScared"
+            vr = "AIArchetypeScared",
+            dist = 8
         },
         Stormer = {
             main_w_classes = {"Firearm"},
             close_w_classes = {"MeleeWeapon", "Shotgun"},
             close_archetype = "Brute",
-            vr = "AIArchetypeAngry"
+            vr = "AIArchetypeAngry",
+            dist = 8
         },
         Artillery = {
             main_w_classes = {"Artillery", "GrenadeLauncher"},

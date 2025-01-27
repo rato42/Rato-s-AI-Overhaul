@@ -108,13 +108,19 @@ function RATOAI_GetEnemyCoverScore(unit, enemy, context, score, att_pos, target_
 end
 
 function RATOAI_SelfCoverToEnemyScore(unit, enemy, context, score, att_pos, target_pos, dist,
-                                      angle_override)
+                                      angle_override, w_override)
     local context = context or unit.ai_context
     local weapon = context.weapon or unit:GetActiveWeapons()
     local enemy_in_range = false
+    local weight = w_override or weight_no_cover
 
     local prone_cover_CTH = Presets.ChanceToHitModifier.Default.RangeAttackTargetStanceCover
     local cover_max_malus = prone_cover_CTH:ResolveValue("Cover")
+    -- {
+    --     Cover = prone_cover_CTH:ResolveValue("Cover"),
+    --     Crouch = prone_cover_CTH:ResolveValue("CrouchPenalty"),
+    --     Prone = prone_cover_CTH:ResolveValue("PronePenalty")
+    -- }
 
     if not enemy:IsDowned() and context.enemy_visible[enemy] and IsValidPos(target_pos) and
         IsValidPos(att_pos) then
@@ -129,8 +135,9 @@ function RATOAI_SelfCoverToEnemyScore(unit, enemy, context, score, att_pos, targ
                                                              nil, nil, 0, false, target_pos, att_pos)
                 value = value or 0
                 if use then
+                    local max_penalty = cover_max_malus -- cover_max_malus[type_cover] or cover_max_malus.Cover
                     local ratio = 100 - Clamp(MulDivRound(value, 100, cover_max_malus), 0, 100)
-                    local add = MulDivRound(weight_no_cover, ratio, 100)
+                    local add = MulDivRound(weight, ratio, 100)
                     score = score + add
                     -- print("self cover", use, enemy.session_id, value, ratio, add)
                 end

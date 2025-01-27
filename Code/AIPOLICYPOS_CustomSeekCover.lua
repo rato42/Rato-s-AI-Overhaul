@@ -29,10 +29,17 @@ DefineClass.AIPolicyCustomSeekCover = {
         }, {
             id = "ExposedAtCloseRange_Score",
             editor = "number",
-            default = -30,
+            default = -100,
             read_only = false,
             no_edit = false
-        }
+        },
+        {
+            id = "SimpleGetCover",
+            editor = "bool",
+            default = false,
+            read_only = false,
+            no_edit = false
+        }, {id = "BaseScore", editor = "number", default = 100, read_only = false, no_edit = false}
     }
 }
 
@@ -42,7 +49,11 @@ local max_range = 30
 local min_dist = 5 * const.SlabSizeX
 local pb_range = const.Weapons.PointBlankRange * const.SlabSizeX
 local close_range = ((const.Weapons.PointBlankRange * 2) + (1)) * const.SlabSizeX
-local close_range_mul = 75
+local medium_range = 2 * pb_range + close_range
+local close_range_mul = 50
+local medium_range_mul = 15
+
+local debug = Platform.developer and Platform.cheats and false
 
 local extra_score_arg_mul = 220
 -----
@@ -54,7 +65,8 @@ end
 function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
     local score = 0
 
-    -- local ux, uy, uz, ustance_idx = stance_pos_unpack(dest)
+    local ux, uy, uz, ustance_idx = stance_pos_unpack(dest)
+    local new_point = point(ux, uy, uz)
     if not dest then
         return score
     end
@@ -66,6 +78,9 @@ function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
     local extra_mul = self.ScalePerDistance and extra_score_arg_mul or 100
     ----
 
+    local debugforpos = {}
+    local debugforpos_simple = {}
+
     for _, enemy in ipairs(tbl) do
         local visible = true
         if self.visibility_mode == "self" then
@@ -76,9 +91,22 @@ function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
 
         if visible then
             table_num = table_num + 1
-            local cover = GetCoverFrom(dest, context.enemy_pack_pos_stance[enemy])
-            local cover_score = self:GetCoverScore(context, self.CoverScores[cover] or 0, dest,
-                                                   grid_voxel, enemy)
+            local cover_score = 0
+
+            if self.SimpleGetCover then
+                local cover = GetCoverFrom(dest, context.enemy_pack_pos_stance[enemy])
+                cover_score = self:SimpleGetCoverScore(context, self.CoverScores[cover] or 0, dest,
+                                                       grid_voxel, enemy)
+
+            else
+                cover_score =
+                    self:GetCoverScore(context, enemy, context.unit, dest, nil, grid_voxel)
+                -- table.insert(debugforpos_simple, {enemy.session_id, cover_score})
+            end
+
+            if debug then
+                table.insert(debugforpos, {enemy.session_id, cover_score})
+            end
 
             score = score + cover_score
         end
@@ -90,18 +118,35 @@ function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
         -- DbgAddCircle(last_pos)
         if last_pos then
             local cover = GetCoverFrom(dest, stance_pos_pack(last_pos))
-            local cover_score = self:GetCoverScore(context, self.CoverScores[cover] or 0, dest,
-                                                   last_pos)
+            local cover_score = self:SimpleGetCoverScore(context, self.CoverScores[cover] or 0,
+                                                         dest, last_pos)
+            -- table.insert(debugforpos_simple, {"last_pos", cover_score})
 
             table_num = table_num + 1
             score = score + cover_score
         end
     end
 
+    ---------------------- Debug
+    if debug then
+        local dbg_txt = ""
+        for _, v in ipairs(debugforpos) do
+            dbg_txt = dbg_txt .. v[1] .. " = " .. v[2] .. " \n"
+        end
+        context.unit.ai_context.dest_custom_seek_cover_debug[dest] = dbg_txt
+    end
+
+    -- local dbg_txt_simple = ""
+    -- for _, v in ipairs(debugforpos_simple) do
+    --     dbg_txt = dbg_txt .. v[1] .. " = " .. v[2] .. " \n"
+    -- end
+    -- context.unit.ai_context.dest_custom_seek_cover_simple_debug[dest] = dbg_txt_simple
+    -----------------------
+
     return MulDivRound(score / Max(1, table_num), extra_mul, 100)
 end
 
-function AIPolicyCustomSeekCover:GetCoverScore(context, cover_score, dest, grid_voxel, enemy)
+function AIPolicyCustomSeekCover:SimpleGetCoverScore(context, cover_score, dest, grid_voxel, enemy)
 
     if not dest then
         return cover_score
@@ -134,9 +179,9 @@ function AIPolicyCustomSeekCover:GetCoverScore(context, cover_score, dest, grid_
             cover_score = self.ExposedAtCloseRange_Score
         elseif IsCloser(x1, y1, z1, x2, y2, z2, close_range + 1) then
             cover_score = MulDivRound(self.ExposedAtCloseRange_Score, close_range_mul, 100)
+        elseif IsCloser(x1, y1, z1, x2, y2, z2, medium_range + 1) then
+            cover_score = MulDivRound(self.ExposedAtCloseRange_Score, medium_range_mul, 100)
         end
-
-        -- print(enemy.session_id, cover_score)
     end
 
     -- if new_pos then
@@ -153,6 +198,87 @@ AIPolicyCustomSeekCover.CoverScores = {
     [const.CoverHigh] = 100
 }
 
+function AIPolicyCustomSeekCover:GetCoverScore(context, enemy, unit, dest, target_pos, grid_voxel)
+    local prone_cover_CTH = Presets.ChanceToHitModifier.Default.RangeAttackTargetStanceCover
+    local cover_max_malus = prone_cover_CTH:ResolveValue("Cover")
+    local score = 0
+
+    local target_pos = target_pos or dest and RATOAI_UnpackPos(dest) or unit:GetPos()
+    local att_pos = enemy and enemy:GetPos()
+    target_pos = RATOAI_ValidatePosZ(target_pos)
+    att_pos = RATOAI_ValidatePosZ(att_pos)
+    local dist = att_pos:Dist(target_pos)
+
+    if not enemy:IsDowned() and IsValidPos(target_pos) and IsValidPos(att_pos) then
+
+        local distance_to_check_lack_of_cover = 30
+        local weapon = enemy:GetActiveWeapons()
+        local is_firearm = weapon and IsKindOf(weapon, "Firearm")
+
+        distance_to_check_lack_of_cover = weapon and is_firearm and weapon.WeaponRange or
+                                              distance_to_check_lack_of_cover
+
+        if not is_firearm then
+            score = self.BaseScore
+        elseif dist <= distance_to_check_lack_of_cover * const.SlabSizeX then
+
+            -- local use, value, _, type_cover = prone_cover_CTH:CalcValue(enemy, unit, false, nil,
+            --                                                             weapon, nil, nil, 0, false,
+            --                                                             target_pos, att_pos)
+            local use, value = RATOAI_CoverCTH(att_pos, target_pos)
+            value = value or 0
+            if use then
+                local ratio = Clamp(MulDivRound(value, 100, cover_max_malus), 0, 100)
+                score = MulDivRound(self.BaseScore, ratio, 100)
+            end
+        end
+    end
+
+    if self.ExposedAtCloseRange_Score ~= 0 and score <= 0 and dist then
+        if dist <= const.Weapons.PointBlankRange * const.SlabSizeX then
+            score = self.ExposedAtCloseRange_Score
+        elseif dist <= const.Weapons.PointBlankRange * 2 * const.SlabSizeX then
+            score = self.ExposedAtCloseRange_Score * 0.5
+        elseif dist <= const.Weapons.PointBlankRange * 3 * const.SlabSizeX then
+            score = self.ExposedAtCloseRange_Score * 0.1
+        end
+    end
+    -- if self.ExposedAtCloseRange_Score ~= 0 and score <= 0 and context.enemy_grid_voxel[enemy] and
+    --     grid_voxel then
+    -- local x1, y1, z1 = point_unpack(context.enemy_grid_voxel[enemy])
+    -- local x2, y2, z2 = point_unpack(grid_voxel)
+    -- if IsCloser(x1, y1, z1, x2, y2, z2, pb_range + 1) then
+    --     score = self.ExposedAtCloseRange_Score
+    -- elseif IsCloser(x1, y1, z1, x2, y2, z2, close_range + 1) then
+    --     score = MulDivRound(self.ExposedAtCloseRange_Score, close_range_mul, 100)
+    -- elseif IsCloser(x1, y1, z1, x2, y2, z2, medium_range + 1) then
+    --     score = MulDivRound(self.ExposedAtCloseRange_Score, medium_range_mul, 100)
+    -- end
+    -- end
+
+    return score
+end
+
+function RATOAI_CoverCTH(attacker_pos, target_pos)
+    local prone_cover_CTH = Presets.ChanceToHitModifier.Default.RangeAttackTargetStanceCover
+    local exposed_value = prone_cover_CTH:ResolveValue("ExposedCover")
+    local full_value = prone_cover_CTH:ResolveValue("Cover")
+
+    local cover, any, coverage = GetCoverPercentage(target_pos, attacker_pos, "Crouch")
+
+    -- if CheckSightCondition(attacker, target, const.usObscured) then
+    -- 	exposed_value = exposed_value + const.EnvEffects.DustStormCoverCTHPenalty
+    -- 	full_value = full_value + const.EnvEffects.DustStormCoverCTHPenalty
+    -- end
+
+    local value = InterpolateCoverEffect(coverage, full_value, exposed_value)
+    local metaText = false
+
+    if value < exposed_value then
+        return true, value
+    end
+    return false, 0
+end
 --[[function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
     local score = 0
 

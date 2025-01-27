@@ -189,25 +189,135 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 
                 if dist <= (max_check_range or dist) and
                     (is_melee or targets_attack_data[k] and not targets_attack_data[k].stuck) then
-
-                    ------------ RATO AI precalc
-                    local mod = pos_mod
-
-                    if CurrentModOptions.UseSimpleAttacksScoring then
-                        ------ Old logic
-                        mod, target_covers, target_los =
-                            RATOAI_ScoreAttacks_Simple(mod, target, upos, tpos, uz, k, dist, ap,
-                                                       context, action, weapon, targets_attack_data,
-                                                       target_covers, target_los, attacker_pos)
-                    else
-                        mod, target_covers, target_los =
-                            RATOAI_ScoreAttacksDetailed(mod, target, upos, tpos, uz, k, ap, context,
-                                                        action, weapon, targets_attack_data,
-                                                        target_covers, target_los, attacker_pos,
-                                                        recoil_cth)
+                    local tx, ty, tz, tstance_idx = stance_pos_unpack(tpos)
+                    tz = tz or terrain.GetHeight(tx, ty)
+                    local hit_mod = pos_mod
+                    if not is_heavy then
+                        hit_mod = hit_mod +
+                                      (uz > tz + MinGroundDifference and modHighGround or uz < tz -
+                                          MinGroundDifference and modLowGround or 0)
+                        hit_mod = hit_mod + (unit:GetLastAttack() == target and modSameTarget or 0)
                     end
 
+                    -------
+
+                    --[[local target_cover = GetCoverFrom(tpos, upos)
+                    if target_cover == const.CoverLow or target_cover == const.CoverHigh then
+                        hit_mod = hit_mod + modCover
+                    end]]
+
+                    ---------------------- Cover penalty score reworked
+                    local use_cover, cover_value, _, _, type_cover =
+                        hit_modifiers.RangeAttackTargetStanceCover:CalcValue(unit, target, nil,
+                                                                             action, weapon, nil,
+                                                                             nil, nil, nil,
+                                                                             attacker_pos)
+                    if use_cover then
+                        if type_cover == "Cover" then
+                            target_covers[target] = cover_value
+                        end
+                        hit_mod = hit_mod + cover_value
+                    end
+
+                    target_los[target] = targets_attack_data and targets_attack_data[k] and
+                                             targets_attack_data[k].los
+
+                    local use_meleecth, melee_range_cth =
+                        hit_modifiers.RangedMeleePenal:CalcValue(unit, target, nil, action, weapon,
+                                                                 nil, nil, nil, nil, attacker_pos)
+                    if use_meleecth then
+                        hit_mod = hit_mod + melee_range_cth
+                    end
+
+                    -- ic(target.session_id)
+                    -- ic(cover_value)
+                    ---------------------
+
+                    local penalty = is_heavy and 0 or (100 - weapon:GetAccuracy(dist))
+
+                    local mod = hit_mod - penalty -- dist_penalty
+                    -- environmental modifiers when applicable
+
+                    local apply, value, target_spot_group, weapon1, weapon2, lof, aim,
+                          opportunity_attack
+                    apply, value = hit_modifiers.Darkness:CalcValue(unit, target, target_spot_group,
+                                                                    action, weapon1, weapon2, lof,
+                                                                    aim, opportunity_attack,
+                                                                    attacker_pos)
+                    if apply then
+                        mod = mod + value
+                    end
+
+                    --[[if not is_heavy and unit:IsPointBlankRange(target) then
+                        mod = MulDivRound(mod, 100 + const.AIPointBlankTargetMod, 100)
+                    end]]
+
+                    --------------------- Point blank rework
+                    if not is_heavy then
+                        local pb_apply, pb_value =
+                            pb_cth_mod:CalcValue(unit, target, target_spot_group, action, weapon,
+                                                 nil, nil, nil, false, attacker_pos)
+                        if pb_apply then
+                            mod = mod + pb_value
+                        end
+                    end
+                    --------------------
+
+                    mod = Max(0, mod)
                     if mod > const.AIShootAboveCTH then
+                        -- calc base score based on cth/attacks/aiming
+                        local base_mod = mod
+                        local attacks, aims = AICalcAttacksAndAim(context, ap)
+
+                        mod = 0
+                        for i = 1, attacks do
+                            local use, bonus, scope_use, scope_penal
+
+                            if (aims[i] or 0) > 0 then
+
+                                --------- in vanilla this could vary between 2 and 8 per aim level, if use == true
+                                ----- Weapon accuracy and other components are disregarded
+                                -- use, bonus = aim_mod:CalcValue(unit, nil, nil, nil, nil, nil, nil, aims[i])
+                                use, bonus = aim_mod:CalcValue(unit, context.current_target, nil,
+                                                               context.default_attack,
+                                                               context.weapon, nil, nil, aims[i])
+                                --------- Scope Addition
+                                scope_use, scope_penal =
+                                    scope_cth_mod:CalcValue(unit, context.current_target, nil,
+                                                            context.default_attack, context.weapon,
+                                                            nil, nil, aims[i], nil,
+                                                            context.attacker_pos)
+                            end
+
+                            mod = mod + base_mod + (use and bonus or 0) +
+                                      (scope_use and scope_penal or 0)
+                            ------
+                            --[[local hip_mod = Presets.ChanceToHitModifier.Default.HipshotPenalty
+                            local hip_use, hip_bonus
+                            if hip_mod and (aims[i] or 3) < 3 then
+                                hip_use, hip_bonus = hip_mod:CalcValue(unit, context.current_target, nil,
+                                                                       context.default_attack, context.weapon, false,
+                                                                       nil, aims[i])
+                            end
+                            if hip_use then
+                                mod = mod + hip_bonus'
+                            end
+                            print("hip bonus", hip_bonus)]]
+                        end
+
+                        ------------ Debug
+                        local old_mod, old_base_mod = mod, base_mod
+                        ------------
+
+                        ------------------- Recoil addition
+                        -- if action.id == "BurstFire" or action.id == "MGBurstFire" or action.id ==
+                        --     "BuckshotBurst" then
+                        --     mod = Max(mod >= 5 and 5 or 0, mod + (recoil_cth * 0.6)) ----------TODO: #3 Weight HERE!
+                        -- end
+                        -------------------
+
+                        ------------------------------------------------- Vanilla postprocessing
+
                         -- modify score by archetype-specific weight and (optional) targeting policies
                         mod = MulDivRound(mod, archetype.TargetBaseScore, 100)
                         for _, policy in ipairs(target_policies) do
@@ -268,6 +378,8 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                         end
 
                         ----------------- DEBUG
+                        old_scores_dbg[target] = old_mod
+                        old_cth_debug[target] = old_base_mod
                         ------------
 
                         best_score = Max(best_score, mod)

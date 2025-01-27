@@ -15,6 +15,7 @@ DefineClass.AIPolicyMGSetupPosScore = {
     }
 }
 
+-----TODO: completely refactor this
 function AIPolicyMGSetupPosScore:EvalDest(context, dest, grid_voxel)
 
     local ap = context.dest_ap[dest] or 0
@@ -35,13 +36,15 @@ function AIPolicyMGSetupPosScore:EvalDest(context, dest, grid_voxel)
     local x, y, z = stance_pos_unpack(dest)
     local new_pos = point(x, y, z)
 
+    local enemies = 0
     for enemy, pos in pairs(context.enemy_pos) do
         if not enemy:IsDowned() and context.enemy_visible[enemy] and IsValidPos(pos) and
             IsValidPos(new_pos) then
 
             local angle = GetShootingAngleDiff(unit, weapon, enemy, true)
+            enemies = enemies + 1
             score = RATOAI_GetEnemyCoverScore(unit, enemy, context, score, new_pos, pos, nil, angle)
         end
     end
-    return MulDivRound(score, self.Weight, 100)
+    return score / Max(1, enemies)
 end

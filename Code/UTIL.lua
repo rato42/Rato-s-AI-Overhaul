@@ -33,4 +33,7 @@ function RATOAI_UnpackPos(pos)
     return new_pos
 end
 
+function RATOAI_ValidatePosZ(point)
+    return IsValidZ(point) and point or point:SetTerrainZ()
+end
 -- GetPackedPosAndStance(unit, stance)
