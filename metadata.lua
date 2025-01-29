@@ -22,7 +22,7 @@ return PlaceObj('ModDef', {
 	'author', "rato",
 	'version_major', 1,
 	'version_minor', 6,
-	'version', 3112,
+	'version', 3144,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -84,8 +84,8 @@ return PlaceObj('ModDef', {
 		UseSimpleAttacksScoring = false,
 	},
 	'has_data', true,
-	'saved', 1738122972,
-	'code_hash', -5402172872200726801,
+	'saved', 1738134007,
+	'code_hash', -8156957664495755764,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",

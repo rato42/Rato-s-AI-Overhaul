@@ -1,5 +1,13 @@
+-- local number_of_precalcs = {}
+-- function ins_n()
+--     Inspect(number_of_precalcs)
+-- end
+-- function clr_n()
+--     number_of_precalcs = {}
+-- end
 function AIPrecalcDamageScore(context, destinations, preferred_target, debug_data)
     local unit = context.unit
+
     local weapon = context.weapon
     local action = CombatActions[context.override_attack_id or false] or context.default_attack
     local archetype = context.archetype
@@ -20,6 +28,17 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
         return
     end
     context.damage_score_precalced = true
+
+    -----
+    -- if not number_of_precalcs[unit.session_id] then
+    --     number_of_precalcs[unit.session_id] = 0
+    -- end
+    -- number_of_precalcs[unit.session_id] = number_of_precalcs[unit.session_id] + 1
+    -- if number_of_precalcs[unit.session_id] > 1 then
+    --     bp()
+    -- end
+    ----
+
     local target_score_mod = {}
     local tsr = archetype.TargetScoreRandomization
     for i, target in ipairs(targets) do
@@ -35,6 +54,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 
     local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
     -- stance mod
+    -- TODO: #64 check messing around with modCrouchBonus and modProneBonus
     local modCrouchBonus = 0
     local modProneBonus = 0
     -- if IsKindOf(weapon, "Firearm") then
@@ -136,18 +156,19 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
         local best_score = 0
         local potential_targets, target_score, target_cth = {}, {}, {}
 
-        ------------------ Recoil storage
+        ------------------ Recoil storage -- Only best target goes to context
         local recoil_score = {}
         ------------------
+
+        ------> refactor to follow dest_target_dist model			
+        local target_covers = {}
+        local target_los = {}
+        context.dest_target_dist[upos] = {}
+        ----
 
         ------------------ Debug
         local old_scores_dbg, old_cth_debug = {}, {}
         ------------------
-
-        ----						
-        local target_covers = {}
-        local target_los = {}
-        ----
 
         if weapon and ap >= cost_ap then
             local pos_mod = base_mod
@@ -161,7 +182,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                 lof_params.step_pos = point_pack(ux, uy, uz)
                 lof_params.stance = ustance
                 targets_attack_data = GetLoFData(unit, targets, lof_params)
-                ---
+                ---- temporary
                 context.attacker_pos = attacker_pos
                 ----
             end
@@ -169,8 +190,12 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
             for k, target in ipairs(targets) do
                 local tpos = GetPackedPosAndStance(target)
                 local dist = stance_pos_dist(upos, tpos)
-                ----
+                ---- temporary
                 context.current_target = target
+                ---
+
+                ----
+                context.dest_target_dist[upos][target] = dist
                 ----
 
                 ------ Recoil CTH Calculation 
@@ -196,15 +221,16 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                     if CurrentModOptions.UseSimpleAttacksScoring then
                         ------ Old logic
                         mod, target_covers, target_los =
-                            RATOAI_ScoreAttacks_Simple(mod, target, upos, tpos, uz, k, dist, ap,
-                                                       context, action, weapon, targets_attack_data,
-                                                       target_covers, target_los, attacker_pos)
+                            RATOAI_ScoreAttacks_Simple(mod, target, dist, upos, tpos, uz, k, dist,
+                                                       ap, context, action, weapon,
+                                                       targets_attack_data, target_covers,
+                                                       target_los, attacker_pos)
                     else
                         mod, target_covers, target_los =
-                            RATOAI_ScoreAttacksDetailed(mod, target, upos, tpos, uz, k, ap, context,
-                                                        action, weapon, targets_attack_data,
-                                                        target_covers, target_los, attacker_pos,
-                                                        recoil_cth)
+                            RATOAI_ScoreAttacksDetailed(mod, target, dist, upos, tpos, uz, k, ap,
+                                                        context, action, weapon,
+                                                        targets_attack_data, target_covers,
+                                                        target_los, attacker_pos, recoil_cth)
                     end
 
                     if mod > const.AIShootAboveCTH then

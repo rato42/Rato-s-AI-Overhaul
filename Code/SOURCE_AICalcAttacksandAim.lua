@@ -1,5 +1,5 @@
 ---TODO: Consider leaving this function as "pre-planning" and moving the more complex logic to when the positions are defined?
-function AICalcAttacksAndAim(context, ap)
+function AICalcAttacksAndAim(context, ap, target_dist)
 
     ------- Fix for min aim
     local unit = context.unit
@@ -89,13 +89,14 @@ function AICalcAttacksAndAim(context, ap)
     end
     -------
 
-    local should_max_aim = ShouldMaxAim(context) or context.force_max_aim
+    local desired_aim_level = GetIdealAimLevels(context, target_dist, max_aim, min_aim)
+    ic(desired_aim_level)
+    -- local should_max_aim = ShouldMaxAim(context, target_dist) or context.force_max_aim
     local aims = {}
 
-    if not has_stance_ap then
-        -- if should_max_aim then
-        --     return 0, min_aim
-        -- end
+    local to_reach_desired_aim_level = desired_aim_level - min_aim
+    --
+    if not has_stance_ap or to_reach_desired_aim_level <= 0 then
         local num_atks = (ap / cost)
         local aims = {}
         for i = 1, num_atks do
@@ -106,36 +107,38 @@ function AICalcAttacksAndAim(context, ap)
 
     local remaining_ap = ap
 
-    if should_max_aim then
-        local first_atk_cost = stance_cost + rotation_cost + cost
-        local to_reach_max_aim = max_aim - min_aim
-        if to_reach_max_aim > 0 then
-            local remaining_ap_after_first_atk = ap - first_atk_cost
+    -- Calculate the cost of the first attack
+    local first_atk_cost = stance_cost + rotation_cost + cost
+    local remaining_ap_after_first_atk = remaining_ap - first_atk_cost
 
-            local aim = min_aim
-            while remaining_ap > aim_cost do
-                if aim >= max_aim then
-                    break
-                end
-                aim = aim + 1
-                remaining_ap_after_first_atk = remaining_ap_after_first_atk - aim_cost
-            end
-            aims[1] = aim
-            remaining_ap = remaining_ap_after_first_atk
+    -- Determine the first attack aim level
+    local aim = min_aim
+    if to_reach_desired_aim_level > 0 then
+        while remaining_ap_after_first_atk >= aim_cost and aim < desired_aim_level do
+            aim = aim + 1
+            remaining_ap_after_first_atk = remaining_ap_after_first_atk - aim_cost
         end
     end
 
-    local index = (#aims or 0) + 1
+    -- Record the first aim level
+    local aims = {aim}
+    remaining_ap = remaining_ap_after_first_atk
+
+    -- Process subsequent attacks
+    local index = 2
     while remaining_ap > 0 do
+        local current_aim = min_aim
         local atk_cost = cost
-        local aim = min_aim
-        while aim < max_aim and remaining_ap >= aim_cost + atk_cost do
-            aim = aim + 1
+
+        -- Increase aim level if possible
+        while current_aim < desired_aim_level and remaining_ap >= aim_cost + atk_cost do
+            current_aim = current_aim + 1
             remaining_ap = remaining_ap - aim_cost
         end
 
+        -- Perform attack if enough AP remains
         if remaining_ap >= atk_cost then
-            aims[index] = aim
+            aims[index] = current_aim
             index = index + 1
             remaining_ap = remaining_ap - atk_cost
         else
@@ -143,8 +146,10 @@ function AICalcAttacksAndAim(context, ap)
         end
     end
 
+    local num_attacks = #aims
+
     -- ic(#aims, aims)
-    return #aims, aims
+    return num_attacks, aims
 end
 
 -- function AICalcAttacksAndAim(context, ap)

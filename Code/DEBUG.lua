@@ -79,6 +79,16 @@ function IModeAIDebug:GetVoxelRolloverText()
         text = text .. "  " .. self.ai_context.dest_custom_seek_cover_debug[dest] .. "\n"
 
     end
+
+    if dest and self.ai_context.aims_at[dest] then
+        for enemy, aims in pairs(self.ai_context.aims_at[dest]) do
+            local aim_text = ""
+            for i, aim in ipairs(aims) do
+                aim_text = aim_text .. aim .. " , "
+            end
+            text = text .. "\n  " .. enemy.session_id .. " aims: " .. aim_text
+        end
+    end
     -----------------------------------------
 
     text = text .. "\nVoxel score: " .. (opt_scores.final_score or "N/A")

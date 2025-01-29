@@ -1,40 +1,40 @@
-function RATOAI_ScoreAttacksDetailed(mod, target, upos, tpos, uz, k, ap, context, action, weapon,
-                                     targets_attack_data, target_covers, target_los, attacker_pos,
-                                     recoil_cth)
-
+function RATOAI_ScoreAttacksDetailed(mod, target, target_dist, upos, tpos, uz, k, ap, context,
+                                     action, weapon, targets_attack_data, target_covers, target_los,
+                                     attacker_pos, recoil_cth)
+    local unit = context.unit
     local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
-    local MinGroundDifference = hit_modifiers.GroundDifference:ResolveValue("RangeThreshold") *
-                                    const.SlabSizeZ / 100
-    local modHighGround = hit_modifiers.GroundDifference:ResolveValue("HighGround")
-    local modLowGround = hit_modifiers.GroundDifference:ResolveValue("LowGround")
-    local modSameTarget = hit_modifiers.SameTarget:ResolveValue("Bonus")
-
     --------------------------
 
-    local unit = context.unit
-    local tx, ty, tz, tstance_idx = stance_pos_unpack(tpos)
-    tz = tz or terrain.GetHeight(tx, ty)
+    -- 	local MinGroundDifference = hit_modifiers.GroundDifference:ResolveValue("RangeThreshold") *
+    -- 	const.SlabSizeZ / 100
+    -- local modHighGround = hit_modifiers.GroundDifference:ResolveValue("HighGround")
+    -- local modLowGround = hit_modifiers.GroundDifference:ResolveValue("LowGround")
+    -- local modSameTarget = hit_modifiers.SameTarget:ResolveValue("Bonus")
+    -- local tx, ty, tz, tstance_idx = stance_pos_unpack(tpos)
+    -- tz = tz or terrain.GetHeight(tx, ty)
 
-    local is_heavy = IsKindOf(weapon, "HeavyWeapon")
-    if not is_heavy then
-        mod = mod +
-                  (uz > tz + MinGroundDifference and modHighGround or uz < tz - MinGroundDifference and
-                      modLowGround or 0)
-        mod = mod + (unit:GetLastAttack() == target and modSameTarget or 0)
-    end
+    -- local is_heavy = IsKindOf(weapon, "HeavyWeapon")
+    -- if not is_heavy then
+    --     mod = mod +
+    --               (uz > tz + MinGroundDifference and modHighGround or uz < tz - MinGroundDifference and
+    --                   modLowGround or 0)
+    --     mod = mod + (unit:GetLastAttack() == target and modSameTarget or 0)
+    -- end
 
-    local attacks, aims = AICalcAttacksAndAim(context, ap)
+    local attacks, aims = AICalcAttacksAndAim(context, ap, target_dist)
     local args = AIGetAttackArgs(context, action, "Torso", "None")
     args.step_pos = context.attacker_pos
     args.prediction = true
 
-    context.cth_attacks_at[upos] = {}
-    context.aims_at[upos] = {}
+    -- context.cth_attacks_at[upos] = context.cth_attacks_at[upos] or {}
+    context.aims_at[upos] = context.aims_at[upos] or {}
+    context.aims_at[upos][target] = aims
+
     for i = 1, attacks do
         args.aim = aims[i]
         local attack_mod, attack_base = unit:CalcChanceToHit(target, action, args, "chance_only")
-        table.insert(context.cth_attacks_at[upos], attack_mod)
-        table.insert(context.aims_at[upos], aims[i])
+        -- table.insert(context.cth_attacks_at[upos], attack_mod)
+        -- table.insert(context.aims_at[upos], aims[i])
         mod = mod + attack_mod
         -- TODO: #55 check if recoil here is a good idea
         -- if i > 1 and aims[i] < 3 then
@@ -59,9 +59,9 @@ function RATOAI_ScoreAttacksDetailed(mod, target, upos, tpos, uz, k, ap, context
     return mod, target_covers, target_los
 end
 
-function RATOAI_ScoreAttacks_Simple(hit_mod, target, upos, tpos, uz, k, dist, ap, context, action,
-                                    weapon, targets_attack_data, target_covers, target_los,
-                                    attacker_pos)
+function RATOAI_ScoreAttacks_Simple(hit_mod, target, target_dist, upos, tpos, uz, k, dist, ap,
+                                    context, action, weapon, targets_attack_data, target_covers,
+                                    target_los, attacker_pos)
     local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
     local MinGroundDifference = hit_modifiers.GroundDifference:ResolveValue("RangeThreshold") *
                                     const.SlabSizeZ / 100
@@ -135,7 +135,7 @@ function RATOAI_ScoreAttacks_Simple(hit_mod, target, upos, tpos, uz, k, dist, ap
     if mod > const.AIShootAboveCTH then
         -- calc base score based on cth/attacks/aiming
         local base_mod = mod
-        local attacks, aims = AICalcAttacksAndAim(context, ap)
+        local attacks, aims = AICalcAttacksAndAim(context, ap, target_dist)
 
         mod = 0
         for i = 1, attacks do

@@ -85,15 +85,18 @@ function AICreateContext(unit, context)
     context.dest_target_score = {} -- dest -> estimated damage
     ------------------
     context.max_attacks = max_attacks
-    context.currentpos_target_cover_score = {}
-    context.dest_target_recoil_cth = {} -- dest -> recoil cth degradation
-    context.dest_target_cover_score = {} -- dest -> cover -- CustomFlanking
-    context.dest_target_los = {} -- dest -> los -- CustomFlanking
+    context.currentpos_target_cover_score = {} -- > start pos target cover --- Custom Flanking
+    context.dest_target_recoil_cth = {} -- dest -> recoil cth degradation --> Best target only
+    context.dest_target_cover_score = {} -- dest -> cover -- CustomFlanking -- targets
+    context.dest_target_los = {} -- dest -> los -- CustomFlanking -- targets
+    context.dest_target_dist = {} --- dest -> distance to targets
+    -- not used yet
+    context.cth_attacks_at = {}
+    context.aims_at = {}
+    --
     context.dest_flanking_pol_debug = {} ------------- DEBUGGER
     context.dest_custom_seek_cover_debug = {}
     context.dest_custom_seek_cover_simple_debug = {}
-    context.cth_attacks_at = {}
-    context.aims_at = {}
     -----------------
     context.weapon = weapon
     context.default_attack = default_attack

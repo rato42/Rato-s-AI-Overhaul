@@ -1,40 +1,39 @@
-function ShouldMaxAim(context) ----- used in AICalcAttacksAndAim
+function ShouldMaxAim(context, target_dist) ----- used in AICalcAttacksAndAim
 
-    local target = context.current_target
-    local attack_pos = context.attacker_pos
-    if not target or not attack_pos or not IsKindOf(context.weapon, "Firearm") then
+    if not target_dist or not IsKindOf(context.weapon, "Firearm") then
         return false
     end
-
-    local dist = context.attacker_pos:Dist(target:GetPos())
 
     local er = context.EffectiveRange
     local pb = const.Weapons.PointBlankRange
     local to_check_range = pb
-    if dist and (dist > to_check_range * const.SlabSizeX) then
+
+    if target_dist and (target_dist > to_check_range * const.SlabSizeX) then
         return true
     end
     return false
 end
 
---[[function GetIdealAimLevels(context) ----- used in AICalcAttacksAndAim
+function GetIdealAimLevels(context, target_dist, max_aim, min_aim) ----- used in AICalcAttacksAndAim
 
-    local target = context.current_target
-    local attack_pos = context.attacker_pos
-    if not target or not attack_pos or not IsKindOf(context.weapon, "Firearm") then
-        return false
+    if not target_dist or not IsKindOf(context.weapon, "Firearm") then
+        return min_aim
     end
 
-    local dist = context.attacker_pos:Dist(target:GetPos())
+    local effective_range = context.EffectiveRange
+    local point_blank = const.Weapons.PointBlankRange
 
-    local er = context.EffectiveRange
-    local pb = const.Weapons.PointBlankRange
-    local to_check_range = pb
-
-    if dist and (dist <= pb * const.SlabSizeX) then
-        return 0
-    elseif dist and (dist <= er * const.SlabSizeX) then
-        return -- 1 (ou 2?)
+    if IsKindOfClasses(context.weapon, "SubmachineGun", "Pistol", "Revolver") then
+        effective_range = MulDivRound(context.EffectiveRange, 50, 100)
+    else
+        effective_range = MulDivRound(context.EffectiveRange, 25, 100)
     end
-    return "Max Aim"
-end]]
+
+    if (target_dist <= point_blank * const.SlabSizeX) then
+        return min_aim
+    elseif (target_dist <= effective_range * const.SlabSizeX) then
+        return Max(1, min_aim)
+    end
+    return max_aim
+end
+

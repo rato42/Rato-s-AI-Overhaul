@@ -2,6 +2,7 @@ function Update_AIPrecalcDamageScore(unit)
     local context = unit.ai_context or {}
     if not context.damage_score_precalced then
         AIPrecalcDamageScore(context)
+        unit.ai_context = context
         return context
     end
     return nil
