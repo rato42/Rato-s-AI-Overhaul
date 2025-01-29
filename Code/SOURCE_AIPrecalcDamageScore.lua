@@ -191,7 +191,7 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                     (is_melee or targets_attack_data[k] and not targets_attack_data[k].stuck) then
 
                     ------------ RATO AI precalc
-                    local mod = pos_mod
+                    local mod = 0
 
                     if CurrentModOptions.UseSimpleAttacksScoring then
                         ------ Old logic
@@ -208,6 +208,11 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
                     end
 
                     if mod > const.AIShootAboveCTH then
+                        -------------
+                        mod = mod + pos_mod
+                        -------------------------------------------------------------------------------------------
+                        -- Vanilla
+                        --------------------------------------- 
                         -- modify score by archetype-specific weight and (optional) targeting policies
                         mod = MulDivRound(mod, archetype.TargetBaseScore, 100)
                         for _, policy in ipairs(target_policies) do
