@@ -17,11 +17,14 @@ function AICalcAttacksAndAim(context, ap, target_dist)
     local aim_cost = Get_AimCost(unit)
 
     local not_moved, has_stance
+
     if IsKindOf(context.weapon, "Firearm") then
         local unit_pos = unit and unit:GetPos()
         local attack_pos = context.attacker_pos
 
-        if attack_pos and unit_pos then
+        if context.AIisPlayingAttacks and unit:HasStatusEffect("shooting_stance") then
+            has_stance = true
+        elseif attack_pos and unit_pos then
             attack_pos = attack_pos:SetTerrainZ()
             unit_pos = unit_pos:SetTerrainZ()
 
@@ -66,22 +69,23 @@ function AICalcAttacksAndAim(context, ap, target_dist)
 
     ----
 
-    ------- Verify if has AP to enter Stance
-
-    ---TODO:Check if this deduction is correct
-    local ap = ap --- - free_move_ap
     local total_stance_cost = cost + stance_cost
 
     ---- support for reverting to basic attacks from AIPlayAttacks (always on the same position as the signature)
-    total_stance_cost = (context.ap_after_signature and unit:HasStatusEffect("shooting_stance")) and
-                            0 or total_stance_cost
-    stance_cost = (context.ap_after_signature and unit:HasStatusEffect("shooting_stance")) and 0 or
-                      stance_cost
+    if context.AIisPlayingAttacks and unit:HasStatusEffect("shooting_stance") then
+        total_stance_cost = 0
+        stance_cost = 0
+    end
+
+    -- total_stance_cost = (context.ap_after_signature and unit:HasStatusEffect("shooting_stance")) and
+    --                         0 or total_stance_cost
+    -- stance_cost = (context.ap_after_signature and unit:HasStatusEffect("shooting_stance")) and 0 or
+    --                   stance_cost
     ----
 
     local has_stance_ap = ap >= total_stance_cost
 
-    if not has_stance_ap then
+    if not has_stance_ap then ------- Verify if has AP to enter Stance
         stance_cost = 0
         ---RATOAI_TryDegradeToSingleShot(context)
     else ---- and modify min aim level if it has
@@ -90,14 +94,14 @@ function AICalcAttacksAndAim(context, ap, target_dist)
     -------
 
     local desired_aim_level = GetIdealAimLevels(context, target_dist, max_aim, min_aim)
-    ic(desired_aim_level)
+
     -- local should_max_aim = ShouldMaxAim(context, target_dist) or context.force_max_aim
     local aims = {}
 
     local to_reach_desired_aim_level = desired_aim_level - min_aim
     --
     if not has_stance_ap or to_reach_desired_aim_level <= 0 then
-        local num_atks = (ap / cost)
+        local num_atks = Min(context.max_attacks, (ap / cost))
         local aims = {}
         for i = 1, num_atks do
             aims[i] = min_aim
@@ -124,20 +128,32 @@ function AICalcAttacksAndAim(context, ap, target_dist)
     local aims = {aim}
     remaining_ap = remaining_ap_after_first_atk
 
+    -- local subsequent_attacks_cost = cost + (to_reach_desired_aim_level * aim_cost)
+    -- local subsequent_attacks = Min(context.max_attacks - 1, remaining_ap / subsequent_attacks_cost)
+
+    -- for i = 1, subsequent_attacks do
+    --     aims[i + 1] = aim
+    -- end
+
     -- Process subsequent attacks
     local index = 2
+
     while remaining_ap > 0 do
         local current_aim = min_aim
         local atk_cost = cost
+        local max_attacks_reached = index > context.max_attacks
 
-        -- Increase aim level if possible
-        while current_aim < desired_aim_level and remaining_ap >= aim_cost + atk_cost do
+        -- Increase aim level if possible or max attacks reached
+        while remaining_ap >= aim_cost and (current_aim < desired_aim_level or max_attacks_reached) do
             current_aim = current_aim + 1
             remaining_ap = remaining_ap - aim_cost
+            if max_attacks_reached then
+                break
+            end
         end
 
-        -- Perform attack if enough AP remains
-        if remaining_ap >= atk_cost then
+        -- Perform attack if enough AP remains and max attacks not reached
+        if remaining_ap >= atk_cost and not max_attacks_reached then
             aims[index] = current_aim
             index = index + 1
             remaining_ap = remaining_ap - atk_cost

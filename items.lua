@@ -189,6 +189,10 @@ return {
 		'name', "SOURCE_AIGetAttackTargetingOptions",
 		'CodeFileName', "Code/SOURCE_AIGetAttackTargetingOptions.lua",
 	}),
+	PlaceObj('ModItemCode', {
+		'name', "SOURCE_AIPlayAttacks",
+		'CodeFileName', "Code/SOURCE_AIPlayAttacks.lua",
+	}),
 	PlaceObj('ModItemOptionToggle', {
 		'name', "ImproveExplosiveStat",
 		'DisplayName', "Improve Explosives Stat",

@@ -22,7 +22,7 @@ return PlaceObj('ModDef', {
 	'author', "rato",
 	'version_major', 1,
 	'version_minor', 6,
-	'version', 3144,
+	'version', 3168,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -73,6 +73,7 @@ return PlaceObj('ModDef', {
 		"Code/SOURCE_AIActionPinDown_PrecalcAction.lua",
 		"Code/SOURCE_AIScoreDest.lua",
 		"Code/SOURCE_AIGetAttackTargetingOptions.lua",
+		"Code/SOURCE_AIPlayAttacks.lua",
 	},
 	'default_options', {
 		AddFlares = true,
@@ -84,8 +85,8 @@ return PlaceObj('ModDef', {
 		UseSimpleAttacksScoring = false,
 	},
 	'has_data', true,
-	'saved', 1738134007,
-	'code_hash', -8156957664495755764,
+	'saved', 1738143498,
+	'code_hash', -6525833238260278154,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "AIArchetype",

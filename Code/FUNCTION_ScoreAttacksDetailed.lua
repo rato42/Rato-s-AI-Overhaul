@@ -23,6 +23,7 @@ function RATOAI_ScoreAttacksDetailed(mod, target, target_dist, upos, tpos, uz, k
 
     local attacks, aims = AICalcAttacksAndAim(context, ap, target_dist)
     local args = AIGetAttackArgs(context, action, "Torso", "None")
+
     args.step_pos = context.attacker_pos
     args.prediction = true
 
@@ -37,12 +38,14 @@ function RATOAI_ScoreAttacksDetailed(mod, target, target_dist, upos, tpos, uz, k
         -- table.insert(context.aims_at[upos], aims[i])
         mod = mod + attack_mod
         -- TODO: #55 check if recoil here is a good idea
-        -- if i > 1 and aims[i] < 3 then
-        --     local recoil_penalty = (aims[i] == 2 and recoil_cth * 0.33 or aims[i] == 1 and
-        --                                recoil_cth * 0.66 or recoil_cth) * (i - 1)
-        --     mod = mod + recoil_penalty
-        --     ic(recoil_penalty)
-        -- end
+        if i > 1 and aims[i] < 3 then
+            -- local recoil_penalty = const.Combat.Recoil_StacksMultiplier * recoil_cth * (i - 1)
+            local recoil_penalty = (aims[i] == 2 and recoil_cth * 0.33 or aims[i] == 1 and
+                                       recoil_cth * 0.66 or recoil_cth) * (i - 1)
+
+            mod = mod + recoil_penalty * const.Combat.Recoil_StacksMultiplier
+            -- ic(i, recoil_penalty)
+        end
     end
 
     ---------------- For Custom Flanking Policy

@@ -1,4 +1,4 @@
-local extra_max_attacks_arg = 4
+local extra_max_attacks_arg = 2
 
 function AICreateContext(unit, context)
     local gx, gy, gz = unit:GetGridCoords()
