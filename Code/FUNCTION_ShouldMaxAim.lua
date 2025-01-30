@@ -31,9 +31,9 @@ function GetIdealAimLevels(context, target_dist, max_aim, min_aim) ----- used in
 
     if IsKindOfClasses(context.weapon, "SubmachineGun", "Pistol", "Revolver") then
         effective_range = MulDivRound(context.EffectiveRange, 50, 100)
-        point_blank = MulDivRound(const.Weapons.PointBlankRange, 70, 100)
+        point_blank = MulDivRound(const.Weapons.PointBlankRange, 80, 100)
     else
-        effective_range = MulDivRound(context.EffectiveRange, 50, 100)
+        effective_range = MulDivRound(context.EffectiveRange, 40, 100)
     end
 
     if (target_dist <= point_blank * const.SlabSizeX) then

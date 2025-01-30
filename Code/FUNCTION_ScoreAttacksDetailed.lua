@@ -35,7 +35,6 @@ function RATOAI_ScoreAttacksDetailed(mod, target, target_dist, upos, tpos, uz, k
         args.aim = aims[i]
         local attack_mod, attack_base = unit:CalcChanceToHit(target, action, args, "chance_only")
         -- table.insert(context.cth_attacks_at[upos], attack_mod)
-        -- table.insert(context.aims_at[upos], aims[i])
         mod = mod + attack_mod
         -- TODO: #55 check if recoil here is a good idea
         if i > 1 and aims[i] < 3 then
@@ -44,7 +43,6 @@ function RATOAI_ScoreAttacksDetailed(mod, target, target_dist, upos, tpos, uz, k
                                        recoil_cth * 0.66 or recoil_cth) * (i - 1)
 
             mod = mod + recoil_penalty * const.Combat.Recoil_StacksMultiplier
-            -- ic(i, recoil_penalty)
         end
     end
 

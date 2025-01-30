@@ -24,7 +24,8 @@ local function GetDestArgs(self, context)
         attacker_pos = point(ux, uy, uz)
         target = context.dest_target[upos]
         if target then
-            dist = attacker_pos:Dist(target:GetPos())
+            dist = context.dest_target_dist[upos] and context.dest_target_dist[upos][target] or
+                       attacker_pos:Dist(target:GetPos())
         end
     end
 

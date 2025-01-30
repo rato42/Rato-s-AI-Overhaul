@@ -235,6 +235,7 @@ return {
 	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
+		BaseAttackWeight = 150,
 		BaseMovementWeight = 10,
 		Behaviors = {
 			PlaceObj('StandardAI', {
@@ -342,7 +343,7 @@ return {
 		SignatureActions = {
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "Autofire",
-				'Weight', 180,
+				'Weight', 200,
 				'NotificationText', "",
 				'CustomScoring', function (self, context)
 					return AutoFire_CustomScoring(self, context)
@@ -378,7 +379,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "GroinShot",
-				'Weight', 130,
+				'Weight', 50,
 				'CustomScoring', function (self, context)
 					return SingleShotTargeted_CustomScoring(self, context)
 				end,
@@ -387,7 +388,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "ArmShot",
-				'Weight', 130,
+				'Weight', 50,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "ArmShot",
@@ -403,7 +404,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "LegShot",
-				'Weight', 130,
+				'Weight', 50,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "LegShot",
@@ -509,6 +510,13 @@ return {
 						'ApplyTo', "Team",
 					}),
 				},
+				'CustomScoring', function (self, context)
+					local unit = context.unit
+					if unit.indoors then                    
+					return MulDivRound(self.Weight,30,100), false, self.Priority
+					end
+					return self.Weight, false, self.Priority
+				end,
 				'self_score_mod', -1000,
 				'min_score', 100,
 				'enemy_cover_mod', 50,
