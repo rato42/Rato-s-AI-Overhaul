@@ -30,13 +30,15 @@ function RATOAI_ScoreAttacksDetailed(mod, target, target_dist, upos, tpos, uz, k
     -- context.cth_attacks_at[upos] = context.cth_attacks_at[upos] or {}
     context.aims_at[upos] = context.aims_at[upos] or {}
     context.aims_at[upos][target] = aims
+    context.cth_attacks_at[upos] = context.cth_attacks_at[upos] or {}
+    context.cth_attacks_at[upos][target] = context.cth_attacks_at[upos][target] or {}
 
     for i = 1, attacks do
         args.aim = aims[i]
         local attack_mod, attack_base = unit:CalcChanceToHit(target, action, args, "chance_only")
-        -- table.insert(context.cth_attacks_at[upos], attack_mod)
+        table.insert(context.cth_attacks_at[upos][target], attack_mod)
         mod = mod + attack_mod
-        -- TODO: #55 check if recoil here is a good idea
+
         if i > 1 and aims[i] < 3 then
             -- local recoil_penalty = const.Combat.Recoil_StacksMultiplier * recoil_cth * (i - 1)
             local recoil_penalty = (aims[i] == 2 and recoil_cth * 0.33 or aims[i] == 1 and

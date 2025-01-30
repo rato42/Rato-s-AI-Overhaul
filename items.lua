@@ -61,6 +61,10 @@ return {
 		'CodeFileName', "Code/AIPOLICYPOS_GrenadeRange.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "AIPOLICYPOS_AvoidDeathSpots",
+		'CodeFileName', "Code/AIPOLICYPOS_AvoidDeathSpots.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "AIPOLICYTARG_EnemyInCover",
 		'CodeFileName', "Code/AIPOLICYTARG_EnemyInCover.lua",
 	}),
@@ -235,7 +239,6 @@ return {
 	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
-		BaseAttackWeight = 150,
 		BaseMovementWeight = 10,
 		Behaviors = {
 			PlaceObj('StandardAI', {
@@ -269,7 +272,7 @@ return {
 			}),
 			PlaceObj('PositioningAI', {
 				'BiasId', "SoldierFlanking",
-				'Weight', 60,
+				'Weight', 10,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SoldierFlanking",
@@ -352,12 +355,32 @@ return {
 				'Aiming', "Maximum",
 				'AttackTargeting', set( "Torso" ),
 			}),
+			PlaceObj('AIAttackSingleTarget', {
+				'BiasId', "SuppressiveFire",
+				'Weight', 150,
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "SuppressiveFire",
+						'Value', -50,
+						'Period', 0,
+						'ApplyTo', "Team",
+					}),
+				},
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return self.Weight, false, self.Priority
+				end,
+				'action_id', "AutoFire",
+				'Aiming', "Remaining AP",
+				'AttackTargeting', set( "Torso" ),
+			}),
 			PlaceObj('AIConeAttack', {
 				'BiasId', "Overwatch",
 				'CustomScoring', function (self, context)
 					return Overwatch_CustomScoring(self, context)
 				end,
-				'team_score', 0,
+				'enemy_score', 110,
+				'team_score', -5,
 				'min_score', 100,
 				'enemy_cover_mod', 80,
 				'action_id', "Overwatch",
@@ -420,7 +443,7 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
-				'Weight', 90,
+				'Weight', 60,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "AssaultGrenadeThrow",
@@ -511,11 +534,7 @@ return {
 					}),
 				},
 				'CustomScoring', function (self, context)
-					local unit = context.unit
-					if unit.indoors then                    
-					return MulDivRound(self.Weight,30,100), false, self.Priority
-					end
-					return self.Weight, false, self.Priority
+					return GrenadeLaunchCustomScoring(self, context)
 				end,
 				'self_score_mod', -1000,
 				'min_score', 100,
@@ -544,7 +563,6 @@ return {
 		Behaviors = {
 			PlaceObj('StandardAI', {
 				'BiasId', "Standard",
-				'OptLocWeight', 20,
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyDealDamage', nil),
 					PlaceObj('AIPolicySaveAP', {
@@ -555,7 +573,6 @@ return {
 						'SaveforShootingStance', true,
 					}),
 					PlaceObj('AIPolicyCustomFlanking', {
-						'Weight', 200,
 						'ReserveAttackAP', "Stance",
 						'visibility_mode', "team",
 					}),
@@ -604,12 +621,14 @@ return {
 		SignatureActions = {
 			PlaceObj('AIActionPinDown', {
 				'BiasId', "PinDownAttack",
+				'Weight', 80,
 				'CustomScoring', function (self, context)
 					return Pindown_CustomScoring(self, context)
 				end,
 			}),
 			PlaceObj('AIActionPinDown', {
 				'BiasId', "PinDownAttack",
+				'Weight', 80,
 				'CustomScoring', function (self, context)
 					return Pindown_CustomScoring(self, context)
 				end,
@@ -617,6 +636,7 @@ return {
 			}),
 			PlaceObj('AIConeAttack', {
 				'BiasId', "Overwatch",
+				'Weight', 50,
 				'CustomScoring', function (self, context)
 					return Overwatch_CustomScoring(self, context)
 				end,
@@ -625,22 +645,9 @@ return {
 				'enemy_cover_mod', 80,
 				'action_id', "Overwatch",
 			}),
-			PlaceObj('AIActionMobileShot', {
-				'NotificationText', "",
-				'CustomScoring', function (self, context)
-					return MobileAttack_CustomScoring(self, context)
-				end,
-				'action_id', "RunAndGun",
-			}),
-			PlaceObj('AIActionMobileShot', {
-				'NotificationText', "",
-				'CustomScoring', function (self, context)
-					return MobileAttack_CustomScoring(self, context)
-				end,
-			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "GroinShot",
-				'Weight', 200,
+				'Weight', 80,
 				'CustomScoring', function (self, context)
 					return SingleShotTargeted_CustomScoring(self, context)
 				end,
@@ -649,7 +656,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "Headshot",
-				'Weight', 200,
+				'Weight', 120,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "Headshot",
@@ -665,7 +672,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "ArmShot",
-				'Weight', 200,
+				'Weight', 80,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "ArmShot",
@@ -681,7 +688,7 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "LegShot",
-				'Weight', 200,
+				'Weight', 80,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "LegShot",
@@ -697,12 +704,11 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
-				'Weight', 50,
+				'Weight', 40,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "AssaultGrenadeThrow",
 						'Effect', "disable",
-						'Period', 0,
 					}),
 				},
 				'self_score_mod', -1000,
@@ -712,6 +718,7 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "SmokeGrenade",
+				'Weight', 50,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SmokeGrenade",
@@ -754,6 +761,19 @@ return {
 				'self_score_mod', -1,
 				'min_score', 100,
 				'MinDist', 5000,
+			}),
+			PlaceObj('AIActionMobileShot', {
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
+				'action_id', "RunAndGun",
+			}),
+			PlaceObj('AIActionMobileShot', {
+				'NotificationText', "",
+				'CustomScoring', function (self, context)
+					return MobileAttack_CustomScoring(self, context)
+				end,
 			}),
 		},
 		TargetScoreRandomization = 10,
@@ -1152,7 +1172,6 @@ return {
 		Behaviors = {
 			PlaceObj('StandardAI', {
 				'turn_phase', "Early",
-				'OptLocWeight', 200,
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyDealDamage', nil),
 					PlaceObj('AIPolicyCustomSeekCover', nil),
@@ -1174,7 +1193,6 @@ return {
 				'Comment', "Grenadier Positioning",
 				'Fallback', false,
 				'turn_phase', "Early",
-				'OptLocWeight', 30,
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyGrenadeRange', {
 						'Weight', 200,
@@ -1189,7 +1207,9 @@ return {
 						'visibility_mode', "team",
 						'OnlyTarget', true,
 					}),
-					PlaceObj('AIPolicyCustomSeekCover', nil),
+					PlaceObj('AIPolicyCustomSeekCover', {
+						'Required', true,
+					}),
 				},
 				'TakeCoverChance', 100,
 			}),
@@ -1486,7 +1506,7 @@ return {
 				'Weight', 50,
 			}),
 			PlaceObj('AIPolicyCustomSeekCover', {
-				'ExposedAtCloseRange_Score', -15,
+				'ExposedAtCloseRange_Score', -20,
 			}),
 		},
 		OptLocSearchRadius = 80,
@@ -1726,7 +1746,9 @@ return {
 		Comment = "used to advance toward last known enemy location",
 		FallbackAction = "overwatch",
 		OptLocPolicies = {
-			PlaceObj('AIPolicyLastEnemyPos', nil),
+			PlaceObj('AIPolicyLastEnemyPos', {
+				'Weight', 500,
+			}),
 			PlaceObj('AIPolicyCustomSeekCover', nil),
 		},
 		OptLocSearchRadius = 80,
