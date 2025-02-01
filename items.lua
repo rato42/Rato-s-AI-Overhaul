@@ -314,7 +314,6 @@ return {
 					}),
 					PlaceObj('AIPolicyCustomSeekCover', {
 						'Required', true,
-						'ExposedAtCloseRange_Score', -50,
 					}),
 				},
 				'TakeCoverChance', 100,
@@ -357,11 +356,11 @@ return {
 			}),
 			PlaceObj('AIAttackSingleTarget', {
 				'BiasId', "SuppressiveFire",
-				'Weight', 150,
+				'Weight', 180,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SuppressiveFire",
-						'Value', -50,
+						'Value', -20,
 						'Period', 0,
 						'ApplyTo', "Team",
 					}),
@@ -963,6 +962,7 @@ return {
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyDealDamage', nil),
 					PlaceObj('AIPolicyCustomFlanking', {
+						'Weight', 80,
 						'ReserveAttackAP', "Stance",
 						'visibility_mode', "team",
 						'OnlyTarget', true,
@@ -997,6 +997,11 @@ return {
 						'Effect', "disable",
 						'Period', 0,
 					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "Overwatch",
+						'Effect', "disable",
+						'Period', 0,
+					}),
 				},
 				'Comment', "Flanking",
 				'Fallback', false,
@@ -1006,18 +1011,20 @@ return {
 						'Weight', 150,
 						'AllyPlannedPosition', true,
 					}),
-					PlaceObj('AIPolicyDealDamage', nil),
+					PlaceObj('AIPolicyDealDamage', {
+						'Weight', 150,
+					}),
 					PlaceObj('AIPolicyCustomFlanking', {
-						'Weight', 200,
 						'Required', true,
 						'ReserveAttackAP', "AP",
 						'visibility_mode', "team",
 						'ScalePerDistance', true,
 					}),
-					PlaceObj('AIPolicyTryNotToBeFlanked', nil),
+					PlaceObj('AIPolicyTryNotToBeFlanked', {
+						'Required', true,
+					}),
 					PlaceObj('AIPolicyCustomSeekCover', {
 						'Required', true,
-						'ExposedAtCloseRange_Score', -40,
 					}),
 				},
 				'TakeCoverChance', 100,
@@ -1037,7 +1044,6 @@ return {
 		Comment = "Keywords: Flank, Explosives",
 		OptLocPolicies = {
 			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 200,
 				'RangeBase', "Absolute",
 				'RangeMin', 5,
 				'RangeMax', 12,
@@ -1053,7 +1059,7 @@ return {
 				'Weight', 50,
 			}),
 			PlaceObj('AIPolicyCustomSeekCover', {
-				'Weight', 120,
+				'Weight', 150,
 				'ExposedAtCloseRange_Score', -50,
 			}),
 		},
@@ -1140,6 +1146,7 @@ return {
 				'TargetLastAttackPos', true,
 			}),
 			PlaceObj('AIConeAttack', {
+				'BiasId', "Overwatch",
 				'Weight', 50,
 				'CustomScoring', function (self, context)
 					return Overwatch_CustomScoring(self, context)

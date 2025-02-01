@@ -40,11 +40,11 @@ function RATOAI_ScoreAttacksDetailed(mod, target, target_dist, upos, tpos, uz, k
         mod = mod + attack_mod
 
         if i > 1 and aims[i] < 3 then
-            -- local recoil_penalty = const.Combat.Recoil_StacksMultiplier * recoil_cth * (i - 1)
+            -- local recoil_penalty = const.Combat.Recoil.StacksMultiplier * recoil_cth * (i - 1)
             local recoil_penalty = (aims[i] == 2 and recoil_cth * 0.33 or aims[i] == 1 and
                                        recoil_cth * 0.66 or recoil_cth) * (i - 1)
 
-            mod = mod + recoil_penalty * const.Combat.Recoil_StacksMultiplier
+            mod = mod + recoil_penalty * const.Combat.Recoil.StacksMultiplier
         end
     end
 
