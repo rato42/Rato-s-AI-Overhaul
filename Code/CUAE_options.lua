@@ -61,7 +61,7 @@ function RATOAI_AddExclusionCUAE()
     local excl_table = {
         Army = {},
         Adonis = {},
-        Rebels = {'Type56A_1', 'Type56C_1'},
+        Rebel = {'Type56A_1', 'Type56C_1'},
         Thugs = {"M14SAW_AUTO", 'Type56D_1', 'Type56B_1', 'PapovkaSKS_1', 'SKS_1'},
         Legion = {"M14SAW_AUTO", 'Type56D_1', 'Type56C_1', 'Papovka2SKS_1'},
         SuperSoldiers = {},
@@ -83,7 +83,7 @@ function RATOAI_AddExclusionCUAE()
 
     add_items(excl_table.Army, old_war, civilian, eastern_special, eastern_common)
     add_items(excl_table.Adonis, old_war, eastern_common)
-    add_items(excl_table.Rebels, german, german_common, western)
+    add_items(excl_table.Rebel, german, german_common, western)
     add_items(excl_table.Thugs, german, end_game, eastern_special, western)
     add_items(excl_table.Legion, german, end_game, eastern_special)
     add_items(excl_table.SuperSoldiers, non_nazi_old_war, civilian, eastern_special, eastern_common,
