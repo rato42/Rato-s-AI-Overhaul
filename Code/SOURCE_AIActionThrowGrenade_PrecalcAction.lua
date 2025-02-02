@@ -37,6 +37,13 @@ function AIActionThrowGrenade:PrecalcAction(context, action_state)
             end
         end
     end
+
+    -------------
+    -- target_pts = target_pts or {}
+    ---for enemy, enemy in ipairs(g_Overwatch) do
+
+    -------------
+
     local zones = AIPrecalcGrenadeZones(context, action_id, self.MinDist, max_range, blast_radius,
                                         grenade.aoeType, target_pts)
     local zone, score = self:EvalZones(context, zones)

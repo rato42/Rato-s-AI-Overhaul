@@ -149,6 +149,10 @@ return {
 		'CodeFileName', "Code/SOURCE_AIPrecalcDamageScore.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "SOURCE_AIPrecalcGrenadeZones",
+		'CodeFileName', "Code/SOURCE_AIPrecalcGrenadeZones.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AICalcAttacksandAim",
 		'CodeFileName', "Code/SOURCE_AICalcAttacksandAim.lua",
 	}),
@@ -1214,9 +1218,7 @@ return {
 						'visibility_mode', "team",
 						'OnlyTarget', true,
 					}),
-					PlaceObj('AIPolicyCustomSeekCover', {
-						'Required', true,
-					}),
+					PlaceObj('AIPolicyCustomSeekCover', nil),
 				},
 				'TakeCoverChance', 100,
 			}),
@@ -1265,7 +1267,6 @@ return {
 				'min_score', 100,
 				'enemy_cover_mod', 50,
 				'MinDist', 4000,
-				'TargetLastAttackPos', true,
 				'AllowedTriggerTypes', set( "Contact" ),
 			}),
 			PlaceObj('AIActionThrowGrenade', {
