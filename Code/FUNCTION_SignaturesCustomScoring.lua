@@ -1,5 +1,6 @@
 local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
 
+---TODO: change the Is Point Blank to check for dist of ai destination
 local function GetDestArgs(self, context)
 
     local unit = context.unit
@@ -60,30 +61,23 @@ function MobileAttack_CustomScoring(self, context)
                                                                                               context)
 
     local ratio, score_mod, use, snap_penal
+
     if target and unit:IsPointBlankRange(target) then
         priority = true
-    elseif dist and target and attacker_pos then
-
-        -- local use, snap_penal = snap_shot_cth_mod:CalcValue(unit, target, nil, action,
-        --                                                     unit:GetActiveWeapons(), nil, nil,
-        --                                                     1, false, attacker_pos,
-        --                                                     target:GetPos())
-
-        --[[local mul = GetWeaponHipfireOrSnapshotMul(unit:GetActiveWeapons(), unit, action, false, 1)
-        local snap_penal = MulDivRound(dist, const.Combat.SnapshotMaxPenalty,
-                                       const.Combat.Snapshot_MaxDistforPenalty * const.SlabSizeX)
-        -- ic(snap_penal, mul)
-        ratio = MulDivRound(dest_cth + const.Combat.Snapshot_BasePenalty + snap_penal * mul, 100,
-                            dest_cth)]]
-        use, snap_penal = hit_modifiers.HipshotPenalty:CalcValue(unit, target, nil, action,
-                                                                 unit:GetActiveWeapons(), nil, nil,
-                                                                 1, false, attacker_pos,
-                                                                 target:GetPos())
-        ratio = MulDivRound(dest_cth + snap_penal, 100, dest_cth)
-        score_mod = 100 - (100 - ratio)
-        weight = MulDivRound(weight, score_mod, 100)
+    elseif dist then
+        if dist > RATOAI_GetCloseRange() then
+            return 0, true, false
+        elseif target and attacker_pos then
+            use, snap_penal = hit_modifiers.HipshotPenalty:CalcValue(unit, target, nil, action,
+                                                                     unit:GetActiveWeapons(), nil,
+                                                                     nil, 1, false, attacker_pos,
+                                                                     target:GetPos())
+            ratio = MulDivRound(dest_cth + snap_penal, 100, dest_cth)
+            score_mod = 100 - (100 - ratio)
+            weight = MulDivRound(weight, score_mod, 100)
+        end
     end
-    -- ic(weight, snap_penal, ratio, dest_cth, dest_recoil, score_mod)
+
     return Max(0, weight), weight < 0 and true or disable, priority
 end
 
@@ -124,7 +118,6 @@ function SingleShotTargeted_CustomScoring(self, context)
         ratio = MulDivRound(dest_cth + targeted_penal, 100, dest_cth)
         score_mod = 100 - (100 - ratio)
         weight = MulDivRound(weight, score_mod, 100)
-        -- ic(targeted_penal, dest_cth, score_mod)
     end
 
     if target and leg_shot then
@@ -168,17 +161,6 @@ function Overwatch_CustomScoring(self, context)
     ---------
     local snap_penal = 0
     if unit and target then
-        --[[local mul = GetWeaponHipfireOrSnapshotMul(unit:GetActiveWeapons(), unit, action, false, 1)
-
-        --- Idea 1: calc a arbitrary snap penal using local effective_range = context.EffectiveRange * const.SlabSizeX
-        --- Idea 2: calc snap penal getting the closer visible target.
-
-        local effective_range = context.EffectiveRange * const.SlabSizeX
-        local snap_penal = MulDivRound(effective_range, const.Combat.SnapshotMaxPenalty,
-                                       const.Combat.Snapshot_MaxDistforPenalty * const.SlabSizeX) *
-                               mul
-
-        snap_penal = use and snap_penal + ow_cth]]
         use, snap_penal = hit_modifiers.HipshotPenalty:CalcValue(unit, target, nil, action,
                                                                  unit:GetActiveWeapons(), nil, nil,
                                                                  1, false, attacker_pos,
@@ -202,14 +184,6 @@ function Overwatch_CustomScoring(self, context)
     interrupt_cth_mod = interrupt_cth_mod + (cover_penal * -1)
 
     ---------
-    --[[if attacker_pos then
-        local cover = GetCoversAt(attacker_pos)
-        interrupt_cth_mod = not cover and MulDivRound(interrupt_cth_mod, 50, 100) or
-                                interrupt_cth_mod
-    end]]
-    ---------
-
-    ---------
     local ratio, score_mod
     if dest_cth then
         ratio = MulDivRound(dest_cth + interrupt_cth_mod, 100, dest_cth)
@@ -227,7 +201,6 @@ function Overwatch_CustomScoring(self, context)
         weight = MulDivRound(weight, sniper_mul, 100)
     end
 
-    -- ic(snap_penal, ow_cth, interrupt_cth_mod, weight, cover_penal)
     return Max(0, weight), weight < 0 and true or disable, priority
 end
 

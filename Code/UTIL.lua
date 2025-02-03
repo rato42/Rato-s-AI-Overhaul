@@ -37,4 +37,8 @@ end
 function RATOAI_ValidatePosZ(point)
     return IsValidZ(point) and point or point:SetTerrainZ()
 end
+
+function RATOAI_GetCloseRange()
+    return (((const.Weapons.PointBlankRange * 2) + (1)) * const.SlabSizeX)
+end
 -- GetPackedPosAndStance(unit, stance)

@@ -1,4 +1,4 @@
---[[local function IsUnitHit(hit)
+local function IsUnitHit(hit)
     if not IsKindOf(hit.obj, "Unit") then
         return false
     end
@@ -83,4 +83,4 @@ function AIPrecalcGrenadeZones(context, action_id, min_range, max_range, blast_r
 
     -- print("grenade targeting precalc in", GetPreciseTicks() - tstart, "ms")
     return zones
-end]] 
+end

@@ -48,8 +48,6 @@ local distance_impact = 1.00
 local max_range = 30
 local min_dist = 5 * const.SlabSizeX
 local pb_range = const.Weapons.PointBlankRange * const.SlabSizeX
-local close_range = ((const.Weapons.PointBlankRange * 2) + (1)) * const.SlabSizeX
-local medium_range = 2 * pb_range + close_range
 local close_range_mul = 50
 local medium_range_mul = 15
 
@@ -146,6 +144,7 @@ function AIPolicyCustomSeekCover:EvalDest(context, dest, grid_voxel)
     return MulDivRound(score / Max(1, table_num), extra_mul, 100)
 end
 
+--- Not really used right now
 function AIPolicyCustomSeekCover:SimpleGetCoverScore(context, cover_score, dest, grid_voxel, enemy)
 
     if not dest then
@@ -167,19 +166,18 @@ function AIPolicyCustomSeekCover:SimpleGetCoverScore(context, cover_score, dest,
 
             cover_score = MulDivRound(cover_score, ratio, 100)
         end
-        -- print(enemy.session_id, dist / const.SlabSizeX, cover_score1, cover_score, ratio)
+
     end
 
     if self.ExposedAtCloseRange_Score ~= 0 and cover_score <= 0 and context.enemy_grid_voxel[enemy] and
         grid_voxel then
-
         local x1, y1, z1 = point_unpack(context.enemy_grid_voxel[enemy])
         local x2, y2, z2 = point_unpack(grid_voxel)
         if IsCloser(x1, y1, z1, x2, y2, z2, pb_range + 1) then
             cover_score = self.ExposedAtCloseRange_Score
-        elseif IsCloser(x1, y1, z1, x2, y2, z2, close_range + 1) then
+        elseif IsCloser(x1, y1, z1, x2, y2, z2, pb_range * 2 + 1) then
             cover_score = MulDivRound(self.ExposedAtCloseRange_Score, close_range_mul, 100)
-        elseif IsCloser(x1, y1, z1, x2, y2, z2, medium_range + 1) then
+        elseif IsCloser(x1, y1, z1, x2, y2, z2, pb_range * 3 + 1) then
             cover_score = MulDivRound(self.ExposedAtCloseRange_Score, medium_range_mul, 100)
         end
     end

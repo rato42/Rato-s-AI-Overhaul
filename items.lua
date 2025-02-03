@@ -149,6 +149,10 @@ return {
 		'CodeFileName', "Code/SOURCE_AIPrecalcDamageScore.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "SOURCE_AICalcAOETargetPoints",
+		'CodeFileName', "Code/SOURCE_AICalcAOETargetPoints.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "SOURCE_AIPrecalcGrenadeZones",
 		'CodeFileName', "Code/SOURCE_AIPrecalcGrenadeZones.lua",
 	}),
@@ -385,7 +389,7 @@ return {
 				'enemy_score', 110,
 				'team_score', -5,
 				'min_score', 100,
-				'enemy_cover_mod', 80,
+				'enemy_cover_mod', 50,
 				'action_id', "Overwatch",
 			}),
 			PlaceObj('AIActionMobileShot', {
@@ -446,12 +450,15 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
-				'Weight', 60,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "AssaultGrenadeThrow",
 						'Effect', "disable",
 						'Period', 0,
+					}),
+					PlaceObj('AIBiasModification', {
+						'BiasId', "AssaultGrenadeThrow",
+						'Value', -20,
 					}),
 				},
 				'self_score_mod', -1000,
@@ -475,7 +482,7 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "SmokeGrenade",
-				'Weight', 160,
+				'Weight', 200,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SmokeGrenade",
@@ -1156,7 +1163,7 @@ return {
 					return Overwatch_CustomScoring(self, context)
 				end,
 				'team_score', -10,
-				'enemy_cover_mod', 80,
+				'enemy_cover_mod', 50,
 				'action_id', "Overwatch",
 			}),
 		},
@@ -1538,7 +1545,6 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "StunGrenade",
-				'Weight', 50,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "StunGrenade",
