@@ -51,7 +51,7 @@ local pb_range = const.Weapons.PointBlankRange * const.SlabSizeX
 local close_range_mul = 50
 local medium_range_mul = 15
 
-local debug = Platform.developer and Platform.cheats and false
+local debug = Platform.developer and Platform.cheats and true
 
 local extra_score_arg_mul = 220
 -----
@@ -220,9 +220,6 @@ function AIPolicyCustomSeekCover:GetCoverScore(context, enemy, unit, dest, targe
             score = self.BaseScore
         elseif dist <= distance_to_check_lack_of_cover * const.SlabSizeX then
 
-            -- local use, value, _, type_cover = prone_cover_CTH:CalcValue(enemy, unit, false, nil,
-            --                                                             weapon, nil, nil, 0, false,
-            --                                                             target_pos, att_pos)
             local use, value = RATOAI_CoverCTH(att_pos, target_pos)
             value = value or 0
             if use then
@@ -241,18 +238,6 @@ function AIPolicyCustomSeekCover:GetCoverScore(context, enemy, unit, dest, targe
             score = self.ExposedAtCloseRange_Score * 0.1
         end
     end
-    -- if self.ExposedAtCloseRange_Score ~= 0 and score <= 0 and context.enemy_grid_voxel[enemy] and
-    --     grid_voxel then
-    -- local x1, y1, z1 = point_unpack(context.enemy_grid_voxel[enemy])
-    -- local x2, y2, z2 = point_unpack(grid_voxel)
-    -- if IsCloser(x1, y1, z1, x2, y2, z2, pb_range + 1) then
-    --     score = self.ExposedAtCloseRange_Score
-    -- elseif IsCloser(x1, y1, z1, x2, y2, z2, close_range + 1) then
-    --     score = MulDivRound(self.ExposedAtCloseRange_Score, close_range_mul, 100)
-    -- elseif IsCloser(x1, y1, z1, x2, y2, z2, medium_range + 1) then
-    --     score = MulDivRound(self.ExposedAtCloseRange_Score, medium_range_mul, 100)
-    -- end
-    -- end
 
     return score
 end

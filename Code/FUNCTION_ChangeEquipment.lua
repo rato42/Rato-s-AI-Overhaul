@@ -37,10 +37,10 @@ function GetGrenadeRoleData(unit)
 
     local map = {
         Marksman = {smoke = {-1, 2}, flash = {-1, 2}},
-        Demolitions = {explo = {2, 5}, timed = {1, 4}, aoe = {0, 4}},
-        Soldier = {explo = {-2, 3}, smoke = {1, 2}, aoe = {-2, 3}},
-        Commander = {explo = {1, 3}, flash = {1, 4}},
-        Recon = {flash = {1, 4}, explo = {0, 3}},
+        Demolitions = {explo = {2, 5}, timed = {1, 4}, aoe = {0, 4}, flash = {0, 4}},
+        Soldier = {explo = {-2, 3}, smoke = {1, 2}, aoe = {-2, 3}, flash = {-1, 2}},
+        Commander = {explo = {1, 3}, flash = {1, 4}, smoke = {-1, 2}},
+        Recon = {flash = {1, 4}, explo = {0, 3}, smoke = {-1, 2}},
         Stormer = {aoe = {1, 4}, flash = {0, 3}, smoke = {-1, 2}}
         -- Artillery = {},
     }

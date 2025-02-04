@@ -22,6 +22,7 @@ function RATOAI_EndTurnAIAction(unit)
 
     RATOAI_EndTurnCycleWeapon(unit)
     RATOAI_TryChangeStance(unit)
+    RATOAI_TryEnterShootingStance(unit)
 
     ---- Make sure we are not saving AP that we spent in the actions in this function
     local ap = unit.ActionPoints
@@ -40,6 +41,49 @@ function RATOAI_EndTurnCycleWeapon(unit)
     if rat_canBolt(weapon) then
         return rat_endturn_bolt(weapon, nil, unit)
     end
+    return 0
+end
+
+function RATOAI_TryEnterShootingStance(unit)
+    if unit:HasPreparedAttack() or unit:HasStatusEffect("ManningEmplacement") or
+        unit:HasStatusEffect("StationedMachineGun") then
+        return 0
+    end
+
+    local ap = unit.ActionPoints
+    local weapon = unit:GetActiveWeapons()
+
+    if not weapon or not IsKindOf(weapon, "Firearm") then
+        return 0
+    end
+
+    local target = unit:GetClosestEnemy()
+
+    local context = unit.ai_context
+
+    if not target then
+        local enemies = table.icopy(GetEnemies(unit))
+        if #(enemies or empty_table) == 0 then
+            enemies = table.ifilter(GetAllEnemyUnits(unit), function(idx, enemy)
+                return not enemy:HasStatusEffect("Hidden")
+            end)
+        end
+        for _, enemy in ipairs(enemies) do
+            if enemy.last_attack_pos then
+                target = enemy.last_attack_pos
+                break
+            end
+        end
+    end
+
+    local cost = unit:GetShootingStanceAP(target, weapon, 1)
+    if cost > 0 and ap >= cost then
+        unit:SetActionCommand("ShootingStanceCommand", "RATOAI_EndTurn_PrepareWeapon", cost,
+                              {target = target})
+        unit.ActionPoints = unit.ActionPoints - cost
+        return cost
+    end
+
     return 0
 end
 

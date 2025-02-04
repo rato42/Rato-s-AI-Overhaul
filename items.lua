@@ -65,6 +65,10 @@ return {
 		'CodeFileName', "Code/AIPOLICYPOS_AvoidDeathSpots.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "AIPOLICYPOS_AvoidThreatenedAreas",
+		'CodeFileName', "Code/AIPOLICYPOS_AvoidThreatenedAreas.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "AIPOLICYTARG_EnemyInCover",
 		'CodeFileName', "Code/AIPOLICYTARG_EnemyInCover.lua",
 	}),
@@ -463,6 +467,7 @@ return {
 				},
 				'self_score_mod', -1000,
 				'min_score', 100,
+				'EnemyPreparedAttackScore', 100,
 				'MinDist', 6000,
 				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 			}),
@@ -477,6 +482,7 @@ return {
 					}),
 				},
 				'self_score_mod', -1000,
+				'EnemyPreparedAttackScore', 100,
 				'MinDist', 6000,
 				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 			}),
@@ -490,7 +496,7 @@ return {
 					}),
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SmokeGrenade",
-						'Value', -50,
+						'Value', -33,
 						'Period', 0,
 						'ApplyTo', "Team",
 					}),
@@ -499,6 +505,7 @@ return {
 				'team_score', 100,
 				'self_score_mod', 100,
 				'min_score', 100,
+				'AllyThreatenedScore', 200,
 				'MinDist', 0,
 				'AllowedAoeTypes', set( "smoke" ),
 			}),
@@ -573,18 +580,17 @@ return {
 		Behaviors = {
 			PlaceObj('StandardAI', {
 				'BiasId', "Standard",
+				'OptLocWeight', 150,
 				'EndTurnPolicies', {
-					PlaceObj('AIPolicyDealDamage', nil),
-					PlaceObj('AIPolicySaveAP', {
-						'Weight', 200,
-						'Required', true,
-						'ReserveAP', 0,
-						'SaveforBoltingAction', true,
-						'SaveforShootingStance', true,
+					PlaceObj('AIPolicyDealDamage', {
+						'Weight', 150,
 					}),
 					PlaceObj('AIPolicyCustomFlanking', {
-						'ReserveAttackAP', "Stance",
 						'visibility_mode', "team",
+						'OnlyTarget', true,
+					}),
+					PlaceObj('AIPolicyCustomSeekCover', {
+						'Weight', 80,
 					}),
 				},
 				'TakeCoverChance', 50,
@@ -604,29 +610,25 @@ return {
 		Comment = "Keywords: Soldier, Sniper, Control, Ordnance, Smoke, Explosives",
 		OptLocPolicies = {
 			PlaceObj('AIPolicyHighGround', {
-				'Weight', 150,
+				'Weight', 80,
 			}),
-			PlaceObj('AIPolicyLosToEnemy', {
-				'Weight', 200,
-			}),
+			PlaceObj('AIPolicyLosToEnemy', nil),
 			PlaceObj('AIPolicyWeaponRange', {
 				'Weight', 200,
 				'RangeMin', 30,
 				'RangeMax', 50,
 			}),
 			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 20,
+				'Weight', 40,
 				'RangeMin', 51,
-				'RangeMax', 100,
+				'RangeMax', 75,
 			}),
-			PlaceObj('AIPolicyTryNotToBeFlanked', {
-				'Weight', 50,
-			}),
-			PlaceObj('AIPolicyCustomSeekCover', {
-				'Weight', 150,
+			PlaceObj('AIPolicyWeaponRange', {
+				'Weight', 20,
+				'RangeMin', 76,
 			}),
 		},
-		OptLocSearchRadius = 80,
+		OptLocSearchRadius = 100,
 		PrefStance = "Crouch",
 		SignatureActions = {
 			PlaceObj('AIActionPinDown', {
@@ -714,7 +716,7 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AssaultGrenadeThrow",
-				'Weight', 40,
+				'Weight', 50,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "AssaultGrenadeThrow",
@@ -723,12 +725,13 @@ return {
 				},
 				'self_score_mod', -1000,
 				'min_score', 100,
+				'EnemyPreparedAttackScore', 100,
 				'MinDist', 6000,
 				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "SmokeGrenade",
-				'Weight', 50,
+				'Weight', 80,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SmokeGrenade",
@@ -736,7 +739,7 @@ return {
 					}),
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SmokeGrenade",
-						'Value', -50,
+						'Value', -33,
 						'Period', 0,
 						'ApplyTo', "Team",
 					}),
@@ -744,6 +747,7 @@ return {
 				'enemy_score', -50,
 				'team_score', 100,
 				'self_score_mod', 100,
+				'AllyThreatenedScore', 200,
 				'MinDist', 0,
 				'AllowedAoeTypes', set( "smoke" ),
 			}),
@@ -789,7 +793,7 @@ return {
 		TargetScoreRandomization = 10,
 		TargetingPolicies = {
 			PlaceObj('AITargetingPindownTargeting', {
-				'Weight', 20,
+				'Weight', 10,
 			}),
 			PlaceObj('AITargetingCancelShot', {
 				'Weight', 20,
@@ -808,9 +812,6 @@ return {
 				end,
 				'EndTurnPolicies', {
 					PlaceObj('AIPolicyDealDamage', nil),
-					PlaceObj('AIPolicyMGSetupAP', {
-						'Weight', 150,
-					}),
 				},
 				'SignatureActions', {
 					PlaceObj('AIActionMGSetup', {
@@ -1108,10 +1109,12 @@ return {
 				'BiasId', "ExplosiveGrenadeThrow",
 				'min_score', 130,
 				'enemy_cover_mod', 50,
+				'EnemyPreparedAttackScore', 250,
 				'MinDist', 6000,
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AOEGrenadeThrow",
+				'EnemyPreparedAttackScore', 120,
 				'MinDist', 6000,
 				'AllowedAoeTypes', set( "fire", "teargas", "toxicgas" ),
 			}),
@@ -1125,7 +1128,7 @@ return {
 					}),
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SmokeGrenade",
-						'Value', -50,
+						'Value', -33,
 						'Period', 0,
 						'ApplyTo', "Team",
 					}),
@@ -1133,6 +1136,7 @@ return {
 				'enemy_score', -50,
 				'team_score', 100,
 				'self_score_mod', 100,
+				'AllyThreatenedScore', 200,
 				'MinDist', 0,
 				'AllowedAoeTypes', set( "smoke" ),
 			}),
@@ -1218,7 +1222,6 @@ return {
 						'RangeMin', 30,
 						'RangeMax', 60,
 						'AllowedTriggerTypes', set( "Contact" ),
-						'SaveAP', true,
 					}),
 					PlaceObj('AIPolicyCustomFlanking', {
 						'Weight', 50,
@@ -1273,6 +1276,7 @@ return {
 				},
 				'min_score', 100,
 				'enemy_cover_mod', 50,
+				'EnemyPreparedAttackScore', 100,
 				'MinDist', 4000,
 				'AllowedTriggerTypes', set( "Contact" ),
 			}),
@@ -1293,11 +1297,14 @@ return {
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "AOEGrenadeThrow",
+				'Weight', 500,
+				'EnemyPreparedAttackScore', 100,
 				'MinDist', 4000,
 				'AllowedAoeTypes', set( "fire", "teargas", "toxicgas" ),
 			}),
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "SmokeGrenade",
+				'Weight', 500,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SmokeGrenade",
@@ -1306,7 +1313,7 @@ return {
 					}),
 					PlaceObj('AIBiasModification', {
 						'BiasId', "SmokeGrenade",
-						'Value', -50,
+						'Value', -33,
 						'Period', 0,
 						'ApplyTo', "Team",
 					}),
@@ -1314,6 +1321,7 @@ return {
 				'enemy_score', -50,
 				'team_score', 100,
 				'self_score_mod', 100,
+				'AllyThreatenedScore', 100,
 				'MinDist', 0,
 				'AllowedAoeTypes', set( "smoke" ),
 			}),
@@ -1553,6 +1561,7 @@ return {
 					}),
 				},
 				'min_score', 100,
+				'EnemyPreparedAttackScore', 120,
 				'MinDist', 6000,
 				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 			}),
@@ -1574,6 +1583,7 @@ return {
 				'enemy_score', 0,
 				'team_score', 100,
 				'self_score_mod', 100,
+				'AllyThreatenedScore', 200,
 				'MinDist', 0,
 				'AllowedAoeTypes', set( "smoke" ),
 			}),

@@ -1,6 +1,5 @@
 local hit_modifiers = Presets["ChanceToHitModifier"]["Default"]
 
----TODO: change the Is Point Blank to check for dist of ai destination
 local function GetDestArgs(self, context)
 
     local unit = context.unit
@@ -40,7 +39,8 @@ function AutoFire_CustomScoring(self, context)
     local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
                                                                                               context)
     local ratio, score_mod
-    if target and unit:IsPointBlankRange(target) then
+
+    if dist and dist <= const.Weapons.PointBlankRange * const.SlabSizeX then
         priority = true
     elseif dest_cth and dest_recoil then
         ---- revisar esses calculos, feito durante privacao de sono kkkkk
@@ -62,7 +62,7 @@ function MobileAttack_CustomScoring(self, context)
 
     local ratio, score_mod, use, snap_penal
 
-    if target and unit:IsPointBlankRange(target) then
+    if dist and dist <= const.Weapons.PointBlankRange * const.SlabSizeX then
         priority = true
     elseif dist then
         if dist > RATOAI_GetCloseRange() then
@@ -88,7 +88,7 @@ function SingleShotTargeted_CustomScoring(self, context)
     local upos, unit, action, dist, target, dest_cth, dest_recoil, attacker_pos = GetDestArgs(self,
                                                                                               context)
 
-    local leg_mul = 115
+    local leg_mul = 125
 
     local body_part = "Head"
 
@@ -218,6 +218,9 @@ function Pindown_CustomScoring(self, context)
 
     if not upos then
         return weight, disable, priority
+    end
+    if dist and dist <= RATOAI_GetCloseRange() then
+        return 0, true, false
     end
     -------------------------------------------------------
     if self.AttackTargeting ~= "Torso" then

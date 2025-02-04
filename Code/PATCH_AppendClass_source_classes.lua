@@ -22,6 +22,18 @@ function OnMsg.ClassesGenerate(classdefs)
                 help = "this value, scaled by InterpolatedCoverEffect %, will be added to the AIEvalZones score for a enemy in cover",
                 editor = "number",
                 default = 0
+            }, {
+                id = "EnemyPreparedAttackScore",
+                name = "Enemy With Prepared Attack Score",
+                help = "this value will be added to the AIEvalZones score for an enemy with a prepared attack",
+                editor = "number",
+                default = 0
+            }, {
+                id = "AllyThreatenedScore",
+                name = "Ally Threatened",
+                help = "this value will be added to the AIEvalZones score for an ally threatened by prepared attacks",
+                editor = "number",
+                default = 0
             }
         }
     }
