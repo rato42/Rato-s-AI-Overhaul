@@ -9,9 +9,9 @@ function RATOAI_CUAEoptions()
 
         local role_table = {
             Marksman = {
-                weaponComponentsCurve = {
-                    28, 34, 40, 46, 52, 58, 64, 70, 76, 82, 88, 94, 99, 99, 99, 99, 99, 99, 99, 99
-                },
+                -- weaponComponentsCurve = {
+                --     28, 34, 40, 46, 52, 58, 64, 70, 76, 82, 88, 94, 99, 99, 99, 99, 99, 99, 99, 99
+                -- },
                 extraWeapons = {{type = {{"Handgun", 70}, {"SMG", 100}}, size = 1}},
                 replacements = {MeleeWeapon = {discard = true}},
 
