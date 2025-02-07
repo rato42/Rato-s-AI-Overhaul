@@ -1,9 +1,73 @@
 function RATOAI_CUAEoptions()
-
     if IsMod_loaded("LDCUAE") then
-        local cuaeSettings = {ExtraHandgun = true, ExtraGrenadesChance = 75, ExtraGrenadesCount = 2}
-        CUAEForceSettings(cuaeSettings)
 
+        local night_pack = { -- Night Combat Package
+            type = {{"Flare", 60}}, -- High probability illumination
+            nightOnly = true, -- Night/underground exclusive
+            amount = 3 -- Two flare devices
+        }
+
+        local role_table = {
+            Marksman = {
+                weaponComponentsCurve = {
+                    28, 34, 40, 46, 52, 58, 64, 70, 76, 82, 88, 94, 99, 99, 99, 99, 99, 99, 99, 99
+                },
+                extraWeapons = {{type = {{"Handgun", 70}, {"SMG", 100}}, size = 1}},
+                replacements = {MeleeWeapon = {discard = true}},
+
+                extraUtility = {{type = {{"Smoke", 33}, {"Flash", 66}, amount = 2}}}
+            },
+            Soldier = {
+                extraUtility = {
+                    night_pack, {type = {{"Smoke", 85}}, amount = 3},
+                    {type = {{"Explosive", 35}, {"Flash", 60}, {"Tear", 75}}, amount = 2}
+                }
+            },
+            Commander = {
+                extraUtility = {
+                    night_pack, {type = {{"Smoke", 90}}, amount = 3},
+                    {type = {{"Explosive", 60}, {"Flash", 80}}, amount = 3}
+                }
+            },
+            Demolitions = {
+                extraUtility = {
+                    night_pack, {type = {{"Explosive", 60}, {"Timed", 100}}, amount = 4},
+                    {type = {{"Fire", 45}, {"Flash", 90}}, amount = 3},
+                    {type = {{"Smoke", 45}, {"Tear", 90}}, amount = 3}
+                }
+
+            },
+            Recon = {
+                extraUtility = {
+                    night_pack, {type = {{"Flash", 90}}, amount = 3},
+                    {type = {{"Explosive", 35}, {"Tear", 55}, {"Fire", 75}}, amount = 2},
+                    {type = {{"Smoke", 60}}, amount = 2}
+                }
+            },
+
+            Stormer = {
+                extraUtility = {
+                    night_pack, {type = {{"Fire", 45}, {"Tear", 90}}, amount = 3},
+                    {type = {{"Explosive", 35}, {"Smoke", 45}, {"Flash", 80}}, amount = 2}
+                }
+
+            }
+        }
+
+        local cuaeSettings = {
+            LoadoutTables = {
+                Legion = role_table,
+                Rebel = role_table,
+                Thugs = role_table,
+                Army = role_table,
+                Adonis = role_table,
+                SuperSoldiers = role_table,
+                Militia = role_table
+            }
+        }
+        local cuaeImmunityTable = {'ToxicGasGrenade'}
+        CUAEAddImmunityTable(cuaeImmunityTable)
+        CUAEForceSettings(cuaeSettings)
         RATOAI_AddExclusionCUAE()
     end
 end

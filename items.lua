@@ -1413,6 +1413,7 @@ return {
 			}),
 			PlaceObj('AIPolicyLosToEnemy', nil),
 			PlaceObj('AIPolicyIndoorsOutdoors', {
+				'Weight', 150,
 				'Indoors', false,
 			}),
 		},
@@ -1420,7 +1421,6 @@ return {
 		SignatureActions = {
 			PlaceObj('AIActionThrowFlare', {
 				'BiasId', "FlareThrow",
-				'Weight', 300,
 				'OnActivationBiases', {
 					PlaceObj('AIBiasModification', {
 						'BiasId', "FlareThrow",
@@ -1464,8 +1464,10 @@ return {
 				'AttackTargeting', set( "Torso" ),
 			}),
 			PlaceObj('AIActionHeavyWeaponAttack', {
-				'Weight', 600,
-				'Priority', true,
+				'Weight', 300,
+				'CustomScoring', function (self, context)
+					return GrenadeLaunchCustomScoring(self, context)
+				end,
 				'min_score', 100,
 				'enemy_cover_mod', 50,
 				'MinDist', 6000,

@@ -21,7 +21,10 @@ function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
         return 0
     end
 
-    if unit:IsUnderTimedTrap() or unit:IsUnderBombard() then
+    local voxels, head = unit:GetVisualVoxels()
+
+    if AreVoxelsInFireRange(voxels) or g_SmokeObjs[head] or unit:IsUnderTimedTrap() or
+        unit:IsUnderBombard() then
         return 0
     end
 

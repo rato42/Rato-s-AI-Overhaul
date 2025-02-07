@@ -1,10 +1,14 @@
 function OnMsg.UnitEnterCombat(unit)
-    RATOAI_AddFlare(unit, true)
-    RATOAI_ProcessAIEquipament(unit)
+    if not IsMod_loaded("LDCUAE") then
+        RATOAI_AddFlare(unit, true)
+        RATOAI_ProcessAIEquipament(unit)
+    end
 end
 
 function OnMsg.ModsReloaded()
-    RATOAI_BuildGrenadeTable()
+    if not IsMod_loaded("LDCUAE") then
+        RATOAI_BuildGrenadeTable()
+    end
 end
 
 function RATOAI_ProcessAIEquipament(unit)
@@ -17,7 +21,6 @@ function RATOAI_ProcessAIEquipament(unit)
 end
 
 ------------------------------------
------TODO: maybe remove handguns/melee from those guys that dont really use it
 
 function GetGrenadeRoleData(unit)
 
@@ -67,7 +70,7 @@ function RATOAI_UpdateUnitEquipedGrenades(unit)
         return
     end
 
-    if not R_IsAI(unit) then
+    if not R_IsAI(unit) or unit.infected then
         return
     end
 
@@ -164,7 +167,7 @@ end
 ------------------------------------
 
 function RATOAI_ChangeMarksmanToHandGun(unit)
-    if not R_IsAI(unit) then
+    if not R_IsAI(unit) or unit.infected then
         return
     end
     local role = unit.custom_role or unit.role or ''
@@ -209,7 +212,7 @@ end
 ------------------------------------
 
 function RATOAI_AddFlare(unit, check)
-    if not CurrentModOptions.AddFlares then
+    if not CurrentModOptions.AddFlares or unit.infected then
         return
     end
     local flare_carriers = {'Soldier', 'Recon', 'Stormer', 'Demolitions'}

@@ -11,7 +11,7 @@ function AITargetingEnemyInCover:EvalTarget(unit, target)
     -- local target_id = target.session_id
     -- ic(target_id, target_cover, target_cover == const.CoverLow or target_cover == const.CoverHigh)
 
-    if target_cover == const.CoverLow then -- or target_cover == const.CoverHigh then
+    if target_cover == const.CoverLow or target_cover == const.CoverHigh then
         return self.Score or 100
     end
     return 0
