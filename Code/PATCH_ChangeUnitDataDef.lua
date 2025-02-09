@@ -175,12 +175,27 @@ local function GetRoleArgs_BoostStats(class)
         }
     }
 
-    return map[role] or map["Soldier"]
+    local args = map[role] or map["Soldier"]
+    local difficulty_mul = CurrentModOptions.BoostStatsDifficulty == "Hard" and 66 or
+                               CurrentModOptions.BoostStatsDifficulty == "Normal" and 33 or 100
+    if CurrentModOptions.BoostStatsDifficulty ~= "Hardest" then
+        local new_args = {}
+        for stat, data in pairs(args) do
+            new_args[stat] = {}
+            for k, v in pairs(data) do
+                local new_value = MulDivRound(v, difficulty_mul, 100)
+                new_args[stat][k] = new_value
+            end
+        end
+        args = new_args
+    end
+
+    return args
 end
 
 local function BoostStats(class)
 
-    if not CurrentModOptions.BoostStats then
+    if CurrentModOptions.BoostStatsDifficulty == "Disabled" then
         return
     end
 

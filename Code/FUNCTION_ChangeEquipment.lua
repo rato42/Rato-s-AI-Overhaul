@@ -212,7 +212,7 @@ end
 ------------------------------------
 
 function RATOAI_AddFlare(unit, check)
-    if not CurrentModOptions.AddFlares or unit.infected then
+    if unit.infected then
         return
     end
     local flare_carriers = {'Soldier', 'Recon', 'Stormer', 'Demolitions'}

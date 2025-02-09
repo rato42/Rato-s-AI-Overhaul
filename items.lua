@@ -209,6 +209,21 @@ return {
 		'name', "SOURCE_AIPlayAttacks",
 		'CodeFileName', "Code/SOURCE_AIPlayAttacks.lua",
 	}),
+	PlaceObj('ModItemOptionChoice', {
+		'name', "BoostStatsDifficulty",
+		'DisplayName', "<color AmmoAPColor>Difficulty (Boost Stats)</color>",
+		'Help', 'If enabled, enemy unit stats will be improved based on their roles. The hardest the difficulty, the bigger the stat boost. If set to "Disabled", enemies will have vanilla stats. Default is "Hardest". Restart after applying.',
+		'OnApply', function (self, value)
+			return
+		end,
+		'DefaultValue', "Hardest",
+		'ChoiceList', {
+			"Disabled",
+			"Normal",
+			"Hard",
+			"Hardest",
+		},
+	}),
 	PlaceObj('ModItemOptionToggle', {
 		'name', "ImproveExplosiveStat",
 		'DisplayName', "Improve Explosives Stat",
@@ -222,21 +237,9 @@ return {
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {
-		'name', "AddFlares",
-		'DisplayName', "Add Flares",
-		'Help', "Add Flares to enemies at night",
-		'DefaultValue', true,
-	}),
-	PlaceObj('ModItemOptionToggle', {
 		'name', "CUAELoreProgression",
 		'DisplayName', "CUAE Lore Friendly Weapons",
 		'Help', "When using CUAE, enable a (subjective) lore friendly weapon progression based on unit affiliation.",
-		'DefaultValue', true,
-	}),
-	PlaceObj('ModItemOptionToggle', {
-		'name', "BoostStats",
-		'DisplayName', "General Stat Boost",
-		'Help', "If enabled, enemy unit stats will be improved based on their roles. For extra challenge.",
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {
@@ -1371,30 +1374,6 @@ return {
 					return MulDivRound(score, self.Weight, 100)
 				end,
 				'TakeCoverChance', 0,
-			}),
-			PlaceObj('PositioningAI', {
-				'BiasId', "RocketeerPositioning",
-				'Weight', 50,
-				'Comment', "Rocketeer Positioning",
-				'Fallback', false,
-				'turn_phase', "Early",
-				'OptLocWeight', 30,
-				'EndTurnPolicies', {
-					PlaceObj('AIPolicySaveAP', {
-						'Required', true,
-						'ReserveAP', 6,
-					}),
-					PlaceObj('AIPolicyWeaponRange', {
-						'Weight', 200,
-						'RangeBase', "Absolute",
-						'RangeMin', 10,
-						'RangeMax', 16,
-					}),
-					PlaceObj('AIPolicyDealDamage', {
-						'Weight', 200,
-					}),
-				},
-				'TakeCoverChance', 100,
 			}),
 		},
 		Comment = "Keywords: Flank, Explosives",

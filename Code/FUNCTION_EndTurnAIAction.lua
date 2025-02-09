@@ -53,7 +53,7 @@ function RATOAI_TryEnterShootingStance(unit)
     local ap = unit.ActionPoints
     local weapon = unit:GetActiveWeapons()
 
-    if not weapon or not IsKindOf(weapon, "Firearm") then
+    if not weapon or not IsKindOf(weapon, "Firearm") or IsKindOf(weapon, "HeavyWeapon") then
         return 0
     end
 
