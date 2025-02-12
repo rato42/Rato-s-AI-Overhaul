@@ -26,14 +26,14 @@ function GetIdealAimLevels(context, target_dist, max_aim, min_aim) ----- used in
         return min_aim
     end
 
-    local effective_range = context.EffectiveRange
+    local atk = context and context.default_attack.id or ""
+    local burst = {"BurstFire", "MGBurstFire", "BuckshotBurst"}
+    local effective_range_mul = table.find(burst, atk) and 55 or 45
+    local effective_range = MulDivRound(context.EffectiveRange, effective_range_mul, 100)
     local point_blank = const.Weapons.PointBlankRange
 
     if IsKindOfClasses(context.weapon, "SubmachineGun", "Pistol", "Revolver") then
-        effective_range = MulDivRound(context.EffectiveRange, 50, 100)
-        point_blank = MulDivRound(const.Weapons.PointBlankRange, 80, 100)
-    else
-        effective_range = MulDivRound(context.EffectiveRange, 40, 100)
+        point_blank = MulDivRound(const.Weapons.PointBlankRange, 70, 100)
     end
 
     if (target_dist <= point_blank * const.SlabSizeX) then

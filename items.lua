@@ -523,8 +523,7 @@ return {
 					}),
 					PlaceObj('AIBiasModification', {
 						'BiasId', "FlareThrow",
-						'Value', -30,
-						'Period', 0,
+						'Value', -20,
 						'ApplyTo', "Team",
 					}),
 				},
@@ -765,8 +764,7 @@ return {
 					}),
 					PlaceObj('AIBiasModification', {
 						'BiasId', "FlareThrow",
-						'Value', -30,
-						'Period', 0,
+						'Value', -20,
 						'ApplyTo', "Team",
 					}),
 				},
@@ -1153,8 +1151,7 @@ return {
 					}),
 					PlaceObj('AIBiasModification', {
 						'BiasId', "FlareThrow",
-						'Value', -30,
-						'Period', 0,
+						'Value', -20,
 						'ApplyTo', "Team",
 					}),
 				},
@@ -1215,6 +1212,13 @@ return {
 			}),
 			PlaceObj('PositioningAI', {
 				'BiasId', "GrenadierPositioning",
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', {
+						'BiasId', "FlareThrow",
+						'Effect', "disable",
+						'Period', 0,
+					}),
+				},
 				'Comment', "Grenadier Positioning",
 				'Fallback', false,
 				'turn_phase', "Early",
@@ -1339,8 +1343,7 @@ return {
 					}),
 					PlaceObj('AIBiasModification', {
 						'BiasId', "FlareThrow",
-						'Value', -30,
-						'Period', 0,
+						'Value', -20,
 						'ApplyTo', "Team",
 					}),
 				},
@@ -1408,8 +1411,7 @@ return {
 					}),
 					PlaceObj('AIBiasModification', {
 						'BiasId', "FlareThrow",
-						'Value', -30,
-						'Period', 0,
+						'Value', -20,
 						'ApplyTo', "Team",
 					}),
 				},
@@ -1578,8 +1580,7 @@ return {
 					}),
 					PlaceObj('AIBiasModification', {
 						'BiasId', "FlareThrow",
-						'Value', -30,
-						'Period', 0,
+						'Value', -20,
 						'ApplyTo', "Team",
 					}),
 				},

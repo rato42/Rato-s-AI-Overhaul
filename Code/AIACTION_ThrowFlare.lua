@@ -1,7 +1,7 @@
 DefineClass.AIActionThrowFlare = {
     __parents = {"AIActionBaseZoneAttack"},
     properties = {
-        {id = "MinDist", editor = "number", scale = "m", default = 2 * guim, min = 0},
+        {id = "MinDist", editor = "number", scale = "m", default = 6 * guim, min = 0},
         {id = "MaxDist", editor = "number", scale = "m", default = 100 * guim, min = 0}, --  {
         --     id = "AllowedAoeTypes",
         --     editor = "set",

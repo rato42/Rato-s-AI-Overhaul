@@ -59,8 +59,6 @@ function RATOAI_TryEnterShootingStance(unit)
 
     local target = unit:GetClosestEnemy()
 
-    local context = unit.ai_context
-
     if not target then
         local enemies = table.icopy(GetEnemies(unit))
         if #(enemies or empty_table) == 0 then
@@ -74,6 +72,10 @@ function RATOAI_TryEnterShootingStance(unit)
                 break
             end
         end
+    end
+
+    if not target then
+        return 0
     end
 
     local cost = unit:GetShootingStanceAP(target, weapon, 1)

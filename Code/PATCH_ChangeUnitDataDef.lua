@@ -66,10 +66,10 @@ local function GetRoleArgs_BoostStats(class)
             Mechanical = {mul = 0, flat = 0}
         },
         Soldier = {
-            Health = {mul = 8, flat = 5},
+            Health = {mul = 0, flat = 5},
             Marksmanship = {mul = 5, flat = 10},
-            Dexterity = {mul = 10, flat = 5},
-            Strength = {mul = 8, flat = 5},
+            Dexterity = {mul = 5, flat = 5},
+            Strength = {mul = 8, flat = 8},
             Agility = {mul = 0, flat = 8},
             Explosives = {mul = 8, flat = 10},
             Wisdom = {mul = 0, flat = 10},
@@ -114,7 +114,7 @@ local function GetRoleArgs_BoostStats(class)
             Mechanical = {mul = 0, flat = 0}
         },
         Artillery = {
-            Health = {mul = 15, flat = 10},
+            Health = {mul = 5, flat = 15},
             Marksmanship = {mul = 15, flat = 0},
             Dexterity = {mul = 8, flat = 30},
             Strength = {mul = 8, flat = 0},
