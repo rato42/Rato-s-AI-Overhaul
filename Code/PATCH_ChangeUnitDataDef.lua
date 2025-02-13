@@ -12,7 +12,7 @@ local stats = {
 local function GetRoleArgs_BoostStats(class)
     local role = class.custom_role or class.role or ""
 
-    if class.militia then
+    if CurrentModOptions.DontBoostMilitia and class.militia then
         return false
     end
 

@@ -252,6 +252,11 @@ return {
 		'DisplayName', "Use Simple Attacks Scoring",
 		'Help', "If you enable this function, the AI will use a simpler function to calculate its probable damage in a position against its targets. Enable it if facing major performance issues.",
 	}),
+	PlaceObj('ModItemOptionToggle', {
+		'name', "DontBoostMilitia",
+		'DisplayName', "Disable Stats Boost for Militia",
+		'Help', "If checked, Militia units will not receive Stats Boost.",
+	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
 		BaseMovementWeight = 10,
@@ -1270,6 +1275,7 @@ return {
 			}),
 		},
 		OptLocSearchRadius = 100,
+		PrefStance = "Crouch",
 		SignatureActions = {
 			PlaceObj('AIActionThrowGrenade', {
 				'BiasId', "ExplosiveGrenadeThrow",
