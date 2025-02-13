@@ -255,7 +255,7 @@ return {
 	PlaceObj('ModItemOptionToggle', {
 		'name', "DontBoostMilitia",
 		'DisplayName', "Disable Stats Boost for Militia",
-		'Help', "If checked, Militia units will not receive Stats Boost.",
+		'Help', "If checked, Militia units will not receive Stats Boost. Restart after applying.",
 	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),

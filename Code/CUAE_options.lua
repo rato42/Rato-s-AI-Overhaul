@@ -8,6 +8,7 @@ function RATOAI_CUAEoptions()
         }
 
         local role_table = {
+            Artillery = {extraWeapons = {{type = {{"AssaultRifle", 50}, {"SMG", 100}}}}},
             Marksman = {
                 -- weaponComponentsCurve = {
                 --     28, 34, 40, 46, 52, 58, 64, 70, 76, 82, 88, 94, 99, 99, 99, 99, 99, 99, 99, 99
