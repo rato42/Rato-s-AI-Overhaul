@@ -8,7 +8,8 @@ function AICreateContext(unit, context)
 
     ---- 
     local weapon_can_unbolt = rat_canBolt(weapon) and IsKindOf(weapon, "SniperRifle")
-    local extra_max_attacks = weapon_can_unbolt and 0 or extra_max_attacks_arg
+    local RPG = IsKindOfClasses(weapon, "RocketLauncher")
+    local extra_max_attacks = (weapon_can_unbolt or RPG) and 0 or extra_max_attacks_arg
     if IsKindOf(weapon, "Firearm") and not IsKindOf(weapon, "HeavyWeapon") and
         not unit:HasStatusEffect("shooting_stance") then
 

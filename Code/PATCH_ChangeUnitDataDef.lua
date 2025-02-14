@@ -16,6 +16,8 @@ local function GetRoleArgs_BoostStats(class)
         return false
     end
 
+    role = class.militia and "Militia" or role
+
     local map = {
         Commander = {
             Health = {mul = 3, flat = 0},
@@ -168,6 +170,18 @@ local function GetRoleArgs_BoostStats(class)
             Strength = {mul = 8, flat = 10},
             Agility = {mul = 0, flat = 0},
             Explosives = {mul = 8, flat = 0},
+            Wisdom = {mul = 0, flat = 10},
+            Medical = {mul = 0, flat = 0},
+            Leadership = {mul = 0, flat = 0},
+            Mechanical = {mul = 0, flat = 0}
+        },
+        Milita = {
+            Health = {mul = 10, flat = 5},
+            Marksmanship = {mul = 0, flat = 4},
+            Dexterity = {mul = 0, flat = 0},
+            Strength = {mul = 0, flat = 10},
+            Agility = {mul = 0, flat = 10},
+            Explosives = {mul = 5, flat = 10},
             Wisdom = {mul = 0, flat = 10},
             Medical = {mul = 0, flat = 0},
             Leadership = {mul = 0, flat = 0},

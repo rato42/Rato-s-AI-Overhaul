@@ -31,6 +31,14 @@ function getAIShootingStanceBehaviorSelectionScore(unit, proto_context)
     ----- Initialization
     local context = unit.ai_context or AICreateContext(unit, proto_context)
     local weapon = context.weapon or unit:GetActiveWeapons()
+    if not weapon or not IsKindOf(weapon, "Firearm") then
+        return 0
+    end
+
+    if IsKindOfClasses(weapon, "RocketLauncher", "GrenadeLauncher", "Artillery") then
+        return 0
+    end
+
     local score = 100
     local no_enemy_in_range = true
     local att_pos = context.unit_pos or unit:GetPos()

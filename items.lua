@@ -805,7 +805,7 @@ return {
 				'Weight', 20,
 			}),
 		},
-		group = "Default",
+		group = "RatoAI",
 		id = "RATOAI_Sniper",
 	}),
 	PlaceObj('ModItemAIArchetype', {
@@ -1388,21 +1388,25 @@ return {
 		Comment = "Keywords: Flank, Explosives",
 		OptLocPolicies = {
 			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 500,
+				'Weight', 300,
 				'RangeBase', "Absolute",
 				'RangeMin', 12,
 				'RangeMax', 18,
 			}),
 			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 20,
+				'Weight', 50,
 				'RangeBase', "Absolute",
 				'RangeMin', 19,
 				'RangeMax', 30,
 			}),
-			PlaceObj('AIPolicyLosToEnemy', nil),
+			PlaceObj('AIPolicyLosToEnemy', {
+				'Weight', 300,
+			}),
 			PlaceObj('AIPolicyIndoorsOutdoors', {
-				'Weight', 150,
 				'Indoors', false,
+			}),
+			PlaceObj('AIPolicyHighGround', {
+				'Weight', 20,
 			}),
 		},
 		OptLocSearchRadius = 100,
@@ -1451,7 +1455,11 @@ return {
 				'AttackTargeting', set( "Torso" ),
 			}),
 			PlaceObj('AIActionHeavyWeaponAttack', {
+				'BiasId', "RocketFire",
 				'Weight', 300,
+				'OnActivationBiases', {
+					PlaceObj('AIBiasModification', nil),
+				},
 				'CustomScoring', function (self, context)
 					return GrenadeLaunchCustomScoring(self, context)
 				end,
@@ -1925,6 +1933,114 @@ return {
 		},
 		group = "System",
 		id = "PinnedDown",
+	}),
+	PlaceObj('ModItemAIArchetype', {
+		Behaviors = {
+			PlaceObj('CustomAI', {
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyCustomSeekCover', nil),
+				},
+				'TakeCoverChance', 100,
+				'EnumDests', function (self, unit, context, debug_data)
+					if g_TacticalMap then 
+						return g_TacticalMap:EnumDestsInAssignedArea(unit, context)
+					end
+				end,
+				'PickEndTurnPolicies', function (self, unit, context, debug_data)
+					return AITacticSelectEndTurnPolicies(unit, context)
+				end,
+				'PickOptimalLoc', function (self, unit, context, debug_data)
+					if g_TacticalMap then
+						return g_TacticalMap:FindOptimalLocationInAssignedArea(unit, context)
+					end
+				end,
+				'PickEndTurnLoc', function (self, unit, context, debug_data)
+					AITacticCalcPathDistances(unit, context, "disable bias")
+					
+					local policies = self:PickEndTurnPolicies(unit, context) or self.EndTurnPolicies
+					local weight = self.OptLocWeight
+					if context.optimal_dest_in_assigned_area and context.assigned_area_unreachable then
+						weight = weight * 10
+					end
+					context.ai_destination = AIScoreReachableVoxels(context, policies, weight, debug_data and debug_data.reachable_scores, "prefer")
+					return true
+				end,
+				'SelectSignatureActions', function (self, unit, context, debug_data)
+					return AITacticSelectSignatureActions(unit, context)
+				end,
+			}),
+		},
+		FallbackAction = "overwatch",
+		group = "Default",
+		id = "GuardArea",
+	}),
+	PlaceObj('ModItemAIArchetype', {
+		Behaviors = {
+			PlaceObj('RetreatAI', {
+				'turn_phase', "Early",
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyLosToEnemy', {
+						'Weight', 300,
+						'Invert', true,
+					}),
+					PlaceObj('AIPolicyProximity', {
+						'Weight', 1000,
+					}),
+					PlaceObj('AIPolicyCustomSeekCover', {
+						'Weight', 300,
+						'ExposedAtCloseRange_Score', -200,
+					}),
+				},
+				'TakeCoverChance', 50,
+				'DespawnAllowed', false,
+			}),
+		},
+		Comment = "morale-related (based on Deserter)",
+		OptLocPolicies = {
+			PlaceObj('AIRetreatPolicy', nil),
+		},
+		OptLocSearchRadius = 100,
+		group = "Default",
+		id = "Panicked",
+	}),
+	PlaceObj('ModItemAIArchetype', {
+		BaseMovementWeight = 10,
+		Behaviors = {
+			PlaceObj('StandardAI', {
+				'Weight', 50,
+				'EndTurnPolicies', {
+					PlaceObj('AIPolicyDealDamage', nil),
+				},
+				'TakeCoverChance', 0,
+			}),
+		},
+		Comment = "morale-related (cloned Assault)",
+		OptLocPolicies = {
+			PlaceObj('AIPolicyWeaponRange', {
+				'Weight', 600,
+				'RangeBase', "Absolute",
+				'RangeMin', 4,
+				'RangeMax', 12,
+			}),
+			PlaceObj('AIPolicyLosToEnemy', nil),
+		},
+		OptLocSearchRadius = 80,
+		PrefStance = "Crouch",
+		SignatureActions = {
+			PlaceObj('AIAttackSingleTarget', {
+				'BiasId', "Autofire",
+				'Weight', 200,
+				'NotificationText', "",
+				'action_id', "AutoFire",
+				'AttackTargeting', set( "Torso" ),
+			}),
+			PlaceObj('AIActionThrowGrenade', {
+				'BiasId', "AssaultGrenadeThrow",
+				'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
+			}),
+		},
+		group = "Default",
+		id = "Beserk",
 	}),
 	PlaceObj('ModItemAIArchetype', {
 		BaseAttackTargeting = set( "Torso" ),
