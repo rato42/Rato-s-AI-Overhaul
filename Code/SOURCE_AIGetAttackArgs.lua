@@ -30,17 +30,23 @@ function AIGetAttackArgs(context, action, target_spot_group, aim_type, override_
             aim_type = aim_type ~= "None" and "Remaining AP" or aim_type
         end
     end
+    local min_aim, max_aim = context.unit:GetBaseAimLevelRange(action, false)
+
     ------------------
 
     if action.id == "Overwatch" then
         local attacks, aim = context.unit:GetOverwatchAttacksAndAim(action, args, unit_ap)
         args.num_attacks = attacks
         args.aim_ap = aim
+        ----
+    elseif action.id == "PinDown" then
+        args.aim = max_aim
+        -----
     elseif aim_type ~= "None" then
         -- args.aim = context.weapon.MaxAimActions
         ---------
         --------TODO: Check if Shooting Stance is correctly being considered
-        local min_aim, max_aim = context.unit:GetBaseAimLevelRange(action, false)
+
         args.aim = max_aim
         --------
         -- if aim_type == "Remaining AP" then

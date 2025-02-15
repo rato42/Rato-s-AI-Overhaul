@@ -179,7 +179,7 @@ local function GetRoleArgs_BoostStats(class)
             Health = {mul = 10, flat = 5},
             Marksmanship = {mul = 0, flat = 4},
             Dexterity = {mul = 0, flat = 0},
-            Strength = {mul = 0, flat = 10},
+            Strength = {mul = 10, flat = 0},
             Agility = {mul = 0, flat = 10},
             Explosives = {mul = 5, flat = 10},
             Wisdom = {mul = 0, flat = 10},

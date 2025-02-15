@@ -9,6 +9,7 @@ function AICreateContext(unit, context)
     ---- 
     local weapon_can_unbolt = rat_canBolt(weapon) and IsKindOf(weapon, "SniperRifle")
     local RPG = IsKindOfClasses(weapon, "RocketLauncher")
+
     local extra_max_attacks = (weapon_can_unbolt or RPG) and 0 or extra_max_attacks_arg
     if IsKindOf(weapon, "Firearm") and not IsKindOf(weapon, "HeavyWeapon") and
         not unit:HasStatusEffect("shooting_stance") then
@@ -27,6 +28,10 @@ function AICreateContext(unit, context)
         end
     end
 
+    local is_shotgun = IsKindOf(weapon, "Shotgun")
+
+    local extreme_range = IsKindOf(weapon, "Firearm") and weapon.WeaponRange or 1
+    extreme_range = is_shotgun and MulDivRound(extreme_range, 70, 100) or extreme_range
     local max_attacks = unit.MaxAttacks + extra_max_attacks
     ---- 
 
@@ -103,8 +108,10 @@ function AICreateContext(unit, context)
     context.default_attack = default_attack
     -- context.default_attack_cost = default_attack:GetAPCost(unit)
     context.default_attack_cost = default_attack:GetAPCost(unit)
-    context.EffectiveRange = IsKindOf(weapon, "Firearm") and weapon.WeaponRange / 2 or 1
-    context.ExtremeRange = IsKindOf(weapon, "Firearm") and weapon.WeaponRange or 1
+    ---
+    context.EffectiveRange = IsKindOf(weapon, "Firearm") and extreme_range / 2 or 1
+    context.ExtremeRange = IsKindOf(weapon, "Firearm") and extreme_range or 1
+    ---
     context.enemies = enemies
     context.enemy_visible = {} -- [enemy] -> true/false
     context.enemy_visible_by_team = {} -- [enemy] -> true/false
