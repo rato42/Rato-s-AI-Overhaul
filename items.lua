@@ -626,12 +626,12 @@ return {
 				'RangeMax', 50,
 			}),
 			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 40,
+				'Weight', 60,
 				'RangeMin', 51,
 				'RangeMax', 75,
 			}),
 			PlaceObj('AIPolicyWeaponRange', {
-				'Weight', 20,
+				'Weight', 40,
 				'RangeMin', 76,
 			}),
 		},

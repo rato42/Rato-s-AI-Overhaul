@@ -32,7 +32,7 @@ local function GetRoleArgs_BoostStats(class)
             Mechanical = {mul = 0, flat = 0}
         },
         Stormer = {
-            Health = {mul = 8, flat = 4},
+            Health = {mul = 0, flat = 8},
             Marksmanship = {mul = 0, flat = 16},
             Dexterity = {mul = 0, flat = 5},
             Strength = {mul = 5, flat = 0},
