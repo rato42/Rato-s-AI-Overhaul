@@ -29,9 +29,16 @@ function AICreateContext(unit, context)
     end
 
     local is_shotgun = IsKindOf(weapon, "Shotgun")
+    local isSlugLoaded = IsSlugLoaded(weapon)
+
+    if isSlugLoaded then
+        default_attack = default_attack.id == "BuckshotBurst" and CombatActions["BurstFire"] or
+                             CombatActions["SingleShot"]
+    end
 
     local extreme_range = IsKindOf(weapon, "Firearm") and weapon.WeaponRange or 1
-    extreme_range = is_shotgun and MulDivRound(extreme_range, 70, 100) or extreme_range
+    extreme_range = is_shotgun and not isSlugLoaded and MulDivRound(extreme_range, 70, 100) or
+                        extreme_range
     local max_attacks = unit.MaxAttacks + extra_max_attacks
     ---- 
 

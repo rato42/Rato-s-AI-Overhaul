@@ -8,8 +8,12 @@ function RATOAI_CUAEoptions()
         }
 
         local role_table = {
+
             Artillery = {extraWeapons = {{type = {{"AssaultRifle", 50}, {"SMG", 100}}}}},
             Marksman = {
+                weaponComponentsPriorities = {
+                    Sniper = {tag = "Precision", prioritySlots = {"Scope", "Mount", "Barrel"}}
+                },
                 -- weaponComponentsCurve = {
                 --     28, 34, 40, 46, 52, 58, 64, 70, 76, 82, 88, 94, 99, 99, 99, 99, 99, 99, 99, 99
                 -- },
@@ -19,6 +23,9 @@ function RATOAI_CUAEoptions()
                 extraUtility = {{type = {{"Smoke", 33}, {"Flash", 66}, amount = 2}}}
             },
             Soldier = {
+                weaponComponentsPriorities = {
+                    AssaultRifle = {tag = "Tactical", prioritySlots = {"Muzzle", "Stock", "Barrel"}}
+                },
                 extraUtility = {
                     night_pack, {type = {{"Smoke", 85}}, amount = 3},
                     {type = {{"Explosive", 35}, {"Flash", 60}, {"Tear", 75}}, amount = 2}
@@ -39,6 +46,13 @@ function RATOAI_CUAEoptions()
 
             },
             Recon = {
+                weaponComponentsPriorities = {
+                    SMG = {
+                        tag = "CloseQuarters",
+                        prioritySlots = {"Muzzle", "Stock", "Barrel", "Side"}
+                    },
+                    Handgun = {tag = "CloseQuarters", prioritySlots = {"Scope", "Barrel", "Side"}}
+                },
                 extraUtility = {
                     night_pack, {type = {{"Flash", 90}}, amount = 3},
                     {type = {{"Explosive", 35}, {"Tear", 55}, {"Fire", 75}}, amount = 2},
@@ -47,11 +61,19 @@ function RATOAI_CUAEoptions()
             },
 
             Stormer = {
+                weaponComponentsPriorities = {
+                    Shotgun = {tag = "CloseQuarters", prioritySlots = {"Barrel", "Muzzle"}}
+                },
                 extraUtility = {
                     night_pack, {type = {{"Fire", 45}, {"Tear", 90}}, amount = 3},
                     {type = {{"Explosive", 35}, {"Smoke", 45}, {"Flash", 80}}, amount = 2}
                 }
 
+            },
+            Heavy = {
+                weaponComponentsPriorities = {
+                    MachineGun = {tag = "Tactical", prioritySlots = {"Scope", "Stock", "Side"}}
+                }
             }
         }
 
@@ -128,7 +150,7 @@ function RATOAI_AddExclusionCUAE()
         Adonis = {},
         Rebel = {'Type56A_1', 'Type56C_1'},
         Thugs = {"M14SAW_AUTO", 'Type56D_1', 'Type56B_1', 'PapovkaSKS_1', 'SKS_1'},
-        Legion = {"M14SAW_AUTO", 'Type56D_1', 'Type56C_1', 'Papovka2SKS_1'},
+        Legion = {'Type56D_1', 'Type56C_1', 'Papovka2SKS_1'},
         SuperSoldiers = {},
         Militia = {"M14SAW_AUTO", 'Type56D_1', 'Type56D_1', 'Type56C_1', 'Papovka2SKS_1'}
     }
@@ -136,6 +158,12 @@ function RATOAI_AddExclusionCUAE()
     local non_nazi_old_war = {
         'Mosin_1', 'Delisle_1', 'VigM2_1', 'StenMK2_1', 'P08_1', 'M1Garand_2', 'HiPower',
         'Winchester1894', 'Auto5', 'DoubleBarrelShotgun', "ColtPeacemaker"
+    }
+
+    local old_war_except_mosin = {
+        'Delisle_1', 'VigM2_1', 'StenMK2_1', 'STG44R_1', 'P08_1', 'M1Garand_2', 'Gewehr43_1',
+        'Gewehr98', 'MP40', 'MG42', 'HiPower', 'Winchester1894', 'Auto5', 'DoubleBarrelShotgun',
+        "ColtPeacemaker"
     }
 
     local function add_items(destination, ...)
@@ -148,7 +176,7 @@ function RATOAI_AddExclusionCUAE()
 
     add_items(excl_table.Army, old_war, civilian, eastern_special, eastern_common)
     add_items(excl_table.Adonis, old_war, eastern_common)
-    add_items(excl_table.Rebel, german, german_common, western)
+    add_items(excl_table.Rebel, german, german_common, western, old_war_except_mosin, civilian)
     add_items(excl_table.Thugs, german, end_game, eastern_special, western)
     add_items(excl_table.Legion, german, end_game, eastern_special)
     add_items(excl_table.SuperSoldiers, non_nazi_old_war, civilian, eastern_special, eastern_common,
