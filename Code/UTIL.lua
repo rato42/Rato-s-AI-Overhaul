@@ -39,6 +39,6 @@ function RATOAI_ValidatePosZ(point)
 end
 
 function RATOAI_GetCloseRange()
-    return (((const.Weapons.PointBlankRange * 2) + (1)) * const.SlabSizeX)
+    return rat_close_range() or (((const.Weapons.PointBlankRange * 2) + (1)) * const.SlabSizeX)
 end
 -- GetPackedPosAndStance(unit, stance)
