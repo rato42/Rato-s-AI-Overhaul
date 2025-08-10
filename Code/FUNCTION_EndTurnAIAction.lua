@@ -9,6 +9,17 @@ function OnMsg.TurnEnded(teamId)
     end
 end
 
+function OnMsg.CombatEnd()
+    for _, unit in ipairs(g_Units) do
+        if R_IsAI(unit) and unit.RATOAI_ChangedStance then
+            unit.RATOAI_ChangedStance = false
+            if unit.stance ~= "Standing" then
+                unit:SetActionCommand("ChangeStance", nil, nil, "Standing")
+            end
+        end
+    end
+end
+
 function RATOAI_EndTurnAIAction(unit)
 
     if not CurrentThread() then
@@ -127,6 +138,7 @@ function RATOAI_TryChangeStance(unit)
             if ap >= prone_AP then
                 unit:SetActionCommand("ChangeStance", "RATOAI_ChangeStance", prone_AP, "Prone")
                 unit.ActionPoints = unit.ActionPoints - prone_AP
+                unit.RATOAI_ChangedStance = true
                 if angle then
                     -- Sleep(1000)
                     unit:AnimatedRotation(angle)
